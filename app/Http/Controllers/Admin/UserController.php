@@ -19,8 +19,20 @@ class UserController extends Controller
             ->latest()
             ->paginate(15);
 
+        // Transform teamMemberships to memberships for frontend consistency
+        $usersArray = collect($users->items())->map(function ($user) {
+            $user->memberships = $user->teamMemberships->map(function ($membership) {
+                return [
+                    'team' => $membership->team,
+                    'role' => $membership->role ?? 'member',
+                ];
+            });
+            unset($user->teamMemberships);
+            return $user;
+        })->toArray();
+
         return Inertia::render('Admin/Users/Index', [
-            'users' => $users->items(),
+            'users' => $usersArray,
             'meta' => [
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
@@ -33,6 +45,16 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load(['teamMemberships.team:id,name,slug,is_personal']);
+        
+        // Transform teamMemberships to memberships
+        $user->memberships = $user->teamMemberships->map(function ($membership) {
+            return [
+                'team' => $membership->team,
+                'role' => $membership->role ?? 'member',
+            ];
+        });
+        unset($user->teamMemberships);
+        
         $user->adoptions_count = Adoption::query()->where('user_id', $user->id)->count();
 
         return Inertia::render('Admin/Users/Show', [
