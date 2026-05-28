@@ -47,6 +47,29 @@ class Pet extends Model
         return 'slug';
     }
 
+    public static function generateUniqueSlug(string $name, ?int $exceptId = null): string
+    {
+        $slug = \Illuminate\Support\Str::slug($name);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        $query = static::where('slug', $slug);
+        if ($exceptId) {
+            $query->where('id', '!=', $exceptId);
+        }
+
+        while ($query->exists()) {
+            $slug = "{$originalSlug}-{$counter}";
+            $query = static::where('slug', $slug);
+            if ($exceptId) {
+                $query->where('id', '!=', $exceptId);
+            }
+            $counter++;
+        }
+
+        return $slug;
+    }
+
     public function toArray(): array
     {
         $array = parent::toArray();

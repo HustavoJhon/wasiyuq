@@ -54,7 +54,7 @@ class PetController extends Controller
     public function store(StorePetRequest $request)
     {
         $data = $request->validated();
-        $data['slug'] = $request->slug ?? Str::slug($request->name);
+        $data['slug'] = $request->slug ?? Pet::generateUniqueSlug($request->name);
 
         unset($data['photo']);
 
@@ -92,7 +92,7 @@ class PetController extends Controller
         $pet = Pet::query()->findOrFail($id);
 
         $data = $request->validated();
-        $data['slug'] = $request->slug ?? Str::slug($request->name);
+        $data['slug'] = $request->slug ?? Pet::generateUniqueSlug($request->name, $id);
 
         unset($data['photo']);
 
