@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FollowUpController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PetController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RoleManagementController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ Route::prefix('admin')
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/perfil', [ProfileController::class, 'index'])->name('profile.index');
         Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/roles', [RoleManagementController::class, 'index'])->name('roles.index');
+        Route::get('/roles/{role}', [RoleManagementController::class, 'show'])->name('roles.show');
 
         Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
         Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
