@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /auth
+Disallow: /invitations
+Disallow: /mi-adopcion
+
+Sitemap: https://wasiyuq.pe/sitemap.xml

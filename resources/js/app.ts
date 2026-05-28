@@ -1,34 +1,38 @@
+import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { initializeTheme } from '@/composables/useAppearance';
-import AppLayout from '@/layouts/AppLayout.vue';
-import AuthLayout from '@/layouts/AuthLayout.vue';
-import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+initializeTheme();
+initializeFlashToast();
+
+const appName = import.meta.env.VITE_APP_NAME || 'Wasiyuq';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => (title ? `${title} — ${appName}` : `${appName} — Adopción responsable en Cusco`),
     layout: (name) => {
         switch (true) {
-            case name === 'Welcome':
-                return null;
-            case name.startsWith('auth/'):
-                return AuthLayout;
-            case name.startsWith('settings/'):
-            case name.startsWith('teams/'):
-                return [AppLayout, SettingsLayout];
+            case name.startsWith('Public/'):
+                return PublicLayout;
+            case name.startsWith('Dashboard'):
+            case name.startsWith('Admin/'):
+                return DashboardLayout;
             default:
-                return AppLayout;
+                return PublicLayout;
         }
     },
+    resolve: (name) => {
+        const pages = import.meta.glob('./pages/**/*.vue', { eager: true });
+        return pages[`./pages/${name}.vue`];
+    },
+    setup({ el, App, props, plugin }) {
+        createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .mount(el);
+    },
     progress: {
-        color: '#4B5563',
+        color: '#2D6A4F',
     },
 });
-
-// This will set light / dark mode on page load...
-initializeTheme();
-
-// This will listen for flash toast data from the server...
-initializeFlashToast();

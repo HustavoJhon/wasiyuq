@@ -12,15 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'slug', 'is_personal'])]
+#[Fillable(['name', 'slug', 'is_personal', 'bio', 'logo', 'website', 'phone', 'address', 'city', 'state', 'social_links'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
     use GeneratesUniqueTeamSlugs, HasFactory, SoftDeletes;
 
-    /**
-     * Bootstrap the model and its traits.
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -38,9 +35,6 @@ class Team extends Model
         });
     }
 
-    /**
-     * Get the team owner.
-     */
     public function owner(): ?Model
     {
         return $this->members()
@@ -48,11 +42,6 @@ class Team extends Model
             ->first();
     }
 
-    /**
-     * Get all members of this team.
-     *
-     * @return BelongsToMany<Model, $this>
-     */
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'team_members', 'team_id', 'user_id')
@@ -61,41 +50,44 @@ class Team extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Get all memberships for this team.
-     *
-     * @return HasMany<Membership, $this>
-     */
     public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class);
     }
 
-    /**
-     * Get all invitations for this team.
-     *
-     * @return HasMany<TeamInvitation, $this>
-     */
     public function invitations(): HasMany
     {
         return $this->hasMany(TeamInvitation::class);
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    public function pets(): HasMany
+    {
+        return $this->hasMany(Pet::class);
+    }
+
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class);
+    }
+
+    public function blogPosts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class);
+    }
+
+    public function adoptions(): HasMany
+    {
+        return $this->hasMany(Adoption::class);
+    }
+
     protected function casts(): array
     {
         return [
             'is_personal' => 'boolean',
+            'social_links' => 'array',
         ];
     }
 
-    /**
-     * Get the route key for the model.
-     */
     public function getRouteKeyName(): string
     {
         return 'slug';

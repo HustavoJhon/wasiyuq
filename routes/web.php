@@ -1,16 +1,112 @@
 <?php
 
+use App\Http\Controllers\Adopter\ApplicationController;
+use App\Http\Controllers\Adopter\FollowUpReportController;
+use App\Http\Controllers\Dashboard\AdoptionController as DashboardAdoptionController;
+use App\Http\Controllers\Dashboard\BlogPostController as DashboardBlogPostController;
+use App\Http\Controllers\Dashboard\EventController as DashboardEventController;
+use App\Http\Controllers\Dashboard\FollowUpController as DashboardFollowUpController;
+use App\Http\Controllers\Teams\PetController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
+use App\Models\Adoption;
+use App\Models\Announcement;
+use App\Models\BlogPost;
+use App\Models\FollowUp;
+use App\Models\Pet;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
+require __DIR__.'/public.php';
+
+Route::get('/auth/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback'])->name('google.callback');
+
+Route::prefix('{current_team}')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('dashboard', function () {
+            return \Inertia\Inertia::render('Dashboard', [
+                'stats' => [
+                    'total_pets' => Pet::query()->count(),
+                    'available_pets' => Pet::query()->where('status', 'available')->count(),
+                    'adopted_pets' => Pet::query()->where('status', 'adopted')->count(),
+                    'total_organizations' => Team::query()->where('is_personal', false)->count(),
+                    'total_adoptions' => Adoption::query()->count(),
+                    'pending_adoptions' => Adoption::query()->where('status', 'pending')->count(),
+                    'total_events' => Announcement::query()->count(),
+                    'total_blog_posts' => BlogPost::query()->count(),
+                    'pending_follow_ups' => FollowUp::query()->where('status', 'pending')->count(),
+                    'total_users' => User::query()->count(),
+                ],
+                'recent_adoptions' => Adoption::query()
+                    ->with(['pet:id,name,slug', 'adopter:id,name'])
+                    ->latest()
+                    ->take(5)
+                    ->get(),
+                'recent_pets' => Pet::query()
+                    ->with('team:id,name')
+                    ->latest()
+                    ->take(5)
+                    ->get(),
+            ]);
+        })->name('dashboard');
+    });
 
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
+    ->name('teams.')
     ->group(function () {
-        Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+        Route::get('mascotas', [PetController::class, 'index'])->name('pets.index');
+        Route::get('mascotas/crear', [PetController::class, 'create'])->name('pets.create');
+        Route::post('mascotas', [PetController::class, 'store'])->name('pets.store');
+        Route::get('mascotas/{id}', [PetController::class, 'show'])->name('pets.show');
+        Route::get('mascotas/{id}/editar', [PetController::class, 'edit'])->name('pets.edit');
+        Route::put('mascotas/{id}', [PetController::class, 'update'])->name('pets.update');
+        Route::delete('mascotas/{id}', [PetController::class, 'destroy'])->name('pets.destroy');
+
+        Route::get('adopciones', [DashboardAdoptionController::class, 'index'])->name('adoptions.index');
+        Route::get('adopciones/{adoption}', [DashboardAdoptionController::class, 'show'])->name('adoptions.show');
+        Route::post('adopciones/{adoption}/aprobar', [DashboardAdoptionController::class, 'approve'])->name('adoptions.approve');
+        Route::post('adopciones/{adoption}/rechazar', [DashboardAdoptionController::class, 'reject'])->name('adoptions.reject');
+
+        Route::get('seguimientos', [DashboardFollowUpController::class, 'index'])->name('follow-ups.index');
+        Route::get('seguimientos/{followUp}', [DashboardFollowUpController::class, 'show'])->name('follow-ups.show');
+        Route::post('seguimientos/{followUp}/completar', [DashboardFollowUpController::class, 'markCompleted'])->name('follow-ups.complete');
+        Route::post('seguimientos/{followUp}/no-realizado', [DashboardFollowUpController::class, 'markMissed'])->name('follow-ups.missed');
+        Route::post('seguimientos', [DashboardFollowUpController::class, 'schedule'])->name('follow-ups.schedule');
+
+        Route::get('blog', [DashboardBlogPostController::class, 'index'])->name('blog.index');
+        Route::get('blog/crear', [DashboardBlogPostController::class, 'create'])->name('blog.create');
+        Route::post('blog', [DashboardBlogPostController::class, 'store'])->name('blog.store');
+        Route::get('blog/{id}', [DashboardBlogPostController::class, 'show'])->name('blog.show');
+        Route::get('blog/{id}/editar', [DashboardBlogPostController::class, 'edit'])->name('blog.edit');
+        Route::put('blog/{id}', [DashboardBlogPostController::class, 'update'])->name('blog.update');
+        Route::delete('blog/{id}', [DashboardBlogPostController::class, 'destroy'])->name('blog.destroy');
+
+        Route::get('eventos', [DashboardEventController::class, 'index'])->name('events.index');
+        Route::get('eventos/crear', [DashboardEventController::class, 'create'])->name('events.create');
+        Route::post('eventos', [DashboardEventController::class, 'store'])->name('events.store');
+        Route::get('eventos/{id}', [DashboardEventController::class, 'show'])->name('events.show');
+        Route::get('eventos/{id}/editar', [DashboardEventController::class, 'edit'])->name('events.edit');
+        Route::put('eventos/{id}', [DashboardEventController::class, 'update'])->name('events.update');
+        Route::delete('eventos/{id}', [DashboardEventController::class, 'destroy'])->name('events.destroy');
     });
+
+// Rutas del adoptante
+Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')->group(function () {
+    Route::get('/postulaciones', [ApplicationController::class, 'index'])->name('applications.index');
+
+    Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
+    Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
+    Route::post('/seguimientos/{followUp}/reportar', [FollowUpReportController::class, 'report'])->name('follow-ups.report');
+});
+
+// Postulación pública (requiere auth)
+Route::post('/mascotas/{slug}/postular', [ApplicationController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('pets.apply');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');

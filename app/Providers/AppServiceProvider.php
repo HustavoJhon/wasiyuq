@@ -2,11 +2,19 @@
 
 namespace App\Providers;
 
+use App\Events\AdoptionApplicationSubmitted;
+use App\Events\AdoptionApproved;
+use App\Events\AdoptionCompleted;
+use App\Listeners\CreateFollowUpPlan;
+use App\Listeners\NotifyAdopterOfApproval;
+use App\Listeners\NotifyEntityOfNewApplication;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +32,25 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerEventListeners();
+    }
+
+    protected function registerEventListeners(): void
+    {
+        Event::listen(
+            AdoptionApplicationSubmitted::class,
+            NotifyEntityOfNewApplication::class,
+        );
+
+        Event::listen(
+            AdoptionApproved::class,
+            NotifyAdopterOfApproval::class,
+        );
+
+        Event::listen(
+            AdoptionCompleted::class,
+            CreateFollowUpPlan::class,
+        );
     }
 
     /**
