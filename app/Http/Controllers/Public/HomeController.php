@@ -18,6 +18,13 @@ class HomeController extends Controller
                 'organizations' => Team::query()->where('is_personal', false)->count(),
                 'pets_available' => Pet::query()->where('status', 'available')->count(),
             ],
+            'species' => [
+                'dog' => Pet::query()->where('status', 'available')->where('species', 'dog')->count(),
+                'cat' => Pet::query()->where('status', 'available')->where('species', 'cat')->count(),
+                'rabbit' => Pet::query()->where('status', 'available')->where('species', 'rabbit')->count(),
+                'bird' => Pet::query()->where('status', 'available')->where('species', 'bird')->count(),
+                'other' => Pet::query()->where('status', 'available')->where('species', 'other')->count(),
+            ],
         ]);
     }
 }
