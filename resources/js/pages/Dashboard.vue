@@ -45,6 +45,7 @@ function statusLabel(status: string): string {
     completed: 'Completada', cancelled: 'Cancelada',
     available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso',
   }
+
   return labels[status] ?? status
 }
 

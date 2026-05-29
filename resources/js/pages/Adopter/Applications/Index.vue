@@ -17,6 +17,7 @@ function statusClass(status: string): string {
     completed: 'bg-green-100 text-green-700',
     cancelled: 'bg-gray-100 text-gray-500',
   }
+
   return map[status] ?? 'bg-gray-100 text-gray-600'
 }
 
@@ -25,11 +26,13 @@ function statusLabel(s: string): string {
     pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada',
     completed: 'Completada', cancelled: 'Cancelada',
   }
+
   return labels[s] ?? s
 }
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' }
+
   return labels[s] ?? s
 }
 

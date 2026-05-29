@@ -30,6 +30,7 @@ function submit(): void {
 
 function currentTeamSlug(): string {
   const m = window.location.pathname.match(/^\/([^/]+)/)
+
   return m ? m[1] : ''
 }
 </script>

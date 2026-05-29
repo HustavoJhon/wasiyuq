@@ -32,11 +32,13 @@ function photoUrl(path: string): string {
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }
+
   return labels[s] ?? s
 }
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso', withheld: 'Reservado' }
+
   return labels[s] ?? s
 }
 

@@ -27,33 +27,42 @@ const submitting = ref(false)
 
 function handlePhotoInput(e: Event): void {
   const input = e.target as HTMLInputElement
+
   if (input.files) {
     photos.value = Array.from(input.files)
   }
 }
 
 function submitReport(): void {
-  if (submitting.value) return
+  if (submitting.value) {
+return
+}
+
   submitting.value = true
 
   const formData = new FormData()
   formData.append('notes', notes.value)
+
   for (const photo of photos.value) {
     formData.append('photos[]', photo)
   }
 
   router.post(`/mi-adopcion/seguimientos/${props.followUp.id}/reportar`, formData, {
-    onFinish: () => { submitting.value = false },
+    onFinish: () => {
+ submitting.value = false 
+},
   })
 }
 
 function statusClass(s: string): string {
   const map: Record<string, string> = { pending: 'bg-amber-100 text-amber-700', completed: 'bg-green-100 text-green-700', missed: 'bg-red-100 text-red-700' }
+
   return map[s] ?? 'bg-gray-100 text-gray-600'
 }
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' }
+
   return labels[s] ?? s
 }
 

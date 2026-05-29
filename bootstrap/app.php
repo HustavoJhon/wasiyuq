@@ -37,5 +37,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Symfony\Component\HttpKernel\Exception\HttpException $e, Illuminate\Http\Request $request) {
+            if ($e->getStatusCode() === 403 && $request->user()) {
+                return Inertia\Inertia::render('Errors/Forbidden', [
+                    'message' => $e->getMessage() ?: 'No tienes permisos para acceder a esta página.',
+                ])->toResponse($request)->setStatusCode(403);
+            }
+        });
     })->create();

@@ -1,9 +1,9 @@
-import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp, h } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
-import { initializeFlashToast } from '@/lib/flashToast';
-import PublicLayout from '@/layouts/PublicLayout.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import { initializeFlashToast } from '@/lib/flashToast';
 
 initializeTheme();
 initializeFlashToast();
@@ -25,6 +25,7 @@ createInertiaApp({
     },
     resolve: (name) => {
         const pages = import.meta.glob('./pages/**/*.vue', { eager: true });
+
         return pages[`./pages/${name}.vue`];
     },
     setup({ el, App, props, plugin }) {

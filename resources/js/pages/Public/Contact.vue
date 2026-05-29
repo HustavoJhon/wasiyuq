@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 import InputError from '@/components/InputError.vue'
 
@@ -28,6 +28,7 @@ const form = useForm({
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }
+
   return labels[s] ?? s
 }
 

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import InputError from '@/components/InputError.vue'
-import type { Team } from '@/types'
 import {
   Select,
   SelectContent,
@@ -13,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import type { Team } from '@/types'
 
 defineProps<{ team: Team }>()
 
@@ -35,10 +35,13 @@ const previewUrl = ref<string | null>(null)
 
 function onPhotoChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
+
   if (file) {
     form.photo = file
     const reader = new FileReader()
-    reader.onload = () => { previewUrl.value = reader.result as string }
+    reader.onload = () => {
+ previewUrl.value = reader.result as string 
+}
     reader.readAsDataURL(file)
   }
 }

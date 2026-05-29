@@ -28,10 +28,22 @@ defineProps<{
 }>()
 
 const getLevelColor = (level: number) => {
-  if (level >= 9) return 'bg-red-100 text-red-800'
-  if (level >= 7) return 'bg-purple-100 text-purple-800'
-  if (level >= 5) return 'bg-blue-100 text-blue-800'
-  if (level >= 3) return 'bg-green-100 text-green-800'
+  if (level >= 9) {
+return 'bg-red-100 text-red-800'
+}
+
+  if (level >= 7) {
+return 'bg-purple-100 text-purple-800'
+}
+
+  if (level >= 5) {
+return 'bg-blue-100 text-blue-800'
+}
+
+  if (level >= 3) {
+return 'bg-green-100 text-green-800'
+}
+
   return 'bg-gray-100 text-gray-800'
 }
 
@@ -46,6 +58,7 @@ const getRoleDescription = (role_value: string) => {
     'member': 'Acceso básico con permisos de lectura sobre mascotas, adopciones y blog',
     'viewer': 'Acceso de solo lectura a toda la información',
   }
+
   return descriptions[role_value] || ''
 }
 </script>

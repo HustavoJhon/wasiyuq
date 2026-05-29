@@ -25,17 +25,22 @@ defineProps<{
 }>()
 
 function photoUrl(path: string | null | undefined): string {
-  if (!path || typeof path !== 'string') return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'
+  if (!path || typeof path !== 'string') {
+return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'
+}
+
   return path.startsWith('http') ? path : `/storage/${path}`
 }
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }
+
   return labels[s] ?? s
 }
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso', withheld: 'Reservado' }
+
   return labels[s] ?? s
 }
 

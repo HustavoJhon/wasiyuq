@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import {
+    BookOpen,
+    ClipboardList,
+    FileText,
+    FolderGit2,
+    LayoutGrid,
+    PawPrint,
+    CalendarDays,
+} from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -25,13 +33,45 @@ const dashboardUrl = computed(() =>
     page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
 );
 
-const mainNavItems = computed<NavItem[]>(() => [
-    {
-        title: 'Dashboard',
-        href: dashboardUrl.value,
-        icon: LayoutGrid,
-    },
-]);
+const allowedModules = computed<string[]>(() =>
+    (page.props.allowedModules as string[]) ?? [],
+);
+
+const teamSlug = computed(() =>
+    (page.props.currentTeam as { slug: string } | null)?.slug ?? '',
+);
+
+const moduleNavItems: Record<string, { title: string; icon: any }> = {
+    mascotas: { title: 'Mascotas', icon: PawPrint },
+    adopciones: { title: 'Adopciones', icon: ClipboardList },
+    blog: { title: 'Blog', icon: FileText },
+    eventos: { title: 'Eventos', icon: CalendarDays },
+    seguimientos: { title: 'Seguimientos', icon: ClipboardList },
+};
+
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboardUrl.value,
+            icon: LayoutGrid,
+        },
+    ];
+
+    for (const mod of allowedModules.value) {
+        const cfg = moduleNavItems[mod];
+
+        if (cfg) {
+            items.push({
+                title: cfg.title,
+                href: `/${teamSlug.value}/${mod}`,
+                icon: cfg.icon,
+            });
+        }
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {

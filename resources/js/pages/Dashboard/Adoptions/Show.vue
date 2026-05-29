@@ -35,12 +35,18 @@ const rejectNotes = ref('')
 const showRejectForm = ref(false)
 
 function approve(): void {
-  if (!props.currentTeam) return
+  if (!props.currentTeam) {
+return
+}
+
   router.post(`/${props.currentTeam.slug}/adopciones/${props.adoption.id}/aprobar`)
 }
 
 function reject(): void {
-  if (!props.currentTeam) return
+  if (!props.currentTeam) {
+return
+}
+
   router.post(`/${props.currentTeam.slug}/adopciones/${props.adoption.id}/rechazar`, {
     notes: rejectNotes.value,
   })
@@ -54,6 +60,7 @@ function statusClass(s: string): string {
     completed: 'bg-green-100 text-green-700',
     cancelled: 'bg-gray-100 text-gray-500',
   }
+
   return map[s] ?? 'bg-gray-100 text-gray-600'
 }
 
@@ -62,6 +69,7 @@ function statusLabel(s: string): string {
     pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada',
     completed: 'Completada', cancelled: 'Cancelada',
   }
+
   return labels[s] ?? s
 }
 

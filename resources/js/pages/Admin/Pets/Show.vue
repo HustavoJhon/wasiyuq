@@ -27,26 +27,31 @@ function photoUrl(path: string): string {
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }
+
   return labels[s] ?? s
 }
 
 function genderLabel(s: string): string {
   const labels: Record<string, string> = { male: 'Macho', female: 'Hembra' }
+
   return labels[s] ?? s
 }
 
 function sizeLabel(s: string): string {
   const labels: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' }
+
   return labels[s] ?? s
 }
 
 function statusClass(s: string): string {
   const classes: Record<string, string> = { available: 'text-green-700 bg-green-100', adopted: 'text-blue-700 bg-blue-100', in_process: 'text-amber-700 bg-amber-100', withheld: 'text-gray-600 bg-gray-100' }
+
   return classes[s] ?? 'text-gray-600 bg-gray-100'
 }
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { available: 'Disponible', adopted: 'Adoptado', in_process: 'En proceso', withheld: 'Retenido' }
+
   return labels[s] ?? s
 }
 

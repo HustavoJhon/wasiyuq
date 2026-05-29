@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useForm, router } from '@inertiajs/vue3'
+import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import InputError from '@/components/InputError.vue'
 
 interface Membership {
   id: number
@@ -48,6 +48,7 @@ function statusLabel(s: string): string {
     completed: 'Completada',
     cancelled: 'Cancelada',
   }
+
   return labels[s] ?? s
 }
 
@@ -59,6 +60,7 @@ function statusClass(s: string): string {
     completed: 'bg-green-100 text-green-700',
     cancelled: 'bg-gray-100 text-gray-600',
   }
+
   return map[s] ?? 'bg-gray-100 text-gray-600'
 }
 
@@ -68,6 +70,7 @@ function formatDate(d: string): string {
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }
+
   return labels[s] ?? s
 }
 </script>

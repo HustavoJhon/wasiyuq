@@ -18,7 +18,10 @@ interface BlogPost {
 defineProps<{ post: BlogPost }>()
 
 function formatDate(date: string | null): string {
-  if (!date) return ''
+  if (!date) {
+return ''
+}
+
   return new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(new Date(date))
 }
 
@@ -26,11 +29,16 @@ function renderContent(content: string): string {
   return content
     .split('\n\n')
     .map(block => {
-      if (block.startsWith('## ')) return '<h3 class="mt-8 text-lg font-semibold text-foreground">' + block.slice(3) + '</h3>'
+      if (block.startsWith('## ')) {
+return '<h3 class="mt-8 text-lg font-semibold text-foreground">' + block.slice(3) + '</h3>'
+}
+
       if (block.startsWith('- ')) {
         const items = block.split('\n').map(l => l.replace(/^- /, '')).filter(Boolean)
+
         return '<ul class="mt-2 list-disc pl-5 space-y-1">' + items.map(i => '<li>' + i + '</li>').join('') + '</ul>'
       }
+
       return '<p class="mt-4">' + block.replace(/\n/g, '<br>') + '</p>'
     })
     .join('')

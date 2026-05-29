@@ -27,6 +27,7 @@ defineProps<{
 
 function typeLabel(t: string): string {
   const labels: Record<string, string> = { adoption_fair: 'Feria de Adopción', fundraiser: 'Recaudación', workshop: 'Taller', campaign: 'Campaña', other: 'Otro' }
+
   return labels[t] ?? t
 }
 

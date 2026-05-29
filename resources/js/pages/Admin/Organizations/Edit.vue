@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useForm, router } from '@inertiajs/vue3'
+import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import InputError from '@/components/InputError.vue'
 
 interface Member {
   id: number
@@ -44,11 +44,14 @@ function submit() {
 }
 
 function destroy(id: number) {
-  if (confirm('¿Estás seguro de eliminar?')) router.delete(`/admin/organizaciones/${id}`)
+  if (confirm('¿Estás seguro de eliminar?')) {
+router.delete(`/admin/organizaciones/${id}`)
+}
 }
 
 function roleLabel(r: string): string {
   const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' }
+
   return labels[r] ?? r
 }
 </script>

@@ -9,6 +9,7 @@ const page = usePage()
 
 const pageJsonLd = computed(() => {
   const props = page.props as Record<string, unknown>
+
   return props.jsonLd as Record<string, unknown> | null ?? null
 })
 

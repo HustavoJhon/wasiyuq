@@ -29,6 +29,7 @@ defineProps<{ organization: Organization }>()
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso', withheld: 'Reservado' }
+
   return labels[s] ?? s
 }
 

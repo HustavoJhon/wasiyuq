@@ -14,10 +14,10 @@ interface AdoptionOption {
 }
 
 import { useForm, router } from '@inertiajs/vue3'
+import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import InputError from '@/components/InputError.vue'
 import {
   Select,
   SelectContent,

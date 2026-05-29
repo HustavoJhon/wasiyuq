@@ -20,11 +20,15 @@ defineProps<{ event: Announcement }>()
 
 function typeLabel(type: string): string {
   const labels: Record<string, string> = { adoption_fair: 'Feria de Adopción', fundraiser: 'Recaudación', workshop: 'Taller', campaign: 'Campaña', other: 'Otro' }
+
   return labels[type] ?? type
 }
 
 function formatDate(date: string | null): string {
-  if (!date) return ''
+  if (!date) {
+return ''
+}
+
   return new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(new Date(date))
 }
 </script>

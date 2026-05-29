@@ -27,7 +27,10 @@ defineProps<{
 }>()
 
 function formatDate(date: string | null): string {
-  if (!date) return ''
+  if (!date) {
+return ''
+}
+
   return new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(new Date(date))
 }
 </script>

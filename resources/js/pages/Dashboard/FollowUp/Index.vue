@@ -35,11 +35,13 @@ function applyFilter(status: string): void {
 
 function statusClass(status: string): string {
   const map: Record<string, string> = { pending: 'bg-amber-100 text-amber-700', completed: 'bg-green-100 text-green-700', missed: 'bg-red-100 text-red-700' }
+
   return map[status] ?? 'bg-gray-100 text-gray-600'
 }
 
 function statusLabel(s: string): string {
   const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' }
+
   return labels[s] ?? s
 }
 
@@ -49,6 +51,7 @@ function formatDate(d: string): string {
 
 function speciesLabel(s: string): string {
   const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' }
+
   return labels[s] ?? s
 }
 </script>
