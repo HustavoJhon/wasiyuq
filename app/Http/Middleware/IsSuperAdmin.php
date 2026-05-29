@@ -16,12 +16,16 @@ class IsSuperAdmin
             return $next($request);
         }
 
-        abort_unless(
-            $user?->is_super_admin,
-            403,
-            'Acceso denegado. Se requieren permisos de administrador.',
-        );
+        if ($request->inertia()) {
+            return redirect()->route('dashboard', $user?->currentTeam?->slug ?? '')
+                ->with('flash', [
+                    'toast' => [
+                        'type' => 'error',
+                        'message' => 'Acceso denegado. Se requieren permisos de administrador.',
+                    ],
+                ]);
+        }
 
-        return $next($request);
+        abort(403, 'Acceso denegado. Se requieren permisos de administrador.');
     }
 }
