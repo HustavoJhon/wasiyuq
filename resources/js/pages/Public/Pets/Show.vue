@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { router, usePage } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { useForm, usePage } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 
 interface Pet {
   id: number
@@ -24,8 +24,9 @@ const props = defineProps<{ pet: Pet }>()
 const page = usePage()
 const isAuthenticated = !!page.props.auth?.user
 const showForm = ref(false)
+const errors = computed(() => page.props.errors as Record<string, string>)
 
-const form = ref({
+const form = useForm({
   motivation: '',
   experience_with_pets: false,
   has_yard: false,
@@ -34,11 +35,11 @@ const form = ref({
 })
 
 function submit(): void {
-  router.post(`/mascotas/${props.pet.slug}/postular`, form.value, {
+  form.post(`/mascotas/${props.pet.slug}/postular`, {
     preserveScroll: true,
     onSuccess: () => {
       showForm.value = false
-      form.value = { motivation: '', experience_with_pets: false, has_yard: false, housing_type: 'house', family_composition: '' }
+      form.reset()
     },
   })
 }
@@ -141,7 +142,8 @@ function statusLabel(status: string): string {
         <form class="mt-6 space-y-4" @submit.prevent="submit">
           <div>
             <label class="text-sm font-medium text-foreground">¿Por qué quieres adoptarlo?</label>
-            <textarea v-model="form.motivation" class="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" rows="4" placeholder="Cuéntanos tu motivación (mín. 150 caracteres)..."></textarea>
+            <textarea v-model="form.motivation" class="mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" :class="errors.motivation ? 'border-red-500' : 'border-border'" rows="4" placeholder="Cuéntanos tu motivación (mín. 150 caracteres)..."></textarea>
+            <p v-if="errors.motivation" class="mt-1 text-xs text-red-500">{{ errors.motivation }}</p>
           </div>
 
           <div class="flex items-center gap-2">
@@ -156,21 +158,23 @@ function statusLabel(status: string): string {
 
           <div>
             <label class="text-sm font-medium text-foreground">Tipo de vivienda</label>
-            <select v-model="form.housing_type" class="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]">
+            <select v-model="form.housing_type" class="mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" :class="errors.housing_type ? 'border-red-500' : 'border-border'">
               <option value="house">Casa</option>
               <option value="apartment">Departamento</option>
               <option value="condo">Condominio</option>
               <option value="other">Otro</option>
             </select>
+            <p v-if="errors.housing_type" class="mt-1 text-xs text-red-500">{{ errors.housing_type }}</p>
           </div>
 
           <div>
             <label class="text-sm font-medium text-foreground">Composición del hogar</label>
-            <textarea v-model="form.family_composition" class="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" rows="2" placeholder="¿Con quién vives? ¿Hay niños u otras mascotas?"></textarea>
+            <textarea v-model="form.family_composition" class="mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" :class="errors.family_composition ? 'border-red-500' : 'border-border'" rows="2" placeholder="¿Con quién vives? ¿Hay niños u otras mascotas?"></textarea>
+            <p v-if="errors.family_composition" class="mt-1 text-xs text-red-500">{{ errors.family_composition }}</p>
           </div>
 
-          <button type="submit" class="w-full rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#246142]">
-            Enviar solicitud
+          <button type="submit" :disabled="form.processing" class="w-full rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#246142]" :class="{ 'opacity-50': form.processing }">
+            {{ form.processing ? 'Enviando...' : 'Enviar solicitud' }}
           </button>
         </form>
       </div>

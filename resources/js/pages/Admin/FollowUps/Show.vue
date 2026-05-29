@@ -73,7 +73,7 @@ function formatDate(d: string): string {
 
       <div>
         <h2 class="text-lg font-semibold text-foreground">Fotos</h2>
-        <div v-if="followUp.photos.length === 0" class="mt-4 text-sm text-muted-foreground/70">Sin fotos registradas.</div>
+        <div v-if="!followUp.photos || followUp.photos.length === 0" class="mt-4 text-sm text-muted-foreground/70">Sin fotos registradas.</div>
         <div v-else class="mt-4 grid grid-cols-2 gap-4">
           <img v-for="(photo, i) in followUp.photos" :key="i" :src="photo" class="rounded-lg border border-border object-cover" />
         </div>

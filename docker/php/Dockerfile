@@ -1,9 +1,6 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
-RUN echo "deb http://archive.debian.org/debian bookworm main" > /etc/apt/sources.list \
-    && echo "deb http://archive.debian.org/debian-security bookworm-security main" >> /etc/apt/sources.list \
-    && echo "deb http://archive.debian.org/debian bookworm-updates main" >> /etc/apt/sources.list \
-    && apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     unzip curl git gnupg libgd-dev libzip-dev libicu-dev ca-certificates --allow-unauthenticated \
     && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list \

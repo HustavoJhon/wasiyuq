@@ -23,6 +23,13 @@ class FollowUp extends Model
         ];
     }
 
+    public function toArray(): array
+    {
+        $data = parent::toArray();
+        $data['photos'] = $data['photos'] ?? [];
+        return $data;
+    }
+
     public function adoption(): BelongsTo
     {
         return $this->belongsTo(Adoption::class);

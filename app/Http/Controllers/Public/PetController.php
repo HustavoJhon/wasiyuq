@@ -40,11 +40,7 @@ class PetController extends Controller
 
         abort_unless($pet, 404);
 
-        $speciesLabel = match ($pet->species) {
-            'dog' => 'Perro',
-            'cat' => 'Gato',
-            default => $pet->species,
-        };
+        $speciesLabel = $pet->species->label();
 
         return Inertia::render('Public/Pets/Show', [
             'pet' => $pet,

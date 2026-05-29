@@ -1,3 +1,6 @@
+permissions:
+	sudo chown -R $(shell id -u):$(shell id -g) storage/ && chmod -R 777 storage/
+
 up:
 	docker-compose up -d
 
@@ -6,6 +9,9 @@ down:
 
 shell:
 	docker-compose exec app bash
+
+link:
+	docker-compose exec app php artisan storage:link
 
 migrate:
 	docker-compose exec app php artisan migrate --seed
