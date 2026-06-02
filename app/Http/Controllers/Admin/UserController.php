@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserRoleRequest;
 use App\Models\Adoption;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -39,6 +40,8 @@ class UserController extends Controller
                 'total' => $users->total(),
                 'per_page' => $users->perPage(),
             ],
+            'teams' => Team::query()->where('is_personal', false)->pluck('name', 'id'),
+            'roles' => ['member', 'admin'],
         ]);
     }
 
