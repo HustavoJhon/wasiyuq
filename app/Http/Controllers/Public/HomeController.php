@@ -25,6 +25,29 @@ class HomeController extends Controller
                 'bird' => Pet::query()->where('status', 'available')->where('species', 'bird')->count(),
                 'other' => Pet::query()->where('status', 'available')->where('species', 'other')->count(),
             ],
+            'recentPets' => Pet::query()
+                ->where('status', 'available')
+                ->with('team:id,name,slug,city,state')
+                ->latest()
+                ->take(4)
+                ->get()
+                ->map(fn ($pet) => [
+                    'id' => $pet->id,
+                    'name' => $pet->name,
+                    'slug' => $pet->slug,
+                    'species' => $pet->species,
+                    'breed' => $pet->breed,
+                    'age_years' => $pet->age_years,
+                    'age_months' => $pet->age_months,
+                    'gender' => $pet->gender,
+                    'size' => $pet->size,
+                    'photos' => $pet->photos,
+                    'team' => [
+                        'name' => $pet->team->name,
+                        'city' => $pet->team->city,
+                        'state' => $pet->team->state,
+                    ],
+                ]),
         ]);
     }
 }
