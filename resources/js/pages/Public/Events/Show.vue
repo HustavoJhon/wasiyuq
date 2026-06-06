@@ -1,4 +1,17 @@
 <script setup lang="ts">
+interface BlogPost {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    cover_image: string | null;
+    category: string;
+    tags: string[] | null;
+    published_at: string | null;
+    team: { id: number; name: string; slug: string };
+    author: { id: number; name: string };
+}
+
 interface Announcement {
     id: number;
     title: string;
@@ -26,7 +39,10 @@ interface Announcement {
     author: { id: number; name: string };
 }
 
-defineProps<{ event: Announcement }>();
+defineProps<{
+    event: Announcement;
+    relatedBlogs: BlogPost[];
+}>();
 
 const typeMeta: Record<string, { label: string; color: string; dot: string; icon: string }> = {
     adoption_fair: { label: 'Feria de Adopción', color: 'bg-rose-50 text-rose-700', dot: 'bg-rose-500', icon: '🐾' },
@@ -38,6 +54,67 @@ const typeMeta: Record<string, { label: string; color: string; dot: string; icon
 
 function typeMetaFor(type: string) {
     return typeMeta[type] ?? typeMeta.other;
+}
+
+const tipsByType: Record<string, { title: string; items: string[] }> = {
+    adoption_fair: {
+        title: 'Tips para una adopción responsable',
+        items: [
+            'Lleva DNI y comprobante de domicilio actualizado.',
+            'Asegúrate de tener espacio adecuado en casa para tu nueva mascota.',
+            'Consulta con tu familia antes de adoptar.',
+            'Prepárate para cubrir los gastos de alimentación y atención veterinaria.',
+            'Lleva una correa o transportadora el día del evento.',
+        ],
+    },
+    campaign: {
+        title: 'Preparativos para una campaña de esterilización',
+        items: [
+            'Ayuno de 8 horas (sin comida, solo agua) antes de la cirugía.',
+            'Lleva una manta o frazada para mantener abrigado a tu peludo después de la operación.',
+            'Prepara un espacio tranquilo y limpio en casa para la recuperación.',
+            'No bañes a tu mascota 3 días antes del procedimiento.',
+            'Consulta con el veterinario si tu mascota tiene alguna condición especial.',
+        ],
+    },
+    fundraiser: {
+        title: 'Cómo apoyar esta recaudación',
+        items: [
+            'Comparte el evento en tus redes sociales para llegar a más personas.',
+            'Si no puedes asistir, considera hacer una donación voluntaria.',
+            'Invita a tus amigos y familiares a participar.',
+            'Sigue a la organización en redes para más novedades.',
+        ],
+    },
+    workshop: {
+        title: 'Recomendaciones para el taller',
+        items: [
+            'Lleva cuaderno y bolígrafo para tomar apuntes.',
+            'Llega 15 minutos antes para registrarte.',
+            'Prepara tus preguntas con anticipación.',
+            'Si es un taller práctico, usa ropa cómoda.',
+        ],
+    },
+    other: {
+        title: 'Información útil',
+        items: [
+            'Comparte el evento en tus redes sociales.',
+            'Llega con anticipación para disfrutar de todas las actividades.',
+            'Sigue a la organización para más novedades.',
+        ],
+    },
+};
+
+function tipsFor(type: string) {
+    return tipsByType[type] ?? tipsByType.other;
+}
+
+function formatBlogDate(date: string | null): string {
+    if (!date) {
+        return '';
+    }
+
+    return new Intl.DateTimeFormat('es-PE', { dateStyle: 'long' }).format(new Date(date));
 }
 
 function formatDate(date: string | null): string {
@@ -259,6 +336,98 @@ function socialIcon(platform: string): string {
                     <p class="leading-relaxed text-muted-foreground whitespace-pre-line text-[15px]">
                         {{ event.description }}
                     </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 rounded-xl border border-[#2D6A4F]/20 bg-[#2D6A4F]/5 p-6 sm:p-8">
+            <div class="flex items-start gap-4">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#2D6A4F]/10 text-2xl">
+                    {{ typeMetaFor(event.type).icon }}
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-foreground">{{ tipsFor(event.type).title }}</h3>
+                    <ul class="mt-4 space-y-2.5">
+                        <li
+                            v-for="(item, i) in tipsFor(event.type).items"
+                            :key="i"
+                            class="flex items-start gap-3 text-sm text-muted-foreground"
+                        >
+                            <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ item }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="relatedBlogs.length > 0" class="mt-14">
+            <div class="border-t border-border/50 pt-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-foreground">Artículos recomendados</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">
+                            {{ tipsFor(event.type).title.toLowerCase() }} — lee más para prepararte.
+                        </p>
+                    </div>
+                    <a
+                        href="/blog"
+                        class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-[#2D6A4F] hover:underline dark:text-emerald-400"
+                    >
+                        Ver todos
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <a
+                        v-for="post in relatedBlogs"
+                        :key="post.id"
+                        :href="'/blog/' + post.slug"
+                        class="group overflow-hidden rounded-xl border border-[#2D6A4F]/15 bg-gradient-to-b from-[#2D6A4F]/4 to-white dark:from-[#2D6A4F]/15 dark:to-black/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#2D6A4F]/10"
+                    >
+                        <div class="aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#2D6A4F]/10 to-[#2D6A4F]/5">
+                            <img
+                                v-if="post.cover_image"
+                                :src="post.cover_image"
+                                :alt="post.title"
+                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            />
+                            <div v-else class="flex h-full w-full items-center justify-center text-3xl text-[#2D6A4F]/20">
+                                📖
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="inline-flex items-center rounded-full bg-[#2D6A4F]/10 px-2.5 py-0.5 text-xs font-semibold text-[#2D6A4F]">
+                                {{ post.category }}
+                            </span>
+                            <h3 class="mt-2.5 text-sm font-semibold leading-snug text-foreground group-hover:text-[#2D6A4F] transition-colors line-clamp-2">
+                                {{ post.title }}
+                            </h3>
+                            <p v-if="post.excerpt" class="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                                {{ post.excerpt }}
+                            </p>
+                            <p class="mt-3 text-xs text-muted-foreground/60">
+                                {{ formatBlogDate(post.published_at) }}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mt-6 text-center sm:hidden">
+                    <a
+                        href="/blog"
+                        class="inline-flex items-center gap-1.5 text-sm font-medium text-[#2D6A4F] hover:underline dark:text-emerald-400"
+                    >
+                        Ver todos los artículos
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
