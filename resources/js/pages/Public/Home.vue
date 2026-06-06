@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import {
     Search,
     Dog,
@@ -18,6 +17,7 @@ import {
     FileText,
     Eye,
 } from 'lucide-vue-next';
+import { ref, onMounted } from 'vue';
 import type { Component } from 'vue';
 
 interface Pet {
@@ -54,6 +54,7 @@ const speciesInfo: { key: string; icon: Component; label: string }[] = [
 
 const speciesIcon = (s: string) => {
     const icons: Record<string, Component> = { dog: Dog, cat: Cat, rabbit: Rabbit, bird: Bird };
+
     return icons[s] || PawPrint;
 };
 
@@ -88,18 +89,26 @@ const faqs = [
 ];
 
 function formatAge(years: number, months: number): string {
-    if (years > 0) return `${years} ${years > 1 ? 'años' : 'año'}`;
-    if (months > 0) return `${months} ${months > 1 ? 'meses' : 'mes'}`;
+    if (years > 0) {
+return `${years} ${years > 1 ? 'años' : 'año'}`;
+}
+
+    if (months > 0) {
+return `${months} ${months > 1 ? 'meses' : 'mes'}`;
+}
+
     return 'Cachorro';
 }
 
 function sizeLabel(size: string): string {
     const labels: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
+
     return labels[size] || size;
 }
 
 function speciesLabel(species: string): string {
     const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };
+
     return labels[species] ?? species;
 }
 
@@ -133,10 +142,14 @@ onMounted(() => {
                     let step = 0;
                     const timer = setInterval(() => {
                         step++;
+
                         for (const t of targets) {
                             animatedStats.value[t.key] = Math.min(Math.round((t.value / steps) * step), t.value);
                         }
-                        if (step >= steps) clearInterval(timer);
+
+                        if (step >= steps) {
+clearInterval(timer);
+}
                     }, interval);
                     observer.disconnect();
                 }
