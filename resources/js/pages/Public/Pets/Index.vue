@@ -68,8 +68,14 @@ function updateFilters(field: string, value: string) {
 }
 
 function formatAge(years: number, months: number): string {
-    if (years > 0) return `${years} ${years > 1 ? 'años' : 'año'}`;
-    if (months > 0) return `${months} ${months > 1 ? 'meses' : 'mes'}`;
+    if (years > 0) {
+return `${years} ${years > 1 ? 'años' : 'año'}`;
+}
+
+    if (months > 0) {
+return `${months} ${months > 1 ? 'meses' : 'mes'}`;
+}
+
     return 'Cachorro';
 }
 
@@ -81,6 +87,7 @@ function speciesLabel(species: string): string {
         bird: 'Ave',
         other: 'Otro',
     };
+
     return labels[species] ?? species;
 }
 
@@ -90,6 +97,7 @@ function sizeLabel(size: string): string {
         medium: 'Mediano',
         large: 'Grande',
     };
+
     return labels[size] ?? size;
 }
 
@@ -104,6 +112,7 @@ const speciesIcon = computed(() => (species: string) => {
         rabbit: Rabbit,
         bird: Bird,
     };
+
     return icons[species] ?? PawPrint;
 });
 
