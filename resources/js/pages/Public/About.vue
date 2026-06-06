@@ -1,193 +1,164 @@
+<script setup lang="ts">
+const heroImages = [
+    'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1200&q=80',
+    'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80',
+];
+
+const values = [
+    {
+        icon: '🐾',
+        title: 'Conectar',
+        desc: 'Unimos adoptantes con organizaciones de rescate verificadas en toda la región.',
+        iconBg: 'bg-rose-100 dark:bg-rose-900/30',
+    },
+    {
+        icon: '💚',
+        title: 'Gestionar',
+        desc: 'Brindamos herramientas para que las entidades administren adopciones, eventos y seguimientos.',
+        iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
+    },
+    {
+        icon: '📢',
+        title: 'Difundir',
+        desc: 'Visibilizamos campañas, eventos y mascotas que esperan un hogar.',
+        iconBg: 'bg-amber-100 dark:bg-amber-900/30',
+    },
+];
+</script>
+
 <template>
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-3xl text-center">
-            <h1
-                class="text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
-            >
-                Sobre Wasiyuq
-            </h1>
-            <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-                Una plataforma que nació del amor por los animales y la
-                necesidad de transformar la adopción en Cusco.
-            </p>
-        </div>
+    <div>
+        <section class="relative flex min-h-[70vh] items-center overflow-hidden">
+            <img
+                :src="heroImages[0]"
+                alt="Perros y gatos"
+                class="absolute inset-0 h-full w-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/60" />
 
-        <div class="mx-auto mt-20 max-w-3xl space-y-16">
-            <section>
-                <h2 class="text-2xl font-semibold text-foreground">
-                    El origen
-                </h2>
-                <div
-                    class="mt-4 space-y-4 text-base leading-relaxed text-muted-foreground"
-                >
-                    <p>
-                        Wasiyuq nació de una realidad que incomoda: en Cusco,
-                        cientos de perros y gatos viven en las calles, expuestos
-                        al frío, el hambre y las enfermedades. Las
-                        organizaciones de rescate hacen lo imposible con
-                        recursos limitados, y las personas que quieren adoptar
-                        no saben por dónde empezar.
-                    </p>
-                    <p>
-                        La idea surgió al ver ese quiebre —la información está
-                        fragmentada, los procesos son lentos, y no existe un
-                        punto de encuentro digital entre las entidades de
-                        rescate y la comunidad. Wasiyuq, que en quechua
-                        significa
-                        <em class="font-semibold text-[#2D6A4F]"
-                            >"casa del animal"</em
-                        >, busca cerrar esa brecha.
-                    </p>
-                </div>
-            </section>
-
-            <div class="border-t border-border" />
-
-            <section>
-                <h2 class="text-2xl font-semibold text-foreground">
-                    Qué buscamos
-                </h2>
-                <div
-                    class="mt-4 space-y-4 text-base leading-relaxed text-muted-foreground"
-                >
-                    <p>
-                        No somos una app más. Buscamos que la adopción deje de
-                        ser un acto reactivo y se convierta en un proceso
-                        organizado, transparente y humano. Cada mascota merece
-                        una segunda oportunidad, y cada familia merece encontrar
-                        al compañero que necesita.
-                    </p>
-                    <p>
-                        Queremos que las organizaciones de rescate tengan
-                        herramientas reales para gestionar sus procesos, y que
-                        la comunidad tenga visibilidad de lo que ocurre en su
-                        región.
-                    </p>
-                </div>
-            </section>
-
-            <div class="border-t border-border" />
-
-            <section>
-                <h2 class="text-2xl font-semibold text-foreground">
-                    Cómo ayuda
-                </h2>
-                <div class="mt-8 grid gap-6 sm:grid-cols-3">
-                    <div
-                        class="rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
-                    >
-                        <div
-                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F]/10"
-                        >
-                            <svg
-                                class="h-6 w-6 text-[#2D6A4F]"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-                                />
-                            </svg>
+            <div class="relative z-10 mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+                <div class="max-w-2xl">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
+                            <span class="text-2xl">🏠</span>
                         </div>
-                        <h3
-                            class="mt-4 text-base font-semibold text-card-foreground"
-                        >
-                            Conectar
-                        </h3>
-                        <p class="mt-2 text-sm text-muted-foreground">
-                            Unimos adoptantes con organizaciones de rescate
-                            verificadas en toda la región.
-                        </p>
+                        <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur-sm">Plataforma de adopción</span>
                     </div>
-                    <div
-                        class="rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
-                    >
-                        <div
-                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F]/10"
-                        >
-                            <svg
-                                class="h-6 w-6 text-[#2D6A4F]"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                />
-                            </svg>
+                    <h1 class="mt-6 text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
+                        Sobre <span class="text-emerald-400">Wasiyuq</span>
+                    </h1>
+                    <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/70">
+                        Una plataforma que nació del amor por los animales y la necesidad de transformar la adopción en Cusco.
+                    </p>
+                    <div class="mt-8 flex items-center gap-8">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-emerald-400">20+</p>
+                            <p class="text-xs text-white/50">Albergues</p>
                         </div>
-                        <h3
-                            class="mt-4 text-base font-semibold text-card-foreground"
-                        >
-                            Gestionar
-                        </h3>
-                        <p class="mt-2 text-sm text-muted-foreground">
-                            Brindamos herramientas para que las entidades
-                            administren adopciones, eventos y seguimientos.
-                        </p>
-                    </div>
-                    <div
-                        class="rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
-                    >
-                        <div
-                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F]/10"
-                        >
-                            <svg
-                                class="h-6 w-6 text-[#2D6A4F]"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                                />
-                            </svg>
+                        <div class="h-10 w-px bg-white/20" />
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-emerald-400">100+</p>
+                            <p class="text-xs text-white/50">Adopciones</p>
                         </div>
-                        <h3
-                            class="mt-4 text-base font-semibold text-card-foreground"
-                        >
-                            Difundir
-                        </h3>
-                        <p class="mt-2 text-sm text-muted-foreground">
-                            Visibilizamos campañas, eventos y mascotas que
-                            esperan un hogar.
-                        </p>
+                        <div class="h-10 w-px bg-white/20" />
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-emerald-400">1</p>
+                            <p class="text-xs text-white/50">Región</p>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <div class="border-t border-border" />
+        <section class="py-20">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+                    <div class="relative">
+                        <div class="aspect-[4/3] overflow-hidden rounded-2xl">
+                            <img
+                                :src="heroImages[1]"
+                                alt="Perro y gato amigos"
+                                class="h-full w-full object-cover"
+                            />
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 rounded-2xl border border-[#2D6A4F]/15 bg-white p-5 shadow-xl dark:border-[#2D6A4F]/30 dark:bg-[#1a2e24]">
+                            <p class="text-sm font-bold text-[#2D6A4F] dark:text-emerald-400">"casa del animal"</p>
+                            <p class="text-xs text-muted-foreground">Wasiyuq en quechua</p>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="inline-flex items-center rounded-full bg-[#2D6A4F]/10 px-3 py-1 text-xs font-semibold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">El origen</span>
+                        <h2 class="mt-4 text-3xl font-bold text-foreground">¿Por qué nació Wasiyuq?</h2>
+                        <p class="mt-4 text-base leading-relaxed text-muted-foreground">
+                            En Cusco, cientos de perros y gatos viven en las calles, expuestos al frío, el hambre y las enfermedades. Las organizaciones de rescate hacen lo imposible con recursos limitados.
+                        </p>
+                        <p class="mt-4 text-base leading-relaxed text-muted-foreground">
+                            La información está fragmentada, los procesos son lentos, y no existe un punto de encuentro digital entre las entidades de rescate y la comunidad.
+                        </p>
 
-            <section
-                class="rounded-2xl bg-gradient-to-br from-[#2D6A4F]/5 to-[#1B4332]/10 p-8 text-center sm:p-12"
-            >
-                <h2 class="text-2xl font-semibold text-foreground">
-                    Formá parte
-                </h2>
-                <p
-                    class="mx-auto mt-3 max-w-xl text-base text-muted-foreground"
-                >
-                    Si representás una organización de rescate o querés sumarte
-                    como voluntario, contactanos. Entre todos podemos construir
-                    un Cusco donde ningún animal esté solo.
-                </p>
-                <a
-                    href="/contacto"
-                    class="mt-6 inline-flex items-center justify-center rounded-xl bg-[#2D6A4F] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#2D6A4F]/25 transition hover:bg-[#246142]"
-                >
-                    Contactanos
-                </a>
-            </section>
-        </div>
+                        <div class="mt-8 space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
+                                    <svg class="h-3.5 w-3.5 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-foreground">Adopción organizada</p>
+                                    <p class="text-sm text-muted-foreground">Procesos transparentes y seguimiento post-adopción.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
+                                    <svg class="h-3.5 w-3.5 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-foreground">Herramientas para albergues</p>
+                                    <p class="text-sm text-muted-foreground">Gestión de adopciones, eventos y seguimiento.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
+                                    <svg class="h-3.5 w-3.5 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-foreground">Comunidad activa</p>
+                                    <p class="text-sm text-muted-foreground">Visibilidad para campañas y eventos de rescate.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-b from-[#2D6A4F]/5 to-transparent py-20 dark:from-[#2D6A4F]/10">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <span class="inline-flex items-center rounded-full bg-[#2D6A4F]/10 px-3 py-1 text-xs font-semibold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">Nuestra misión</span>
+                    <h2 class="mt-4 text-3xl font-bold text-foreground">¿Qué buscamos?</h2>
+                    <p class="mt-3 text-base leading-relaxed text-muted-foreground">
+                        No somos una app más. Buscamos que la adopción deje de ser un acto reactivo y se convierta en un proceso organizado, transparente y humano.
+                    </p>
+                </div>
+                <div class="mt-12 grid gap-6 sm:grid-cols-3">
+                    <div
+                        v-for="v in values"
+                        :key="v.title"
+                        class="group rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#2D6A4F]/10 dark:from-[#2D6A4F]/15 dark:to-black/40 dark:border-[#2D6A4F]/30"
+                    >
+                        <div :class="['mx-auto flex h-16 w-16 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110', v.iconBg]">
+                            {{ v.icon }}
+                        </div>
+                        <h3 class="mt-5 text-lg font-bold text-foreground">{{ v.title }}</h3>
+                        <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{{ v.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </template>
