@@ -7,11 +7,13 @@ const page = usePage();
 
 const pageTitle = computed(() => {
     const pg = page.props as Record<string, unknown>;
+
     return (pg.pageTitle as string) || '';
 });
 
 const pageDescription = computed(() => {
     const pg = page.props as Record<string, unknown>;
+
     return (pg.pageDescription as string) || '';
 });
 </script>
