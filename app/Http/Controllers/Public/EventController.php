@@ -4,13 +4,23 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Services\AnnouncementService;
+use App\Services\BlogPostService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class EventController extends Controller
 {
+    private const TYPE_CATEGORY_MAP = [
+        'adoption_fair' => 'adopcion',
+        'fundraiser' => 'historias',
+        'workshop' => 'salud',
+        'campaign' => 'salud',
+        'other' => null,
+    ];
+
     public function __construct(
         private readonly AnnouncementService $announcementService,
+        private readonly BlogPostService $blogPostService,
     ) {}
 
     public function index(Request $request)
@@ -37,8 +47,28 @@ class EventController extends Controller
 
         abort_unless($event, 404);
 
+        $relatedBlogs = collect();
+        $category = self::TYPE_CATEGORY_MAP[$event->type->value] ?? null;
+
+        if ($category) {
+            $relatedBlogs = $this->blogPostService->searchPublished(
+                category: $category,
+                perPage: 3,
+            )->getCollection();
+        }
+
+        if ($relatedBlogs->count() < 3) {
+            $teamBlogs = $this->blogPostService->searchPublished(
+                teamId: $event->team_id,
+                perPage: 3 - $relatedBlogs->count(),
+            )->getCollection();
+
+            $relatedBlogs = $relatedBlogs->concat($teamBlogs)->unique('id')->take(3);
+        }
+
         return Inertia::render('Public/Events/Show', [
             'event' => $event,
+            'relatedBlogs' => $relatedBlogs->values(),
             'jsonLd' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'Event',

@@ -28,7 +28,7 @@ class AnnouncementRepository
     {
         return Announcement::query()
             ->where('slug', $slug)
-            ->with('team:id,name,slug,logo,phone,city,state')
+            ->with('team:id,name,slug,logo,phone,city,state,website,social_links')
             ->with('author:id,name')
             ->first();
     }
