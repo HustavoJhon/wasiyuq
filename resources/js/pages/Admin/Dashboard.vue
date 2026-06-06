@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import {
     PawPrint,
@@ -11,6 +12,8 @@ import {
     Activity,
 } from 'lucide-vue-next';
 import AreaChart from '@/components/charts/AreaChart.vue';
+import BarChart from '@/components/charts/BarChart.vue';
+import DoughnutChart from '@/components/charts/DoughnutChart.vue';
 import { Badge } from '@/components/ui/badge';
 import {
     Card,
@@ -110,6 +113,16 @@ function formatDate(date: string): string {
         new Date(date),
     );
 }
+
+const petDistribution = computed(() => [
+    { label: 'Disponibles', value: props.stats.available_pets, color: '#52B788' },
+    { label: 'Adoptados', value: props.stats.adopted_pets, color: '#2D6A4F' },
+    {
+        label: 'En proceso',
+        value: props.stats.total_pets - props.stats.available_pets - props.stats.adopted_pets,
+        color: '#95D5B2',
+    },
+]);
 
 const metricCards = [
     {
@@ -216,21 +229,40 @@ const metricCards = [
             </Link>
         </div>
 
-        <div class="mt-8">
-            <Card>
+        <div class="mt-8 grid gap-6 lg:grid-cols-3">
+            <Card class="lg:col-span-2">
                 <CardHeader class="pb-3">
-                    <CardTitle class="text-base"
-                        >Actividad de Adopciones</CardTitle
-                    >
-                    <CardDescription
-                        >Adopciones por mes (últimos 12 meses)</CardDescription
-                    >
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <CardTitle class="text-base">Actividad de Adopciones</CardTitle>
+                            <CardDescription>Adopciones por mes (últimos 12 meses)</CardDescription>
+                        </div>
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2D6A4F]/10 text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </span>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <AreaChart
                         :data="adoptions_trend"
                         height="220"
                         color="#2D6A4F"
+                    />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader class="pb-3">
+                    <CardTitle class="text-base">Estado de Mascotas</CardTitle>
+                    <CardDescription>Distribución actual</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <DoughnutChart
+                        :data="petDistribution"
+                        size="200"
+                        :inner-radius="65"
                     />
                 </CardContent>
             </Card>
@@ -248,6 +280,7 @@ const metricCards = [
                     Sin adopciones recientes.
                 </div>
                 <Card v-else class="mt-3">
+                    <div class="overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -277,6 +310,7 @@ const metricCards = [
                             </TableRow>
                         </TableBody>
                     </Table>
+                    </div>
                 </Card>
             </div>
 
@@ -291,6 +325,7 @@ const metricCards = [
                     Sin mascotas registradas.
                 </div>
                 <Card v-else class="mt-3">
+                    <div class="overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -322,6 +357,7 @@ const metricCards = [
                             </TableRow>
                         </TableBody>
                     </Table>
+                    </div>
                 </Card>
             </div>
         </div>
