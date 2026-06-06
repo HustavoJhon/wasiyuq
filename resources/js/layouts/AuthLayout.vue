@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/auth/AuthSplitLayout.vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import AuthSplitLayout from '@/layouts/auth/AuthSplitLayout.vue';
 
-const { title = '', description = '' } = defineProps<{
-    title?: string;
-    description?: string;
-}>();
+const page = usePage();
+
+const pageTitle = computed(() => {
+    const pg = page.props as Record<string, unknown>;
+    return (pg.pageTitle as string) || '';
+});
+
+const pageDescription = computed(() => {
+    const pg = page.props as Record<string, unknown>;
+    return (pg.pageDescription as string) || '';
+});
 </script>
 
 <template>
-    <AuthLayout :title="title" :description="description">
+    <AuthSplitLayout :title="pageTitle" :description="pageDescription">
         <slot />
-    </AuthLayout>
+    </AuthSplitLayout>
 </template>

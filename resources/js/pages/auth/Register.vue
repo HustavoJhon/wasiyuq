@@ -13,13 +13,6 @@ import { store } from '@/routes/register';
 defineProps<{
     passwordRules: string;
 }>();
-
-defineOptions({
-    layout: {
-        title: 'Crear cuenta',
-        description: 'Completá tus datos para registrarte',
-    },
-});
 </script>
 
 <template>

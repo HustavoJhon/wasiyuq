@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import type { DefineComponent } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
@@ -20,6 +21,8 @@ createInertiaApp({
         switch (true) {
             case name.startsWith('Public/'):
                 return PublicLayout;
+            case name.startsWith('auth/'):
+                return AuthLayout;
             case name.startsWith('Dashboard'):
             case name.startsWith('Admin/'):
                 return DashboardLayout;
