@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import {
-    createColumnHelper,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useVueTable,
-} from '@tanstack/vue-table';
-import {
     ArrowUpDown,
     ChevronLeft,
     ChevronRight,
@@ -19,6 +11,8 @@ import {
     ShieldX,
     MailCheck,
     MailX,
+    User as UserIcon,
+    Calendar,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -83,77 +77,6 @@ const globalFilter = ref('');
 const teamFilter = ref('all');
 const roleFilter = ref('all');
 
-const columnHelper = createColumnHelper<User>();
-
-const columns = [
-    columnHelper.accessor('name', {
-        header: 'Usuario',
-        cell: ({ row }) => {
-            const user = row.original;
-            const initials = user.name
-                .split(' ')
-                .map((n) => n[0])
-                .join('')
-                .toUpperCase()
-                .slice(0, 2);
-
-            return {
-                component: 'div',
-                props: {},
-                children: [
-                    { component: 'span', children: initials },
-                    { component: 'span', children: user.name },
-                    { component: 'span', children: user.email },
-                ],
-            };
-        },
-        enableSorting: true,
-    }),
-    columnHelper.accessor('email_verified_at', {
-        header: 'Verificado',
-        cell: ({ getValue }) => getValue() !== null,
-        enableSorting: true,
-    }),
-    columnHelper.accessor('is_super_admin', {
-        header: 'Admin',
-        cell: ({ getValue }) => getValue(),
-        enableSorting: true,
-    }),
-    columnHelper.accessor('team_memberships_count', {
-        header: 'Equipos',
-        enableSorting: true,
-    }),
-    columnHelper.accessor('created_at', {
-        header: 'Registro',
-        enableSorting: true,
-    }),
-];
-
-const data = computed(() => props.users);
-
-const table = useVueTable({
-    get data() {
-        return data.value;
-    },
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    state: {
-        get globalFilter() {
-            return globalFilter.value;
-        },
-    },
-    onGlobalFilterChange: (value) => {
-        globalFilter.value = value;
-    },
-    globalFilterFn: 'includesString',
-    initialState: {
-        pagination: { pageSize: 15 },
-    },
-});
-
 const filteredUsers = computed(() => {
     return props.users.filter((u) => {
         if (
@@ -174,6 +97,16 @@ const filteredUsers = computed(() => {
 
         return true;
     });
+});
+
+const searchedUsers = computed(() => {
+    if (!globalFilter.value) return filteredUsers.value;
+    const q = globalFilter.value.toLowerCase();
+    return filteredUsers.value.filter(
+        (u) =>
+            u.name.toLowerCase().includes(q) ||
+            u.email.toLowerCase().includes(q),
+    );
 });
 
 function initials(name: string): string {
@@ -202,7 +135,7 @@ function goToPage(page: number) {
 
 <template>
     <div>
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-foreground">Usuarios</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
@@ -213,39 +146,22 @@ function goToPage(page: number) {
 
         <Card class="mt-6">
             <CardHeader class="pb-3">
-                <div
-                    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-                >
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <CardTitle class="text-base">Lista de Usuarios</CardTitle>
-                    <CardDescription
-                        >{{ meta.total }} usuarios en total</CardDescription
-                    >
+                    <CardDescription>{{ meta.total }} usuarios en total</CardDescription>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div class="relative w-full sm:max-w-sm">
-                        <Search
-                            class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                        />
-                        <Input
-                            v-model="globalFilter"
-                            placeholder="Buscar usuarios..."
-                            class="pl-9"
-                        />
+                        <Search class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input v-model="globalFilter" placeholder="Buscar usuarios..." class="pl-9" />
                     </div>
                     <Select v-model="teamFilter">
                         <SelectTrigger class="w-full sm:w-44">
                             <SelectValue placeholder="Todos los equipos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all"
-                                >Todos los equipos</SelectItem
-                            >
-                            <SelectItem
-                                v-for="(name, id) in teams"
-                                :key="id"
-                                :value="id"
-                                >{{ name }}</SelectItem
-                            >
+                            <SelectItem value="all">Todos los equipos</SelectItem>
+                            <SelectItem v-for="(name, id) in teams" :key="id" :value="id">{{ name }}</SelectItem>
                         </SelectContent>
                     </Select>
                     <Select v-model="roleFilter">
@@ -254,124 +170,70 @@ function goToPage(page: number) {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Todos los roles</SelectItem>
-                            <SelectItem
-                                v-for="r in roles"
-                                :key="r"
-                                :value="r"
-                                >{{ r }}</SelectItem
-                            >
+                            <SelectItem v-for="r in roles" :key="r" :value="r">{{ r }}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
             </CardHeader>
-            <CardContent class="p-0">
+            <CardContent class="hidden overflow-x-auto md:block">
                 <Table>
                     <TableHeader>
-                        <TableRow
-                            v-for="headerGroup in table.getHeaderGroups()"
-                            :key="headerGroup.id"
-                        >
-                            <TableHead
-                                v-for="header in headerGroup.headers"
-                                :key="header.id"
-                                :class="{
-                                    'cursor-pointer select-none':
-                                        header.column.getCanSort(),
-                                }"
-                                @click="
-                                    header.column.getToggleSortingHandler()?.(
-                                        $event,
-                                    )
-                                "
-                            >
+                        <TableRow>
+                            <TableHead class="cursor-pointer select-none">
                                 <div class="flex items-center gap-1">
-                                    <template v-if="header.column.id === 'name'"
-                                        >Usuario</template
-                                    >
-                                    <template
-                                        v-else-if="
-                                            header.column.id ===
-                                            'email_verified_at'
-                                        "
-                                        >Verificado</template
-                                    >
-                                    <template
-                                        v-else-if="
-                                            header.column.id ===
-                                            'is_super_admin'
-                                        "
-                                        >Admin</template
-                                    >
-                                    <template
-                                        v-else-if="
-                                            header.column.id ===
-                                            'team_memberships_count'
-                                        "
-                                        >Equipos</template
-                                    >
-                                    <template
-                                        v-else-if="
-                                            header.column.id === 'created_at'
-                                        "
-                                        >Registro</template
-                                    >
-                                    <template v-else>{{
-                                        header.column.id
-                                    }}</template>
-                                    <ArrowUpDown
-                                        class="size-3 text-muted-foreground/60"
-                                    />
+                                    Usuario
+                                    <ArrowUpDown class="size-3 text-muted-foreground/60" />
+                                </div>
+                            </TableHead>
+                            <TableHead class="cursor-pointer select-none">
+                                <div class="flex items-center gap-1">
+                                    Verificado
+                                    <ArrowUpDown class="size-3 text-muted-foreground/60" />
+                                </div>
+                            </TableHead>
+                            <TableHead class="cursor-pointer select-none">
+                                <div class="flex items-center gap-1">
+                                    Admin
+                                    <ArrowUpDown class="size-3 text-muted-foreground/60" />
+                                </div>
+                            </TableHead>
+                            <TableHead class="cursor-pointer select-none">
+                                <div class="flex items-center gap-1">
+                                    Equipos
+                                    <ArrowUpDown class="size-3 text-muted-foreground/60" />
+                                </div>
+                            </TableHead>
+                            <TableHead class="cursor-pointer select-none">
+                                <div class="flex items-center gap-1">
+                                    Registro
+                                    <ArrowUpDown class="size-3 text-muted-foreground/60" />
                                 </div>
                             </TableHead>
                             <TableHead class="w-24" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="row in filteredUsers" :key="row.id">
+                        <TableRow v-for="row in searchedUsers" :key="row.id">
                             <TableCell>
                                 <div class="flex items-center gap-3">
                                     <Avatar class="size-8">
-                                        <AvatarFallback class="text-xs">{{
-                                            initials(row.name)
-                                        }}</AvatarFallback>
+                                        <AvatarFallback class="text-xs">{{ initials(row.name) }}</AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <p
-                                            class="font-medium text-card-foreground"
-                                        >
-                                            {{ row.name }}
-                                        </p>
-                                        <p
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{ row.email }}
-                                        </p>
+                                        <p class="font-medium text-card-foreground">{{ row.name }}</p>
+                                        <p class="text-xs text-muted-foreground">{{ row.email }}</p>
                                     </div>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <Badge
-                                    variant="outline"
-                                    :class="
-                                        row.email_verified_at
-                                            ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400'
-                                            : 'border-muted-foreground/20 text-muted-foreground'
-                                    "
-                                >
-                                    <MailCheck
-                                        v-if="row.email_verified_at"
-                                        class="size-3"
-                                    />
+                                <Badge variant="outline" :class="row.email_verified_at ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400' : 'border-muted-foreground/20 text-muted-foreground'">
+                                    <MailCheck v-if="row.email_verified_at" class="size-3" />
                                     <MailX v-else class="size-3" />
                                     {{ row.email_verified_at ? 'Sí' : 'No' }}
                                 </Badge>
                             </TableCell>
                             <TableCell>
-                                <Badge
-                                    v-if="row.is_super_admin"
-                                    variant="default"
-                                    class="bg-amber-600 hover:bg-amber-700"
-                                >
+                                <Badge v-if="row.is_super_admin" variant="default" class="bg-amber-600 hover:bg-amber-700">
                                     <ShieldCheck class="size-3" />
                                     Super Admin
                                 </Badge>
@@ -382,39 +244,19 @@ function goToPage(page: number) {
                             </TableCell>
                             <TableCell class="text-muted-foreground">
                                 <template v-if="row.memberships.length > 0">
-                                    <span
-                                        v-for="(m, i) in row.memberships"
-                                        :key="i"
-                                    >
-                                        {{ m.team.name
-                                        }}<span
-                                            v-if="
-                                                i < row.memberships.length - 1
-                                            "
-                                            >,
-                                        </span>
-                                    </span>
+                                    <span v-for="(m, i) in row.memberships" :key="i">{{ m.team.name }}<span v-if="i < row.memberships.length - 1">, </span></span>
                                 </template>
-                                <span v-else class="text-muted-foreground/50"
-                                    >—</span
-                                >
+                                <span v-else class="text-muted-foreground/50">—</span>
                             </TableCell>
-                            <TableCell class="text-muted-foreground">{{
-                                formatDate(row.created_at)
-                            }}</TableCell>
+                            <TableCell class="text-muted-foreground">{{ formatDate(row.created_at) }}</TableCell>
                             <TableCell>
                                 <Button variant="outline" size="sm" as-child>
-                                    <Link :href="admin.users.show(row.id).url"
-                                        >Ver</Link
-                                    >
+                                    <Link :href="admin.users.show(row.id).url">Ver</Link>
                                 </Button>
                             </TableCell>
                         </TableRow>
-                        <TableRow v-if="filteredUsers.length === 0">
-                            <TableCell
-                                colspan="6"
-                                class="py-12 text-center text-muted-foreground"
-                            >
+                        <TableRow v-if="searchedUsers.length === 0">
+                            <TableCell colspan="6" class="py-12 text-center text-muted-foreground">
                                 No se encontraron usuarios.
                             </TableCell>
                         </TableRow>
@@ -423,74 +265,81 @@ function goToPage(page: number) {
             </CardContent>
         </Card>
 
+        <div v-if="searchedUsers.length > 0" class="mt-6 space-y-3 md:hidden">
+            <div v-for="row in searchedUsers" :key="row.id" class="rounded-xl border border-border bg-card p-4 transition hover:shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <Avatar class="size-10">
+                            <AvatarFallback class="text-xs">{{ initials(row.name) }}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p class="font-semibold text-card-foreground">{{ row.name }}</p>
+                            <p class="text-xs text-muted-foreground">{{ row.email }}</p>
+                        </div>
+                    </div>
+                    <div class="flex shrink-0 flex-col items-end gap-1.5">
+                        <Badge variant="outline" :class="row.email_verified_at ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400' : 'border-muted-foreground/20 text-muted-foreground'" class="text-[10px]">
+                            {{ row.email_verified_at ? 'Verificado' : 'No verificado' }}
+                        </Badge>
+                        <Badge v-if="row.is_super_admin" variant="default" class="bg-amber-600 text-[10px]">Super Admin</Badge>
+                        <Badge v-else variant="secondary" class="text-[10px]">Usuario</Badge>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-center gap-3 text-xs text-muted-foreground/70">
+                    <span class="flex items-center gap-1">
+                        <UserIcon class="size-3" />
+                        {{ row.memberships.length > 0 ? row.memberships.map(m => m.team.name).join(', ') : 'Sin equipos' }}
+                    </span>
+                </div>
+                <div class="mt-2 flex items-center justify-between border-t border-border/50 pt-3">
+                    <span class="flex items-center gap-1 text-[10px] text-muted-foreground/60">
+                        <Calendar class="size-3" />
+                        {{ formatDate(row.created_at) }}
+                    </span>
+                    <Link :href="admin.users.show(row.id).url" class="flex items-center gap-1 text-xs font-medium text-[#2D6A4F] dark:text-emerald-400">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        Ver perfil
+                    </Link>
+                </div>
+            </div>
+            <div v-if="searchedUsers.length === 0" class="rounded-xl border border-border bg-card px-5 py-8 text-center text-sm text-muted-foreground/70">
+                No se encontraron usuarios.
+            </div>
+        </div>
+
         <div
             v-if="meta.last_page > 1"
-            class="mt-4 flex items-center justify-between px-2"
+            class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-2"
         >
             <p class="text-sm text-muted-foreground">
                 Página {{ meta.current_page }} de {{ meta.last_page }}
             </p>
             <div class="flex items-center gap-1.5">
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="meta.current_page <= 1"
-                    @click="goToPage(1)"
-                >
+                <Button variant="outline" size="icon" :disabled="meta.current_page <= 1" @click="goToPage(1)">
                     <ChevronsLeft class="size-4" />
                 </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="meta.current_page <= 1"
-                    @click="goToPage(meta.current_page - 1)"
-                >
+                <Button variant="outline" size="icon" :disabled="meta.current_page <= 1" @click="goToPage(meta.current_page - 1)">
                     <ChevronLeft class="size-4" />
                 </Button>
 
                 <template v-for="p in meta.last_page" :key="p">
                     <Button
-                        v-if="
-                            p === meta.current_page ||
-                            Math.abs(p - meta.current_page) <= 1 ||
-                            p === 1 ||
-                            p === meta.last_page
-                        "
+                        v-if="p === meta.current_page || Math.abs(p - meta.current_page) <= 1 || p === 1 || p === meta.last_page"
                         variant="outline"
                         size="icon"
-                        :class="
-                            p === meta.current_page
-                                ? 'bg-[#2D6A4F] text-white hover:bg-[#2D6A4F]/90 hover:text-white'
-                                : ''
-                        "
+                        :class="p === meta.current_page ? 'bg-[#2D6A4F] text-white hover:bg-[#2D6A4F]/90 hover:text-white dark:bg-emerald-500 dark:text-black dark:hover:bg-emerald-600' : ''"
                         @click="goToPage(p)"
-                    >
-                        {{ p }}
-                    </Button>
-                    <span
-                        v-else-if="
-                            p === meta.current_page - 2 ||
-                            p === meta.current_page + 2
-                        "
-                        class="px-1 text-muted-foreground/50"
-                        >...</span
-                    >
+                    >{{ p }}</Button>
+                    <span v-else-if="p === meta.current_page - 2 || p === meta.current_page + 2" class="px-1 text-muted-foreground/50">...</span>
                 </template>
 
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="meta.current_page >= meta.last_page"
-                    @click="goToPage(meta.current_page + 1)"
-                >
+                <Button variant="outline" size="icon" :disabled="meta.current_page >= meta.last_page" @click="goToPage(meta.current_page + 1)">
                     <ChevronRight class="size-4" />
                 </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="meta.current_page >= meta.last_page"
-                    @click="goToPage(meta.last_page)"
-                >
+                <Button variant="outline" size="icon" :disabled="meta.current_page >= meta.last_page" @click="goToPage(meta.last_page)">
                     <ChevronsRight class="size-4" />
                 </Button>
             </div>
