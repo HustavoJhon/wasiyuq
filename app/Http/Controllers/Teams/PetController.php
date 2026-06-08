@@ -7,6 +7,7 @@ use App\Http\Requests\Pet\StorePetRequest;
 use App\Http\Requests\Pet\UpdatePetRequest;
 use App\Models\Pet;
 use App\Models\Team;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -64,10 +65,16 @@ class PetController extends Controller
         $data['slug'] = $request->slug ?? Str::slug($request->name);
 
         unset($data['photo']);
+        unset($data['photo_url']);
 
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('pets', 'public');
             $data['photos'] = [$path];
+        } elseif ($request->filled('photo_url')) {
+            $path = $this->downloadPhotoFromUrl($request->photo_url);
+            if ($path) {
+                $data['photos'] = [$path];
+            }
         }
 
         Pet::query()->create($data);
@@ -107,6 +114,7 @@ class PetController extends Controller
         $data['slug'] = $request->slug ?? Str::slug($request->name);
 
         unset($data['photo']);
+        unset($data['photo_url']);
 
         if ($request->hasFile('photo')) {
             if ($pet->photos && count($pet->photos) > 0) {
@@ -115,6 +123,15 @@ class PetController extends Controller
 
             $path = $request->file('photo')->store('pets', 'public');
             $data['photos'] = [$path];
+        } elseif ($request->filled('photo_url')) {
+            if ($pet->photos && count($pet->photos) > 0) {
+                Storage::disk('public')->delete($pet->photos[0]);
+            }
+
+            $path = $this->downloadPhotoFromUrl($request->photo_url);
+            if ($path) {
+                $data['photos'] = [$path];
+            }
         }
 
         $pet->update($data);
@@ -125,6 +142,26 @@ class PetController extends Controller
                 'message' => 'Mascota actualizada exitosamente',
             ],
         ]);
+    }
+
+    private function downloadPhotoFromUrl(string $url): ?string
+    {
+        try {
+            $response = Http::timeout(15)->get($url);
+            if ($response->successful()) {
+                $extension = 'jpg';
+                $contentType = $response->header('Content-Type');
+                if (str_contains($contentType, 'png')) $extension = 'png';
+                elseif (str_contains($contentType, 'webp')) $extension = 'webp';
+                elseif (str_contains($contentType, 'gif')) $extension = 'gif';
+
+                $filename = 'pets/' . Str::random(40) . '.' . $extension;
+                Storage::disk('public')->put($filename, $response->body());
+                return $filename;
+            }
+        } catch (\Exception) {
+        }
+        return null;
     }
 
     public function destroy(Team $current_team, int $id)
