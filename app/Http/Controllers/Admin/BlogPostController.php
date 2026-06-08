@@ -15,10 +15,19 @@ class BlogPostController extends Controller
 {
     public function index()
     {
-        $posts = BlogPost::query()
-            ->with(['team:id,name,slug', 'author:id,name'])
-            ->latest()
-            ->paginate(15);
+        $query = BlogPost::query()
+            ->with(['team:id,name,slug', 'author:id,name']);
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%")
+                  ->orWhereHas('team', fn($t) => $t->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('author', fn($a) => $a->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $posts = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('Admin/Blog/Index', [
             'posts' => $posts->items(),
@@ -28,6 +37,7 @@ class BlogPostController extends Controller
                 'total' => $posts->total(),
                 'per_page' => $posts->perPage(),
             ],
+            'filters' => request()->only(['search']),
         ]);
     }
 
