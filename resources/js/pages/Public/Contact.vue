@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import { toast } from 'vue-sonner';
 import InputError from '@/components/InputError.vue';
 
@@ -15,8 +14,6 @@ interface Pet {
 const props = defineProps<{
     selectedPet?: Pet | null;
 }>();
-
-const tab = ref<'contact' | 'login' | 'register'>('contact');
 
 const form = useForm({
     name: '',
@@ -77,61 +74,18 @@ function handleSubmit() {
             <div class="mx-auto mt-10 max-w-5xl">
                 <div class="flex justify-center">
                     <div class="inline-flex rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-1.5 shadow-sm dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
-                        <button
-                            class="rounded-xl px-6 py-2.5 text-sm font-semibold transition-all"
-                            :class="
-                                tab === 'contact'
-                                    ? 'bg-[#2D6A4F] text-white shadow-md shadow-[#2D6A4F]/25'
-                                    : 'text-muted-foreground hover:text-foreground'
-                            "
-                            @click="tab = 'contact'"
+                        <span
+                            class="inline-flex items-center gap-2 rounded-xl bg-[#2D6A4F] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#2D6A4F]/25"
                         >
-                            <span class="flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                Contacto
-                            </span>
-                        </button>
-                        <button
-                            class="rounded-xl px-6 py-2.5 text-sm font-semibold transition-all"
-                            :class="
-                                tab === 'login'
-                                    ? 'bg-[#2D6A4F] text-white shadow-md shadow-[#2D6A4F]/25'
-                                    : 'text-muted-foreground hover:text-foreground'
-                            "
-                            @click="tab = 'login'"
-                        >
-                            <span class="flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                </svg>
-                                Iniciar sesión
-                            </span>
-                        </button>
-                        <button
-                            class="rounded-xl px-6 py-2.5 text-sm font-semibold transition-all"
-                            :class="
-                                tab === 'register'
-                                    ? 'bg-[#2D6A4F] text-white shadow-md shadow-[#2D6A4F]/25'
-                                    : 'text-muted-foreground hover:text-foreground'
-                            "
-                            @click="tab = 'register'"
-                        >
-                            <span class="flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                                </svg>
-                                Registrarse
-                            </span>
-                        </button>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Contacto
+                        </span>
                     </div>
                 </div>
 
-                <div
-                    v-if="tab === 'contact'"
-                    class="mt-12 grid gap-10 lg:grid-cols-5"
-                >
+                <div class="mt-12 grid gap-10 lg:grid-cols-5">
                     <div class="lg:col-span-3">
                         <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-8 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                             <div
@@ -286,27 +240,6 @@ function handleSubmit() {
                             </ul>
                         </div>
 
-                        <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-br from-[#2D6A4F]/10 via-[#2D6A4F]/5 to-[#1B4332]/10 p-6 dark:border-[#2D6A4F]/40 dark:from-[#2D6A4F]/20 dark:via-[#1a2e24] dark:to-black/60">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2D6A4F]/20 dark:bg-[#2D6A4F]/30">
-                                <svg class="h-5 w-5 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
-                            <h3 class="mt-4 text-sm font-bold text-foreground">¿Representás a una entidad?</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-                                Registrate para publicar mascotas, eventos y anuncios en la plataforma.
-                            </p>
-                            <button
-                                class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#2D6A4F] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#2D6A4F]/20 transition hover:bg-[#246142]"
-                                @click="tab = 'register'"
-                            >
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                </svg>
-                                Registrar entidad
-                            </button>
-                        </div>
-
                         <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                             <h3 class="flex items-center gap-2 text-sm font-bold text-foreground">
                                 <svg class="h-4 w-4 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,116 +251,6 @@ function handleSubmit() {
                                 Tus datos están protegidos. Respondemos todos los mensajes en un máximo de 48 horas hábiles.
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                <div v-if="tab === 'login'" class="mx-auto mt-12 max-w-md">
-                    <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-8 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
-                            <svg class="h-6 w-6 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                            </svg>
-                        </div>
-                        <h2 class="mt-4 text-center text-xl font-bold text-foreground">Iniciar sesión</h2>
-                        <p class="mt-1 text-center text-sm text-muted-foreground">Ingresá a tu cuenta para gestionar tu entidad.</p>
-                        <form class="mt-6 space-y-5">
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Correo electrónico</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    <input type="email" class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30" placeholder="correo@ejemplo.com" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Contraseña</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                    <input type="password" class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30" placeholder="••••••••" />
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full rounded-xl bg-[#2D6A4F] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#2D6A4F]/20 transition hover:bg-[#246142] hover:shadow-xl hover:shadow-[#2D6A4F]/30">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                    </svg>
-                                    Iniciar sesión
-                                </span>
-                            </button>
-                            <p class="text-center text-sm text-muted-foreground">
-                                ¿No tenés cuenta?
-                                <button class="font-medium text-[#2D6A4F] hover:underline dark:text-emerald-400" @click="tab = 'register'">Registrate</button>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-
-                <div v-if="tab === 'register'" class="mx-auto mt-12 max-w-md">
-                    <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-8 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
-                            <svg class="h-6 w-6 text-[#2D6A4F] dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                            </svg>
-                        </div>
-                        <h2 class="mt-4 text-center text-xl font-bold text-foreground">Crear cuenta</h2>
-                        <p class="mt-1 text-center text-sm text-muted-foreground">Sumate a Wasiyuq y gestioná tu organización.</p>
-                        <form class="mt-6 space-y-5">
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Nombre completo</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    <input type="text" class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30" placeholder="Tu nombre" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Correo electrónico</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    <input type="email" class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30" placeholder="correo@ejemplo.com" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Contraseña</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                    <input type="password" class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30" placeholder="••••••••" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-foreground">Tipo de usuario</label>
-                                <div class="relative mt-1.5">
-                                    <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <select class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/80 py-2.5 pl-10 pr-10 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/30">
-                                        <option>Adoptante</option>
-                                        <option>Entidad (Municipalidad/Albergue/ONG)</option>
-                                        <option>Veterinario</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full rounded-xl bg-[#2D6A4F] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#2D6A4F]/20 transition hover:bg-[#246142] hover:shadow-xl hover:shadow-[#2D6A4F]/30">
-                                <span class="flex items-center justify-center gap-2">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                                    </svg>
-                                    Crear cuenta
-                                </span>
-                            </button>
-                            <p class="text-center text-sm text-muted-foreground">
-                                ¿Ya tenés cuenta?
-                                <button class="font-medium text-[#2D6A4F] hover:underline dark:text-emerald-400" @click="tab = 'login'">Iniciá sesión</button>
-                            </p>
-                        </form>
                     </div>
                 </div>
             </div>
