@@ -15,10 +15,19 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Announcement::query()
-            ->with(['team:id,name,slug', 'author:id,name'])
-            ->latest()
-            ->paginate(15);
+        $query = Announcement::query()
+            ->with(['team:id,name,slug', 'author:id,name']);
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%")
+                  ->orWhereHas('team', fn($t) => $t->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('author', fn($a) => $a->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $events = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('Admin/Events/Index', [
             'events' => $events->items(),
@@ -28,6 +37,7 @@ class EventController extends Controller
                 'total' => $events->total(),
                 'per_page' => $events->perPage(),
             ],
+            'filters' => request()->only(['search']),
         ]);
     }
 
