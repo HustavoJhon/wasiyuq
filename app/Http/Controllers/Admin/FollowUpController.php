@@ -14,14 +14,23 @@ class FollowUpController extends Controller
 {
     public function index()
     {
-        $followUps = FollowUp::query()
+        $query = FollowUp::query()
             ->with([
                 'adoption.pet:id,name,slug',
                 'adoption.adopter:id,name',
                 'createdBy:id,name',
-            ])
-            ->latest()
-            ->paginate(15);
+            ]);
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('adoption.pet', fn($p) => $p->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('adoption.adopter', fn($a) => $a->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('createdBy', fn($c) => $c->where('name', 'like', "%{$search}%"))
+                  ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        $followUps = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('Admin/FollowUps/Index', [
             'followUps' => $followUps->items(),
@@ -31,6 +40,7 @@ class FollowUpController extends Controller
                 'total' => $followUps->total(),
                 'per_page' => $followUps->perPage(),
             ],
+            'filters' => request()->only(['search']),
         ]);
     }
 
