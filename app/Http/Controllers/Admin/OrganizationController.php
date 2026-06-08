@@ -13,11 +13,27 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Team::query()
+        $query = Team::query()
             ->where('is_personal', false)
-            ->withCount(['pets', 'adoptions', 'announcements', 'blogPosts'])
-            ->latest()
-            ->paginate(15);
+            ->withCount(['pets', 'adoptions', 'announcements', 'blogPosts']);
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('state', 'like', "%{$search}%")
+                    ->orWhere('bio', 'like', "%{$search}%");
+            });
+        }
+
+        $organizations = $query->latest()->paginate(15)->withQueryString();
+
+        $stats = [
+            'total_organizations' => Team::where('is_personal', false)->count(),
+            'total_pets' => \App\Models\Pet::count(),
+            'total_adoptions' => \App\Models\Adoption::count(),
+            'total_events' => \App\Models\Announcement::count(),
+        ];
 
         return Inertia::render('Admin/Organizations/Index', [
             'organizations' => $organizations->items(),
@@ -27,6 +43,8 @@ class OrganizationController extends Controller
                 'total' => $organizations->total(),
                 'per_page' => $organizations->perPage(),
             ],
+            'filters' => request()->only(['search']),
+            'stats' => $stats,
         ]);
     }
 
@@ -65,11 +83,27 @@ class OrganizationController extends Controller
 
     public function show(Team $team)
     {
-        $team->loadCount(['pets', 'adoptions', 'announcements', 'blogPosts']);
-        $team->load(['pets' => fn ($q) => $q->latest()->take(10)]);
+        $team->loadCount(['pets', 'adoptions', 'announcements', 'blogPosts', 'members']);
+
+        $team->load([
+            'members' => fn ($q) => $q->select('users.id', 'users.name', 'users.email'),
+            'pets' => fn ($q) => $q->latest()->take(10),
+        ]);
+
+        $speciesStats = $team->pets()
+            ->selectRaw('species, count(*) as count')
+            ->groupBy('species')
+            ->pluck('count', 'species');
+
+        $statusStats = $team->pets()
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
 
         return Inertia::render('Admin/Organizations/Show', [
             'organization' => $team,
+            'speciesStats' => $speciesStats,
+            'statusStats' => $statusStats,
         ]);
     }
 
