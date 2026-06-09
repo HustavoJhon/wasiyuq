@@ -16,6 +16,9 @@ import {
     MapPin,
     FileText,
     Eye,
+    Stethoscope,
+    Users,
+    Handshake,
 } from 'lucide-vue-next';
 import { ref, onMounted } from 'vue';
 import type { Component } from 'vue';
@@ -43,6 +46,16 @@ const props = defineProps<{
 const faqOpen = ref<number | null>(null);
 const animatedStats = ref({ adopted: 0, organizations: 0, pets_available: 0 });
 const statsRef = ref<HTMLElement | null>(null);
+const searchQuery = ref('');
+
+function goSearch() {
+    const q = searchQuery.value.trim();
+    window.location.href = '/mascotas' + (q ? '?search=' + encodeURIComponent(q) : '');
+}
+
+function onSearchKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') goSearch();
+}
 
 const speciesInfo: { key: string; icon: Component; label: string }[] = [
     { key: 'dog', icon: Dog, label: 'Perros' },
@@ -74,10 +87,37 @@ const features = [
 ];
 
 const impactItems = [
-    { valueKey: 'adopted' as const, label: 'Mascotas adoptadas con éxito', color: 'from-[#2D6A4F] to-[#40916C]' },
-    { valueKey: 'organizations' as const, label: 'Entidades verificadas en la red', color: 'from-[#40916C] to-[#52B788]' },
-    { valueKey: 'pets_available' as const, label: 'Mascotas esperando un hogar', color: 'from-[#52B788] to-[#74C69D]' },
-    { value: 100, label: 'Seguimiento post-adopción', color: 'from-[#74C69D] to-[#95D5B2]' },
+    { valueKey: 'adopted' as const, label: 'Mascotas adoptadas con éxito', color: 'from-[#2D6A4F] to-[#40916C]', bg: 'bg-gradient-to-br from-[#2D6A4F] to-[#40916C]', icon: Heart, badge: 'Impacto', suffix: '+' },
+    { valueKey: 'organizations' as const, label: 'Entidades verificadas en la red', color: 'from-[#40916C] to-[#52B788]', bg: 'bg-gradient-to-br from-[#40916C] to-[#52B788]', icon: Building2, badge: 'Red', suffix: '+' },
+    { valueKey: 'pets_available' as const, label: 'Mascotas esperando un hogar', color: 'from-[#52B788] to-[#74C69D]', bg: 'bg-gradient-to-br from-[#52B788] to-[#74C69D]', icon: PawPrint, badge: 'Disponibles', suffix: '+' },
+    { value: 100, label: 'Seguimiento post-adopción', color: 'from-[#74C69D] to-[#95D5B2]', bg: 'bg-gradient-to-br from-[#74C69D] to-[#95D5B2]', icon: CheckCircle, badge: 'Garantía', suffix: '%' },
+];
+
+const partners = [
+    {
+        name: 'Wanchaq.Vet',
+        tag: 'Municipalidad de Wanchaq',
+        tagClass: 'text-[#2D6A4F]',
+        desc: 'Clínica veterinaria municipal que brinda atención gratuita y esterilizaciones para mascotas en situación de calle y adopción.',
+        icon: Stethoscope,
+        bg: 'bg-gradient-to-br from-[#2D6A4F] to-[#40916C]',
+    },
+    {
+        name: 'Animalistas de Cusco',
+        tag: 'Organización civil',
+        tagClass: 'text-[#E07A5F]',
+        desc: 'Colectivo de proteccionistas independientes que rescatan, rehabilitan y buscan hogar para perros y gatos en abandono en la región del Cusco.',
+        icon: Users,
+        bg: 'bg-gradient-to-br from-[#E07A5F] to-[#F4A261]',
+    },
+    {
+        name: 'Patitas Cusco',
+        tag: 'Asociación sin fines de lucro',
+        tagClass: 'text-[#6C63FF]',
+        desc: 'ONG dedicada al bienestar animal, campañas de concientización y acompañamiento en procesos de adopción responsable.',
+        icon: Handshake,
+        bg: 'bg-gradient-to-br from-[#6C63FF] to-[#9D95FF]',
+    },
 ];
 
 const faqs = [
@@ -164,11 +204,11 @@ clearInterval(timer);
 <template>
     <div class="overflow-hidden">
         <!-- HERO -->
-        <section class="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[#1B4332] via-[#2D6A4F] to-[#40916C]">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-            <div class="pointer-events-none absolute top-1/4 -left-32 h-96 w-96 animate-pulse rounded-full bg-white/5 blur-3xl" style="animation-duration: 8s" />
-            <div class="pointer-events-none absolute top-1/3 -right-32 h-80 w-80 animate-pulse rounded-full bg-white/5 blur-3xl" style="animation-duration: 6s; animation-delay: 1s" />
-            <div class="pointer-events-none absolute -bottom-32 left-1/3 h-72 w-72 animate-pulse rounded-full bg-white/5 blur-3xl" style="animation-duration: 10s; animation-delay: 2s" />
+        <section class="relative min-h-[90vh] flex items-center overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="/images/hero-dogs.webp" alt="" class="h-full w-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/60" />
+            </div>
 
             <div class="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
                 <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -187,11 +227,11 @@ clearInterval(timer);
                         <div class="mb-8 flex flex-col gap-3 sm:flex-row">
                             <div class="relative flex-1">
                                 <Search class="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-white/50" />
-                                <input type="text" placeholder="Busca por raza, ubicación..." class="w-full rounded-xl border-0 bg-white/15 py-3.5 pr-4 pl-12 text-sm text-white placeholder-white/50 backdrop-blur-sm transition focus:bg-white/20 focus:ring-2 focus:ring-white/30 focus:outline-none" />
+                                <input v-model="searchQuery" @keydown="onSearchKeydown" type="text" placeholder="Busca por raza, ubicación..." class="w-full rounded-xl border-0 bg-white/15 py-3.5 pr-4 pl-12 text-sm text-white placeholder-white/50 backdrop-blur-sm transition focus:bg-white/20 focus:ring-2 focus:ring-white/30 focus:outline-none" />
                             </div>
-                            <a href="/mascotas" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[#1B4332] shadow-lg shadow-black/10 transition-all hover:bg-green-50 hover:shadow-xl hover:-translate-y-0.5">
+                            <button @click="goSearch" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[#1B4332] shadow-lg shadow-black/10 transition-all hover:bg-green-50 hover:shadow-xl hover:-translate-y-0.5">
                                 Buscar <ArrowRight class="h-4 w-4" />
-                            </a>
+                            </button>
                         </div>
                         <div class="mb-6 flex flex-wrap gap-2">
                             <a v-for="s in speciesInfo" :key="s.key" :href="'/mascotas?species=' + s.key" class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3.5 py-1.5 text-sm text-white backdrop-blur-sm transition hover:bg-white/20 hover:scale-105">
@@ -262,6 +302,44 @@ clearInterval(timer);
                 </div>
             </div>
             <div class="absolute right-0 bottom-0 left-0 h-32 bg-gradient-to-t from-background to-transparent" />
+        </section>
+
+        <!-- PARTNERS -->
+        <section class="bg-gradient-to-b from-background to-muted/20 py-16 sm:py-24">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="reveal translate-y-8 opacity-0 transition-all duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100">
+                    <div class="mb-10 text-center sm:mb-14">
+                        <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2D6A4F]/10 px-4 py-1.5 text-xs font-medium text-[#2D6A4F]">
+                            <Building2 class="h-3.5 w-3.5" />
+                            Aliados estratégicos
+                        </div>
+                        <h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                            Entidades que <span class="text-[#2D6A4F]">respaldan</span> Wasiyuq
+                        </h2>
+                        <p class="mx-auto max-w-2xl text-lg text-muted-foreground">Trabajamos junto a municipalidades y organizaciones para garantizar adopciones responsables en Cusco.</p>
+                    </div>
+                </div>
+
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="(partner, i) in partners" :key="partner.name"
+                        class="reveal translate-y-8 opacity-0 transition-all duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100 group"
+                        :style="{ transitionDelay: `${i * 150}ms` }">
+                        <div class="relative h-full overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#2D6A4F]/5">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#2D6A4F]/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <div class="relative flex items-start gap-4">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl" :class="partner.bg">
+                                    <component :is="partner.icon" class="h-8 w-8 text-white" />
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="text-lg font-bold text-foreground">{{ partner.name }}</h3>
+                                    <p class="mt-1 text-xs font-medium uppercase tracking-wider" :class="partner.tagClass">{{ partner.tag }}</p>
+                                    <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{{ partner.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- SPECIES -->
@@ -370,47 +448,63 @@ clearInterval(timer);
         </section>
 
         <!-- IMPACT -->
-        <section class="bg-muted/30 py-20 sm:py-28">
+        <section class="relative overflow-hidden bg-gradient-to-b from-muted/30 to-background py-20 sm:py-28">
+            <div class="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.02]">
+                <img src="/images/hero-cat.webp" alt="" class="h-full w-full object-cover" />
+            </div>
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="reveal translate-y-8 opacity-0 transition-all duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100">
-                    <div class="lg:grid lg:grid-cols-12 lg:items-center lg:gap-16">
-                        <div class="lg:col-span-5">
-                            <div class="mb-8">
-                                <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2D6A4F]/10 px-4 py-1.5 text-xs font-medium text-[#2D6A4F]">
-                                    <Heart class="h-3.5 w-3.5" />
-                                    Impacto en Cusco
-                                </div>
-                                <h2 class="mb-2 text-3xl font-bold tracking-tight text-foreground lg:text-4xl">Nuestra comunidad crece cada día</h2>
-                                <p class="text-muted-foreground">Gracias a nuestra comunidad, cada día más mascotas encuentran un hogar.</p>
-                            </div>
-                            <blockquote class="relative rounded-2xl border border-border bg-card p-6">
-                                <Heart class="absolute top-4 right-4 h-6 w-6 text-[#2D6A4F]/20" />
-                                <p class="text-lg text-foreground italic leading-relaxed">"Wasiyuq nos permitió encontrar un hogar para más de 50 perritos en solo tres meses. La plataforma es muy fácil de usar y el equipo de soporte siempre está disponible."</p>
-                                <div class="mt-6 flex items-center gap-3">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#40916C] text-sm font-bold text-white shadow-md">MG</div>
-                                    <div>
-                                        <div class="font-bold text-foreground">María García</div>
-                                        <div class="text-xs text-muted-foreground">Fundadora | Patitas Cusco</div>
-                                    </div>
-                                </div>
-                            </blockquote>
+                    <div class="mb-12 text-center">
+                        <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2D6A4F]/10 px-4 py-1.5 text-xs font-medium text-[#2D6A4F]">
+                            <Heart class="h-3.5 w-3.5" />
+                            Impacto en Cusco
                         </div>
+                        <h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                            Nuestra comunidad <span class="text-[#2D6A4F]">crece cada día</span>
+                        </h2>
+                        <p class="mx-auto mt-3 max-w-2xl text-muted-foreground">Gracias a nuestra comunidad, cada día más mascotas encuentran un hogar.</p>
+                    </div>
+                </div>
 
-                        <div class="mt-10 lg:col-span-6 lg:col-end-13 lg:mt-0">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div v-for="(item, i) in impactItems" :key="item.label"
-                                    class="reveal translate-y-8 opacity-0 transition-all duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100 rounded-2xl border border-border bg-card p-6 sm:p-8"
-                                    :style="{ transitionDelay: `${i * 150}ms` }">
-                                    <div class="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                        <div class="h-full rounded-full bg-gradient-to-r transition-all duration-1000"
-                                            :class="item.color"
-                                            :style="{ width: `${Math.min((item.value || animatedStats[item.valueKey as keyof typeof animatedStats] || 0) / 100 * 100, 100)}%` }" />
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div v-for="(item, i) in impactItems" :key="item.label"
+                        class="reveal translate-y-8 opacity-0 transition-all duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100 group"
+                        :style="{ transitionDelay: `${i * 150}ms` }">
+                        <div class="relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#2D6A4F]/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <div class="relative">
+                                <div class="mb-4 flex items-center justify-between">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl" :class="item.bg">
+                                        <component :is="item.icon" class="h-6 w-6 text-white" />
                                     </div>
-                                    <div class="text-3xl font-bold text-foreground sm:text-4xl tabular-nums">
-                                        {{ item.value ?? animatedStats[item.valueKey as keyof typeof animatedStats] }}+
-                                    </div>
-                                    <p class="mt-1 text-sm text-muted-foreground">{{ item.label }}</p>
+                                    <span class="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                                        {{ item.badge }}
+                                    </span>
                                 </div>
+                                <div class="text-4xl font-bold text-foreground sm:text-5xl tabular-nums">
+                                    {{ item.value ?? animatedStats[item.valueKey as keyof typeof animatedStats] }}{{ item.suffix ?? '+' }}
+                                </div>
+                                <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">{{ item.label }}</p>
+                                <div class="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                    <div class="h-full rounded-full bg-gradient-to-r transition-all duration-1000"
+                                        :class="item.color"
+                                        :style="{ width: `${Math.min(((item.value ?? animatedStats[item.valueKey as keyof typeof animatedStats] ?? 0) / 100) * 100, 100)}%` }" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial below stats -->
+                <div class="reveal translate-y-8 opacity-0 transition-all delay-300 duration-700 ease-out [&.reveal-visible]:translate-y-0 [&.reveal-visible]:opacity-100">
+                    <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-[#2D6A4F]/10 bg-gradient-to-br from-[#2D6A4F]/5 to-white p-6 text-center sm:p-10 dark:from-[#2D6A4F]/15 dark:to-black/20 dark:border-[#2D6A4F]/20">
+                        <Heart class="mx-auto mb-4 h-8 w-8 text-[#2D6A4F]/30" />
+                        <p class="text-lg font-medium text-foreground italic leading-relaxed">"Wasiyuq nos permitió encontrar un hogar para más de 50 perritos en solo tres meses. La plataforma es muy fácil de usar y el equipo de soporte siempre está disponible."</p>
+                        <div class="mt-6 flex items-center justify-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#40916C] text-sm font-bold text-white shadow-md">MG</div>
+                            <div class="text-left">
+                                <div class="font-semibold text-foreground">María García</div>
+                                <div class="text-xs text-muted-foreground">Fundadora | Patitas Cusco</div>
                             </div>
                         </div>
                     </div>
@@ -477,6 +571,10 @@ clearInterval(timer);
                     <div class="grid gap-10 md:grid-cols-5">
                         <div class="md:col-span-2">
                             <div class="max-w-xs">
+                                <div class="relative mb-6 overflow-hidden rounded-2xl">
+                                    <img src="/images/hero-cat.webp" alt="" class="h-40 w-full object-cover" />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                </div>
                                 <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2D6A4F]/10 px-4 py-1.5 text-xs font-medium text-[#2D6A4F]">
                                     <CheckCircle class="h-3.5 w-3.5" />
                                     FAQ
