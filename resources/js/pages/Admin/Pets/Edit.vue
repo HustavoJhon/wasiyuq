@@ -2,6 +2,7 @@
 import { useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import InputError from '@/components/InputError.vue';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,9 +43,7 @@ const props = defineProps<{
     teams: Team[];
 }>();
 
-function photoUrl(path: string): string {
-    return path.startsWith('http') ? path : `/storage/${path}`;
-}
+const { photoUrl } = usePhotoUrl();
 
 const existingPhoto = props.pet.photos?.length ? photoUrl(props.pet.photos[0]) : null;
 

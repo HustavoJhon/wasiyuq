@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import type { Team } from '@/types';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 interface Pet {
     id: number;
@@ -26,9 +27,7 @@ defineProps<{
     currentTeam?: Team | null;
 }>();
 
-function photoUrl(path: string): string {
-    return path.startsWith('http') ? path : `/storage/${path}`;
-}
+const { photoUrl } = usePhotoUrl();
 
 function speciesLabel(s: string): string {
     const labels: Record<string, string> = {

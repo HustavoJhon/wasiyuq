@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
 interface Pet {
     id: number;
     name: string;
@@ -22,9 +24,7 @@ interface Pet {
 const props = defineProps<{ pet: Pet }>();
 const pet = props.pet;
 
-function photoUrl(path: string): string {
-    return path.startsWith('http') ? path : `/storage/${path}`;
-}
+const { photoUrl } = usePhotoUrl();
 
 function speciesLabel(s: string): string {
     const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };

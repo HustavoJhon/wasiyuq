@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 interface Pet {
     id: number;
@@ -56,26 +57,7 @@ const filteredPets = computed(() => {
     );
 });
 
-function photoUrl(path: string | null | undefined): string {
-    if (!path) return '';
-    return path.startsWith('http') ? path : `/storage/${path}`;
-}
-
-const speciesLabels: Record<string, string> = {
-    dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro',
-};
-
-const speciesColors: Record<string, string> = {
-    dog: '#16a34a', cat: '#eab308', rabbit: '#a855f7', bird: '#0ea5e9', other: '#78716c',
-};
-
-const statusLabels: Record<string, string> = {
-    available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso', withheld: 'Reservado',
-};
-
-const statusColors: Record<string, string> = {
-    available: '#16a34a', adopted: '#2563eb', in_process: '#d97706', withheld: '#78716c',
-};
+const { photoUrl } = usePhotoUrl();
 
 function speciesLabel(s: string): string {
     return speciesLabels[s] ?? s;
