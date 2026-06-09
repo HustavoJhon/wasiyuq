@@ -1,4 +1,11 @@
 <script setup lang="ts">
+interface Vaccine {
+    name: string;
+    date: string;
+    vet: string;
+    next_due: string;
+}
+
 interface FollowUpShow {
     id: number;
     scheduled_date: string;
@@ -7,6 +14,11 @@ interface FollowUpShow {
     notes: string | null;
     photos: string[];
     created_at: string;
+    drive_link: string | null;
+    weight_kg: number | null;
+    health_status: string | null;
+    vaccines: Vaccine[];
+    behavior: string | null;
     adoption: {
         id: number;
         pet: { id: number; name: string; slug: string };
@@ -29,6 +41,20 @@ function statusClass(s: string): string {
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' };
     return labels[s] ?? s;
+}
+
+function healthClass(s: string | null): string {
+    const map: Record<string, string> = {
+        good: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+        fair: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+        poor: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
+    };
+    return map[s ?? ''] ?? '';
+}
+
+function healthLabel(s: string | null): string {
+    const labels: Record<string, string> = { good: 'Bueno', fair: 'Regular', poor: 'Malo' };
+    return s ? labels[s] ?? s : '—';
 }
 
 function formatDate(d: string): string {
@@ -72,21 +98,76 @@ function formatDate(d: string): string {
 
         <div class="mt-6 grid gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
-                <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <!-- Notas -->
+                <div v-if="followUp.notes || followUp.behavior" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                     <div class="mb-5 flex items-center gap-2">
                         <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <h2 class="text-base font-semibold text-foreground">Información de la visita</h2>
                     </div>
-
+                    <div v-if="followUp.behavior" class="mb-4 rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                        <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Comportamiento</p>
+                        <p class="mt-1 text-sm text-foreground leading-relaxed">{{ followUp.behavior }}</p>
+                    </div>
                     <div v-if="followUp.notes" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
                         <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Notas</p>
                         <p class="mt-1 text-sm text-foreground leading-relaxed">{{ followUp.notes }}</p>
                     </div>
-                    <p v-else class="text-sm text-muted-foreground/60 italic">Sin notas registradas.</p>
+                </div>
+                <div v-if="!followUp.notes && !followUp.behavior" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <div class="mb-5 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h2 class="text-base font-semibold text-foreground">Información de la visita</h2>
+                    </div>
+                    <p class="text-sm text-muted-foreground/60 italic">Sin información registrada.</p>
                 </div>
 
+                <!-- Salud y peso -->
+                <div v-if="followUp.weight_kg || followUp.health_status" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <div class="mb-5 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <h2 class="text-base font-semibold text-foreground">Salud y bienestar</h2>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div v-if="followUp.weight_kg" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                            <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Peso</p>
+                            <p class="mt-1 text-lg font-semibold text-foreground">{{ followUp.weight_kg }} kg</p>
+                        </div>
+                        <div v-if="followUp.health_status" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                            <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Estado de salud</p>
+                            <span class="mt-1 inline-block rounded-full px-3 py-0.5 text-xs font-medium" :class="healthClass(followUp.health_status)">{{ healthLabel(followUp.health_status) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vacunas -->
+                <div v-if="followUp.vaccines && followUp.vaccines.length > 0" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <div class="mb-5 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <h2 class="text-base font-semibold text-foreground">Vacunas</h2>
+                    </div>
+                    <div class="space-y-3">
+                        <div v-for="(v, i) in followUp.vaccines" :key="i" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                            <div class="mb-2 flex items-center justify-between">
+                                <span class="text-sm font-semibold text-foreground">{{ v.name }}</span>
+                                <span class="text-xs text-muted-foreground">{{ v.date ? formatDate(v.date) : '' }}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                <span v-if="v.vet">Veterinario: {{ v.vet }}</span>
+                                <span v-if="v.next_due">Próxima dosis: {{ formatDate(v.next_due) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fotos -->
                 <div v-if="followUp.photos && followUp.photos.length > 0" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                     <div class="mb-5 flex items-center gap-2">
                         <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,6 +209,23 @@ function formatDate(d: string): string {
                         <div v-if="followUp.completed_date" class="flex items-center justify-between pt-3">
                             <dt class="text-xs text-muted-foreground/70">Fecha realizada</dt>
                             <dd class="text-sm font-medium text-foreground">{{ formatDate(followUp.completed_date) }}</dd>
+                        </div>
+                        <div v-if="followUp.weight_kg" class="flex items-center justify-between pt-3">
+                            <dt class="text-xs text-muted-foreground/70">Peso</dt>
+                            <dd class="text-sm font-medium text-foreground">{{ followUp.weight_kg }} kg</dd>
+                        </div>
+                        <div v-if="followUp.health_status" class="flex items-center justify-between pt-3">
+                            <dt class="text-xs text-muted-foreground/70">Salud</dt>
+                            <dd class="text-sm font-medium text-foreground">{{ healthLabel(followUp.health_status) }}</dd>
+                        </div>
+                        <div v-if="followUp.drive_link" class="flex items-center justify-between pt-3">
+                            <dt class="text-xs text-muted-foreground/70">Drive</dt>
+                            <dd>
+                                <a :href="followUp.drive_link" target="_blank" class="inline-flex items-center gap-1 text-sm font-medium text-[#2D6A4F] hover:underline">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    Abrir
+                                </a>
+                            </dd>
                         </div>
                         <div class="flex items-center justify-between pt-3">
                             <dt class="text-xs text-muted-foreground/70">Creado por</dt>

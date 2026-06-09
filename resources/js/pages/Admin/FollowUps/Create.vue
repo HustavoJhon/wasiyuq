@@ -12,6 +12,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+interface Vaccine {
+    name: string;
+    date: string;
+    vet: string;
+    next_due: string;
+}
+
 interface AdoptionOption {
     id: number;
     pet: { id: number; name: string };
@@ -25,7 +32,20 @@ const form = useForm({
     scheduled_date: '',
     status: 'pending',
     notes: '',
+    drive_link: '',
+    weight_kg: '',
+    vaccines: [] as Vaccine[],
+    behavior: '',
+    health_status: '',
 });
+
+function addVaccine() {
+    form.vaccines.push({ name: '', date: '', vet: '', next_due: '' });
+}
+
+function removeVaccine(i: number) {
+    form.vaccines.splice(i, 1);
+}
 
 function submit() {
     form.post('/admin/seguimiento');
@@ -56,6 +76,7 @@ function submit() {
         </div>
 
         <form @submit.prevent="submit" class="space-y-6">
+            <!-- Adopción -->
             <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                 <div class="mb-5 flex items-center gap-2">
                     <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,6 +100,7 @@ function submit() {
                 </div>
             </div>
 
+            <!-- Fecha y estado -->
             <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                 <div class="mb-5 flex items-center gap-2">
                     <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +108,6 @@ function submit() {
                     </svg>
                     <h2 class="text-base font-semibold text-foreground">Fecha y estado</h2>
                 </div>
-
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div class="grid gap-2">
                         <Label for="scheduled_date">Fecha programada</Label>
@@ -100,15 +121,9 @@ function submit() {
                                 <SelectValue placeholder="Seleccionar estado" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="pending">
-                                    <span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-amber-500" /> Pendiente</span>
-                                </SelectItem>
-                                <SelectItem value="completed">
-                                    <span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500" /> Completado</span>
-                                </SelectItem>
-                                <SelectItem value="missed">
-                                    <span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-red-500" /> No Realizado</span>
-                                </SelectItem>
+                                <SelectItem value="pending"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-amber-500" /> Pendiente</span></SelectItem>
+                                <SelectItem value="completed"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500" /> Completado</span></SelectItem>
+                                <SelectItem value="missed"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-red-500" /> No Realizado</span></SelectItem>
                             </SelectContent>
                         </Select>
                         <InputError :message="form.errors.status" />
@@ -116,26 +131,130 @@ function submit() {
                 </div>
             </div>
 
+            <!-- Enlace de Drive -->
             <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                 <div class="mb-5 flex items-center gap-2">
                     <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <h2 class="text-base font-semibold text-foreground">Notas</h2>
+                    <h2 class="text-base font-semibold text-foreground">Enlace de seguimiento</h2>
                 </div>
                 <div class="grid gap-2">
-                    <Label for="notes">Notas de la visita</Label>
-                    <div class="relative">
-                        <svg class="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                        </svg>
-                        <textarea
-                            id="notes" v-model="form.notes" rows="4"
-                            class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                            placeholder="Observaciones, resultados de la visita..." :disabled="form.processing"
-                        ></textarea>
+                    <Label for="drive_link">Link de Google Drive (compartido con el adoptante)</Label>
+                    <Input id="drive_link" v-model="form.drive_link" type="url" placeholder="https://drive.google.com/drive/folders/..." :disabled="form.processing" />
+                    <p class="text-xs text-muted-foreground/60">El adoptante puede compartir fotos y videos en esta carpeta compartida.</p>
+                    <InputError :message="form.errors.drive_link" />
+                </div>
+            </div>
+
+            <!-- Salud y peso -->
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <h2 class="text-base font-semibold text-foreground">Salud y bienestar</h2>
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="weight_kg">Peso actual (kg)</Label>
+                        <Input id="weight_kg" v-model="form.weight_kg" type="number" step="0.1" min="0" placeholder="5.2" :disabled="form.processing" />
+                        <InputError :message="form.errors.weight_kg" />
                     </div>
-                    <InputError :message="form.errors.notes" />
+                    <div class="grid gap-2">
+                        <Label for="health_status">Estado de salud general</Label>
+                        <Select v-model="form.health_status" name="health_status">
+                            <SelectTrigger class="w-full">
+                                <SelectValue placeholder="Seleccionar estado" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="good"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500" /> Bueno</span></SelectItem>
+                                <SelectItem value="fair"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-amber-500" /> Regular</span></SelectItem>
+                                <SelectItem value="poor"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-red-500" /> Malo</span></SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="form.errors.health_status" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacunas -->
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <h2 class="text-base font-semibold text-foreground">Vacunas</h2>
+                    </div>
+                    <button type="button" @click="addVaccine" class="inline-flex items-center gap-1 rounded-lg bg-[#2D6A4F] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#245a40]">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Agregar vacuna
+                    </button>
+                </div>
+                <div v-if="form.vaccines.length === 0" class="text-sm text-muted-foreground/60 italic">No se registraron vacunas aún.</div>
+                <div v-for="(v, i) in form.vaccines" :key="i" class="mb-4 rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                    <div class="mb-3 flex items-center justify-between">
+                        <span class="text-sm font-medium text-foreground">Vacuna #{{ i + 1 }}</span>
+                        <button type="button" @click="removeVaccine(i)" class="text-xs text-red-500 hover:text-red-700">Eliminar</button>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="grid gap-1.5">
+                            <Label :for="'vaccine_name_' + i">Nombre</Label>
+                            <Input :id="'vaccine_name_' + i" v-model="v.name" placeholder="Rabia, Múltiple, etc." />
+                        </div>
+                        <div class="grid gap-1.5">
+                            <Label :for="'vaccine_date_' + i">Fecha de aplicación</Label>
+                            <Input :id="'vaccine_date_' + i" v-model="v.date" type="date" />
+                        </div>
+                        <div class="grid gap-1.5">
+                            <Label :for="'vaccine_vet_' + i">Veterinario / Clínica</Label>
+                            <Input :id="'vaccine_vet_' + i" v-model="v.vet" placeholder="Dr. Pérez - VetClinic" />
+                        </div>
+                        <div class="grid gap-1.5">
+                            <Label :for="'vaccine_next_' + i">Próxima dosis</Label>
+                            <Input :id="'vaccine_next_' + i" v-model="v.next_due" type="date" />
+                        </div>
+                    </div>
+                </div>
+                <InputError :message="form.errors.vaccines" />
+            </div>
+
+            <!-- Comportamiento -->
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h2 class="text-base font-semibold text-foreground">Comportamiento y observaciones</h2>
+                </div>
+                <div class="grid gap-4">
+                    <div class="grid gap-2">
+                        <Label for="behavior">Comportamiento observado</Label>
+                        <div class="relative">
+                            <svg class="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <textarea id="behavior" v-model="form.behavior" rows="3"
+                                class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                                placeholder="Cómo se comporta la mascota? Es sociable, tranquila, juguetona?" :disabled="form.processing"
+                            ></textarea>
+                        </div>
+                        <InputError :message="form.errors.behavior" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="notes">Notas adicionales de la visita</Label>
+                        <div class="relative">
+                            <svg class="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <textarea id="notes" v-model="form.notes" rows="4"
+                                class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2.5 pl-10 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                                placeholder="Observaciones, resultados de la visita..." :disabled="form.processing"
+                            ></textarea>
+                        </div>
+                        <InputError :message="form.errors.notes" />
+                    </div>
                 </div>
             </div>
 

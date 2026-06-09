@@ -18,6 +18,13 @@ interface Adoption {
     notes: string | null;
     created_at: string;
     reviewed_at: string | null;
+    why_this_pet: string | null;
+    has_children: boolean | null;
+    other_pets: string | null;
+    housing_ownership: string | null;
+    hours_alone: number | null;
+    veterinary_plan: string | null;
+    agreement: boolean | null;
     pet: { id: number; name: string; slug: string; species: string; breed: string | null };
     adopter: { id: number; name: string; email: string };
     team: { id: number; name: string; slug: string };
@@ -28,6 +35,9 @@ interface Adoption {
 defineProps<{ adoption: Adoption }>();
 
 const speciesEmoji: Record<string, string> = { dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾' };
+
+const housingLabels: Record<string, string> = { house: 'Casa', apartment: 'Departamento', condo: 'Condominio', other: 'Otro' };
+const ownershipLabels: Record<string, string> = { own: 'Propia', rent: 'Alquilada', other: 'Otro' };
 
 function statusClass(status: string): string {
     const map: Record<string, string> = {
@@ -110,23 +120,55 @@ function initials(name: string): string {
                             <p class="mt-1 text-sm text-foreground leading-relaxed">{{ adoption.motivation }}</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <div v-if="adoption.why_this_pet">
+                            <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">¿Qué le llamó la atención?</p>
+                            <p class="mt-1 text-sm text-foreground leading-relaxed">{{ adoption.why_this_pet }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
                             <div class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
                                 <p class="text-xs text-muted-foreground/70">Experiencia con mascotas</p>
                                 <p class="mt-0.5 font-medium text-foreground">{{ adoption.experience_with_pets ? 'Sí' : 'No' }}</p>
                             </div>
                             <div class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
-                                <p class="text-xs text-muted-foreground/70">Tiene patio/yarda</p>
+                                <p class="text-xs text-muted-foreground/70">Tiene patio/jardín</p>
                                 <p class="mt-0.5 font-medium text-foreground">{{ adoption.has_yard ? 'Sí' : 'No' }}</p>
                             </div>
                             <div class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
                                 <p class="text-xs text-muted-foreground/70">Tipo de vivienda</p>
-                                <p class="mt-0.5 font-medium text-foreground">{{ adoption.housing_type }}</p>
+                                <p class="mt-0.5 font-medium text-foreground">{{ housingLabels[adoption.housing_type] ?? adoption.housing_type }}</p>
+                            </div>
+                            <div v-if="adoption.housing_ownership" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                                <p class="text-xs text-muted-foreground/70">Tenencia</p>
+                                <p class="mt-0.5 font-medium text-foreground">{{ ownershipLabels[adoption.housing_ownership] ?? adoption.housing_ownership }}</p>
                             </div>
                             <div class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
                                 <p class="text-xs text-muted-foreground/70">Composición familiar</p>
                                 <p class="mt-0.5 font-medium text-foreground">{{ adoption.family_composition }}</p>
                             </div>
+                            <div v-if="adoption.has_children !== null" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                                <p class="text-xs text-muted-foreground/70">Niños en casa</p>
+                                <p class="mt-0.5 font-medium text-foreground">{{ adoption.has_children ? 'Sí' : 'No' }}</p>
+                            </div>
+                            <div v-if="adoption.hours_alone !== null" class="rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-3 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                                <p class="text-xs text-muted-foreground/70">Horas solo al día</p>
+                                <p class="mt-0.5 font-medium text-foreground">{{ adoption.hours_alone }} hrs</p>
+                            </div>
+                        </div>
+
+                        <div v-if="adoption.other_pets">
+                            <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Otras mascotas</p>
+                            <p class="mt-1 text-sm text-foreground leading-relaxed">{{ adoption.other_pets }}</p>
+                        </div>
+
+                        <div v-if="adoption.veterinary_plan">
+                            <p class="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide">Plan veterinario</p>
+                            <p class="mt-1 text-sm text-foreground leading-relaxed">{{ adoption.veterinary_plan }}</p>
+                        </div>
+
+                        <div v-if="adoption.agreement !== null" class="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-900/30 dark:bg-emerald-950/20 dark:text-emerald-400">
+                            <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            <span>Aceptó el compromiso de adopción responsable</span>
                         </div>
 
                         <div v-if="adoption.notes">
