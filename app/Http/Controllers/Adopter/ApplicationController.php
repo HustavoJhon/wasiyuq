@@ -52,6 +52,13 @@ class ApplicationController extends Controller
             'has_yard' => $request->has_yard,
             'housing_type' => $request->housing_type,
             'family_composition' => $request->family_composition,
+            'why_this_pet' => $request->why_this_pet,
+            'has_children' => $request->has_children,
+            'other_pets' => $request->other_pets,
+            'housing_ownership' => $request->housing_ownership,
+            'hours_alone' => $request->hours_alone,
+            'veterinary_plan' => $request->veterinary_plan,
+            'agreement' => $request->agreement,
         ]);
 
         return redirect()->route('adopter.applications.index')->with('flash', [
