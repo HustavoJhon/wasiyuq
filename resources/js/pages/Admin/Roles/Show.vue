@@ -1,19 +1,28 @@
 <script setup lang="ts">
-interface Permission {
-    value: string;
-    label: string;
-}
+import {
+    ShieldCheck,
+    Shield,
+    ShieldHalf,
+    Eye,
+    Settings,
+    CheckCircle2,
+    ArrowLeft,
+    Building2,
+    Users,
+    Mail,
+    PawPrint,
+    Heart,
+    ClipboardList,
+    FileText,
+    CalendarDays,
+    Megaphone,
+    BarChart3,
+    Database,
+} from 'lucide-vue-next';
 
-interface PermissionGroup {
-    module: string;
-    permissions: Permission[];
-}
-
-interface ModuleInfo {
-    module: string;
-    count: number;
-}
-
+interface Permission { value: string; label: string }
+interface PermissionGroup { module: string; permissions: Permission[] }
+interface ModuleInfo { module: string; count: number }
 interface Role {
     value: string;
     label: string;
@@ -21,198 +30,153 @@ interface Role {
     level: number;
 }
 
-defineProps<{
+const props = defineProps<{
     role: Role;
     permissions: PermissionGroup[];
     all_permissions: ModuleInfo[];
 }>();
 
-const getLevelColor = (level: number) => {
-    if (level >= 9) {
-        return 'bg-red-100 text-red-800';
-    }
-
-    if (level >= 7) {
-        return 'bg-purple-100 text-purple-800';
-    }
-
-    if (level >= 5) {
-        return 'bg-blue-100 text-blue-800';
-    }
-
-    if (level >= 3) {
-        return 'bg-green-100 text-green-800';
-    }
-
-    return 'bg-gray-100 text-gray-800';
-};
-
-const getRoleDescription = (role_value: string) => {
-    const descriptions: Record<string, string> = {
-        owner: 'Tiene acceso total y control ilimitado sobre toda la organización',
-        admin: 'Administración completa incluyendo gestión de equipos y todos los módulos',
-        organization_manager:
-            'Gestiona la organización, mascotas, adopciones y seguimientos',
-        pet_manager: 'Responsable del registro y gestión de mascotas',
-        blog_editor: 'Crea y edita contenido de blog, eventos y anuncios',
-        adoptions_coordinator:
-            'Coordina el proceso de adopciones y seguimientos post-adopción',
-        member: 'Acceso básico con permisos de lectura sobre mascotas, adopciones y blog',
-        viewer: 'Acceso de solo lectura a toda la información',
+function levelColor(level: number): string {
+    const map: Record<string, string> = {
+        '10': 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
+        '9': 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
+        '8': 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
+        '6': 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-400',
+        '5': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+        '4': 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+        '2': 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+        '1': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+    return map[String(level)] ?? 'bg-gray-100 text-gray-600';
+}
 
-    return descriptions[role_value] || '';
+function roleIcon(level: number) {
+    if (level >= 9) return ShieldCheck;
+    if (level >= 7) return Shield;
+    if (level >= 5) return ShieldHalf;
+    if (level >= 3) return Settings;
+    return Eye;
+}
+
+const moduleIcons: Record<string, any> = {
+    team: Building2,
+    member: Users,
+    invitation: Mail,
+    pets: PawPrint,
+    adoptions: Heart,
+    'follow-ups': ClipboardList,
+    blog: FileText,
+    events: CalendarDays,
+    announcements: Megaphone,
+    reports: BarChart3,
+    data: Database,
 };
+
+const moduleLabels: Record<string, string> = {
+    team: 'Equipo', member: 'Miembros', invitation: 'Invitaciones',
+    pets: 'Mascotas', adoptions: 'Adopciones', 'follow-ups': 'Seguimientos',
+    blog: 'Blog', events: 'Eventos', announcements: 'Anuncios',
+    reports: 'Reportes', data: 'Datos',
+};
+
+function permissionAction(p: string): string {
+    const action = p.split(':')[1] ?? p;
+    const map: Record<string, string> = {
+        view: 'Ver', create: 'Crear', update: 'Editar', delete: 'Eliminar',
+        add: 'Agregar', remove: 'Remover', cancel: 'Cancelar',
+        'update-status': 'Cambiar estado', 'generate-docs': 'Generar documentos',
+        export: 'Exportar',
+    };
+    return map[action] ?? action;
+}
+
+function totalPermissions() {
+    return props.permissions.reduce((sum, g) => sum + g.permissions.length, 0);
+}
 </script>
 
 <template>
-    <div class="space-y-8">
-        <!-- Header -->
-        <div class="space-y-4 border-b border-border pb-8">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-foreground">
-                        {{ role.label }}
-                    </h1>
-                    <p class="mt-2 text-sm text-muted-foreground">
-                        {{ role.description }}
-                    </p>
-                </div>
-                <span
-                    :class="[
-                        'rounded-full px-3 py-1 text-sm font-semibold',
-                        getLevelColor(role.level),
-                    ]"
-                >
-                    Nivel {{ role.level }}
-                </span>
-            </div>
+    <div class="mx-auto max-w-6xl">
+        <a href="/admin/roles"
+            class="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-[#2D6A4F]">
+            <ArrowLeft class="h-4 w-4" />
+            Volver a Roles
+        </a>
 
-            <div class="max-w-2xl rounded-lg bg-muted/50 p-4">
-                <p class="text-sm text-muted-foreground">
-                    {{ getRoleDescription(role.value) }}
-                </p>
+        <div class="mb-8 mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl"
+                    :class="role.level >= 9 ? 'bg-purple-100 dark:bg-purple-900/30' : role.level >= 7 ? 'bg-blue-100 dark:bg-blue-900/30' : role.level >= 5 ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-gray-800'">
+                    <component :is="roleIcon(role.level)" class="h-6 w-6"
+                        :class="role.level >= 9 ? 'text-purple-600' : role.level >= 7 ? 'text-blue-600' : role.level >= 5 ? 'text-emerald-600' : 'text-muted-foreground/70'" />
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-foreground">{{ role.label }}</h1>
+                        <span class="rounded-full px-2.5 py-0.5 text-xs font-medium" :class="levelColor(role.level)">Nivel {{ role.level }}</span>
+                    </div>
+                    <p class="mt-0.5 text-sm text-muted-foreground">{{ role.description }}</p>
+                </div>
             </div>
         </div>
 
-        <!-- Permissions by module -->
-        <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-foreground">
-                Permisos por Módulo
-            </h2>
+        <div class="mb-8 grid grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <p class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">Módulos</p>
+                <p class="mt-1 text-2xl font-bold text-foreground">{{ permissions.length }}</p>
+            </div>
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <p class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">Permisos Totales</p>
+                <p class="mt-1 text-2xl font-bold text-foreground">{{ totalPermissions() }}</p>
+            </div>
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <p class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">Módulos Disponibles</p>
+                <p class="mt-1 text-2xl font-bold text-foreground">{{ all_permissions.length }}</p>
+            </div>
+        </div>
 
-            <div class="grid gap-6 md:grid-cols-2">
-                <div
-                    v-for="group in permissions"
-                    :key="group.module"
-                    class="rounded-xl border border-border bg-card p-6"
-                >
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h3
-                                class="text-lg font-bold text-card-foreground capitalize"
-                            >
-                                {{ group.module }}
-                            </h3>
-                            <span
-                                class="rounded-full bg-[#2D6A4F]/10 px-3 py-1 text-xs font-semibold text-[#2D6A4F]"
-                            >
-                                {{ group.permissions.length }} permisos
-                            </span>
+        <div class="grid gap-6 lg:grid-cols-3">
+            <div class="space-y-6 lg:col-span-2">
+                <div v-for="group in permissions" :key="group.module"
+                    class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <div class="mb-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#2D6A4F]/15 bg-white dark:border-[#2D6A4F]/30 dark:bg-black/40">
+                                <component :is="moduleIcons[group.module]" class="h-4 w-4 text-[#2D6A4F]" />
+                            </div>
+                            <h3 class="text-base font-semibold text-foreground capitalize">{{ moduleLabels[group.module] ?? group.module }}</h3>
                         </div>
+                        <span class="rounded-full bg-[#2D6A4F]/10 px-2.5 py-0.5 text-xs font-medium text-[#2D6A4F] dark:bg-[#2D6A4F]/20">{{ group.permissions.length }} permisos</span>
+                    </div>
 
-                        <ul class="space-y-2">
-                            <li
-                                v-for="permission in group.permissions"
-                                :key="permission.value"
-                                class="flex items-start gap-3 rounded-lg bg-muted/30 p-3"
-                            >
-                                <svg
-                                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-card-foreground"
-                                    >
-                                        {{ permission.label }}
-                                    </p>
-                                    <p class="text-xs text-muted-foreground">
-                                        {{ permission.value }}
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
+                    <div class="flex flex-wrap gap-2">
+                        <div v-for="p in group.permissions" :key="p.value"
+                            class="flex items-center gap-1.5 rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 px-3 py-2 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                            <CheckCircle2 class="h-4 w-4 text-emerald-500" />
+                            <span class="text-sm text-foreground">{{ permissionAction(p.value) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Summary stats -->
-        <div class="grid gap-4 border-t border-border pt-8 md:grid-cols-3">
-            <div class="rounded-lg bg-muted/50 p-4">
-                <p
-                    class="text-xs font-semibold text-muted-foreground uppercase"
-                >
-                    Módulos
-                </p>
-                <p class="mt-1 text-2xl font-bold text-foreground">
-                    {{ permissions.length }}
-                </p>
-            </div>
-            <div class="rounded-lg bg-muted/50 p-4">
-                <p
-                    class="text-xs font-semibold text-muted-foreground uppercase"
-                >
-                    Permisos Totales
-                </p>
-                <p class="mt-1 text-2xl font-bold text-foreground">
-                    {{
-                        permissions.reduce(
-                            (sum, g) => sum + g.permissions.length,
-                            0,
-                        )
-                    }}
-                </p>
-            </div>
-            <div class="rounded-lg bg-muted/50 p-4">
-                <p
-                    class="text-xs font-semibold text-muted-foreground uppercase"
-                >
-                    Módulos Disponibles
-                </p>
-                <p class="mt-1 text-2xl font-bold text-foreground">
-                    {{ all_permissions.length }}
-                </p>
+            <div class="space-y-4">
+                <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+                        <BarChart3 class="h-4 w-4 text-[#2D6A4F]" />
+                        Todos los módulos
+                    </h3>
+                    <ul class="space-y-2">
+                        <li v-for="mod in all_permissions" :key="mod.module"
+                            class="flex items-center justify-between rounded-lg border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 px-3 py-2.5 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10">
+                            <span class="flex items-center gap-2 text-sm text-foreground">
+                                <component :is="moduleIcons[mod.module]" class="h-3.5 w-3.5 text-muted-foreground/70" />
+                                {{ moduleLabels[mod.module] ?? mod.module }}
+                            </span>
+                            <span class="text-xs text-muted-foreground/60">{{ mod.count }} permisos</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-
-        <!-- Back button -->
-        <a
-            href="/admin/roles"
-            class="inline-flex items-center gap-2 rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted/80"
-        >
-            <svg
-                class="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"
-                />
-            </svg>
-            Volver a Roles
-        </a>
     </div>
 </template>
