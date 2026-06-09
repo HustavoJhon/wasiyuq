@@ -19,6 +19,13 @@ class StoreApplicationRequest extends FormRequest
             'has_yard' => ['required', 'boolean'],
             'housing_type' => ['required', 'string', 'in:house,apartment,condo,other'],
             'family_composition' => ['required', 'string', 'max:500'],
+            'why_this_pet' => ['nullable', 'string', 'max:1000'],
+            'has_children' => ['nullable', 'boolean'],
+            'other_pets' => ['nullable', 'string', 'max:500'],
+            'housing_ownership' => ['nullable', 'string', 'in:own,rent,other'],
+            'hours_alone' => ['nullable', 'integer', 'min:0', 'max:24'],
+            'veterinary_plan' => ['nullable', 'string', 'max:1000'],
+            'agreement' => ['accepted'],
         ];
     }
 
@@ -31,6 +38,7 @@ class StoreApplicationRequest extends FormRequest
             'has_yard.required' => 'Indica si tienes patio o jardín.',
             'housing_type.required' => 'Selecciona el tipo de vivienda.',
             'family_composition.required' => 'Describe la composición de tu hogar.',
+            'agreement.accepted' => 'Debes aceptar el compromiso de adopción responsable.',
         ];
     }
 }

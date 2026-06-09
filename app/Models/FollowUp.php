@@ -11,6 +11,8 @@ class FollowUp extends Model
     protected $fillable = [
         'adoption_id', 'scheduled_date', 'completed_date',
         'status', 'notes', 'photos', 'created_by',
+        'drive_link', 'weight_kg', 'vaccines',
+        'behavior', 'health_status',
     ];
 
     protected function casts(): array
@@ -20,6 +22,8 @@ class FollowUp extends Model
             'scheduled_date' => 'date',
             'completed_date' => 'date',
             'photos' => 'array',
+            'vaccines' => 'array',
+            'weight_kg' => 'decimal:2',
         ];
     }
 
@@ -27,6 +31,7 @@ class FollowUp extends Model
     {
         $data = parent::toArray();
         $data['photos'] = $data['photos'] ?? [];
+        $data['vaccines'] = $data['vaccines'] ?? [];
         return $data;
     }
 
