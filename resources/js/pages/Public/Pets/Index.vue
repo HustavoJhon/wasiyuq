@@ -11,6 +11,7 @@ import {
     ChevronRight,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 interface Pet {
     id: number;
@@ -52,19 +53,22 @@ const props = defineProps<{
     };
 }>();
 
-const emit = defineEmits<{
-    updateFilters: [
-        filters: {
-            species?: string;
-            size?: string;
-            gender?: string;
-            search?: string;
-        },
-    ];
-}>();
+function applyFilters(newFilters: Record<string, string>) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(newFilters)) {
+        if (value) params.set(key, value);
+    }
+    const qs = params.toString();
+    router.get('/mascotas' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
+}
 
-function updateFilters(field: string, value: string) {
-    emit('updateFilters', { ...props.filters, [field]: value });
+let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+function onSearchInput(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        applyFilters({ ...props.filters, search: value });
+    }, 400);
 }
 
 function formatAge(years: number, months: number): string {
@@ -183,12 +187,7 @@ const placeholderSrc =
                         <input
                             type="text"
                             :value="filters.search"
-                            @input="
-                                updateFilters(
-                                    'search',
-                                    ($event.target as HTMLInputElement).value,
-                                )
-                            "
+                            @input="onSearchInput"
                             placeholder="Buscar por nombre, raza..."
                             class="h-12 w-full border-0 bg-transparent text-white placeholder-green-100/50 outline-none"
                         />
@@ -204,7 +203,7 @@ const placeholderSrc =
                 <button
                     v-for="opt in filterOptions.species"
                     :key="opt.value"
-                    @click="updateFilters('species', opt.value)"
+                    @click="applyFilters({ ...props.filters, species: opt.value })"
                     class="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200"
                     :class="
                         (filters.species || '') === opt.value
@@ -227,10 +226,7 @@ const placeholderSrc =
                 <select
                     :value="filters.size || ''"
                     @change="
-                        updateFilters(
-                            'size',
-                            ($event.target as HTMLSelectElement).value,
-                        )
+                        applyFilters({ ...props.filters, size: ($event.target as HTMLSelectElement).value })
                     "
                     class="rounded-xl border border-border bg-transparent px-3 py-2 text-sm text-muted-foreground outline-none transition focus:border-[#2D6A4F] focus:ring-1 focus:ring-[#2D6A4F]"
                 >
@@ -246,10 +242,7 @@ const placeholderSrc =
                 <select
                     :value="filters.gender || ''"
                     @change="
-                        updateFilters(
-                            'gender',
-                            ($event.target as HTMLSelectElement).value,
-                        )
+                        applyFilters({ ...props.filters, gender: ($event.target as HTMLSelectElement).value })
                     "
                     class="rounded-xl border border-border bg-transparent px-3 py-2 text-sm text-muted-foreground outline-none transition focus:border-[#2D6A4F] focus:ring-1 focus:ring-[#2D6A4F]"
                 >
@@ -264,14 +257,7 @@ const placeholderSrc =
 
                 <button
                     v-if="filters.species || filters.size || filters.gender || filters.search"
-                    @click="
-                        emit('updateFilters', {
-                            species: '',
-                            size: '',
-                            gender: '',
-                            search: '',
-                        })
-                    "
+                    @click="applyFilters({ species: '', size: '', gender: '', search: '' })"
                     class="rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
                 >
                     Limpiar
@@ -294,14 +280,7 @@ const placeholderSrc =
                     Intentá con otros filtros o volvé a intentar más tarde.
                 </p>
                 <button
-                    @click="
-                        emit('updateFilters', {
-                            species: '',
-                            size: '',
-                            gender: '',
-                            search: '',
-                        })
-                    "
+                    @click="applyFilters({ species: '', size: '', gender: '', search: '' })"
                     class="mt-6 rounded-xl bg-[#2D6A4F] px-6 py-2.5 text-sm font-medium text-white transition hover:bg-[#246142]"
                 >
                     Limpiar filtros
@@ -415,22 +394,22 @@ const placeholderSrc =
                 v-if="meta.last_page > 1"
                 class="flex items-center justify-center gap-2 pb-16"
             >
-                <a
+                <button
                     v-if="meta.current_page > 1"
-                    :href="'/mascotas?page=' + (meta.current_page - 1)"
+                    @click="applyFilters({ ...props.filters, page: String(meta.current_page - 1) })"
                     class="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
                     <ChevronLeft class="h-4 w-4" />
-                </a>
+                </button>
 
                 <template v-for="page in meta.last_page" :key="page">
-                    <span
+                    <button
                         v-if="
                             page === 1 ||
                             page === meta.last_page ||
                             Math.abs(page - meta.current_page) <= 2
                         "
-                        :href="'/mascotas?page=' + page"
+                        @click="applyFilters({ ...props.filters, page: String(page) })"
                         class="flex h-10 min-w-[40px] items-center justify-center rounded-xl px-3 text-sm font-medium transition"
                         :class="
                             page === meta.current_page
@@ -439,7 +418,7 @@ const placeholderSrc =
                         "
                     >
                         {{ page }}
-                    </span>
+                    </button>
                     <span
                         v-else-if="
                             Math.abs(page - meta.current_page) === 3
@@ -450,13 +429,13 @@ const placeholderSrc =
                     </span>
                 </template>
 
-                <a
+                <button
                     v-if="meta.current_page < meta.last_page"
-                    :href="'/mascotas?page=' + (meta.current_page + 1)"
+                    @click="applyFilters({ ...props.filters, page: String(meta.current_page + 1) })"
                     class="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
                     <ChevronRight class="h-4 w-4" />
-                </a>
+                </button>
             </div>
         </section>
     </div>

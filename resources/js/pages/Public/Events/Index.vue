@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3';
 interface Announcement {
     id: number;
     title: string;
@@ -27,12 +28,13 @@ const props = defineProps<{
     filters: { type?: string };
 }>();
 
-const emit = defineEmits<{
-    updateFilters: [filters: { type?: string }];
-}>();
-
-function updateFilters(newFilters: { type?: string }) {
-    emit('updateFilters', newFilters);
+function applyFilters(newFilters: { type?: string }) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(newFilters)) {
+        if (value) params.set(key, value);
+    }
+    const qs = params.toString();
+    router.get('/eventos' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
 }
 
 function typeLabel(type: string): string {
@@ -108,7 +110,7 @@ return text;
                     <span class="text-sm font-medium text-foreground">Filtrar:</span>
                     <select
                         :value="props.filters.type"
-                        @change="(e) => updateFilters({ type: (e.target as HTMLSelectElement).value })"
+                        @change="applyFilters({ type: ($event.target as HTMLSelectElement).value })"
                         class="rounded-xl border border-[#2D6A4F]/20 bg-[#2D6A4F]/5 px-4 py-2.5 text-sm font-medium text-[#2D6A4F] outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/40 dark:bg-[#2D6A4F]/20 dark:text-emerald-400"
                     >
                         <option value="">Todos los tipos</option>
@@ -204,17 +206,17 @@ return text;
         </div>
 
         <div v-if="meta.last_page > 1" class="mt-14 flex items-center justify-center gap-2">
-            <a
+            <button
                 v-for="page in meta.last_page"
                 :key="page"
-                :href="'/eventos?page=' + page"
+                @click="applyFilters({ ...props.filters, page: String(page) })"
                 class="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition-all"
                 :class="
                     page === meta.current_page
                         ? 'bg-[#2D6A4F] text-white shadow-md shadow-[#2D6A4F]/30'
                         : 'bg-[#2D6A4F]/10 text-[#2D6A4F] hover:bg-[#2D6A4F]/20 dark:bg-[#2D6A4F]/20 dark:text-emerald-400 dark:hover:bg-[#2D6A4F]/30'
                 "
-            >{{ page }}</a>
+            >{{ page }}</button>
         </div>
     </div>
 </template>
