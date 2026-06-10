@@ -36,6 +36,28 @@ const isAuthenticated = !!page.props.auth?.user;
 const showForm = ref(false);
 const errors = computed(() => page.props.errors as Record<string, string>);
 
+const lightboxIndex = ref<number | null>(null);
+
+function openLightbox(index: number) {
+    lightboxIndex.value = index;
+}
+
+function closeLightbox() {
+    lightboxIndex.value = null;
+}
+
+function prevPhoto() {
+    if (lightboxIndex.value !== null && props.pet.photos) {
+        lightboxIndex.value = (lightboxIndex.value - 1 + props.pet.photos.length) % props.pet.photos.length;
+    }
+}
+
+function nextPhoto() {
+    if (lightboxIndex.value !== null && props.pet.photos) {
+        lightboxIndex.value = (lightboxIndex.value + 1) % props.pet.photos.length;
+    }
+}
+
 const form = useForm({
     motivation: '',
     experience_with_pets: false,
@@ -65,212 +87,320 @@ function openForm(): void {
     if (!isAuthenticated) {
         window.location.href =
             '/login?redirect=' + encodeURIComponent(window.location.pathname);
-
         return;
     }
-
     showForm.value = true;
 }
 
 function formatAge(years: number, months: number): string {
-    if (years > 0) {
-        return years + ' año' + (years > 1 ? 's' : '');
-    }
-
-    if (months > 0) {
-        return months + ' mes' + (months > 1 ? 'es' : '');
-    }
-
+    if (years > 0) return years + ' año' + (years > 1 ? 's' : '');
+    if (months > 0) return months + ' mes' + (months > 1 ? 'es' : '');
     return 'Cachorro';
 }
 
 function speciesLabel(species: string): string {
-    const labels: Record<string, string> = {
-        dog: 'Perro',
-        cat: 'Gato',
-        rabbit: 'Conejo',
-        bird: 'Ave',
-        other: 'Otro',
-    };
-
+    const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };
     return labels[species] ?? species;
 }
 
 function sizeLabel(size: string): string {
-    const labels: Record<string, string> = {
-        small: 'Pequeño',
-        medium: 'Mediano',
-        large: 'Grande',
-    };
-
+    const labels: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
     return labels[size] ?? size;
 }
 
 function genderLabel(gender: string): string {
     const labels: Record<string, string> = { male: 'Macho', female: 'Hembra' };
-
     return labels[gender] ?? gender;
 }
 
 function statusLabel(status: string): string {
-    const labels: Record<string, string> = {
-        available: 'Disponible',
-        in_process: 'En Proceso',
-        adopted: 'Adoptado',
-        withheld: 'Reservado',
-    };
-
+    const labels: Record<string, string> = { available: 'Disponible', in_process: 'En Proceso', adopted: 'Adoptado', withheld: 'Reservado' };
     return labels[status] ?? status;
+}
+
+function statusColor(status: string): string {
+    const colors: Record<string, string> = {
+        available: 'bg-emerald-500',
+        in_process: 'bg-amber-500',
+        adopted: 'bg-blue-500',
+        withheld: 'bg-gray-400',
+    };
+    return colors[status] ?? 'bg-gray-400';
+}
+
+function speciesEmoji(species: string): string {
+    const icons: Record<string, string> = { dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾' };
+    return icons[species] ?? '🐾';
 }
 </script>
 
 <template>
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <a
-            href="/mascotas"
-            class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-[#2D6A4F]"
-        >
-            <svg
-                class="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+    <div class="min-h-screen bg-gradient-to-b from-white via-emerald-50/30 to-white">
+        <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+            <a
+                href="/mascotas"
+                class="group inline-flex items-center gap-1.5 text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[#2D6A4F]"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"
-                />
-            </svg>
-            Volver a mascotas
-        </a>
+                <svg class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Volver a mascotas
+            </a>
 
-        <div class="mt-6 grid gap-12 lg:grid-cols-2">
-            <div class="grid gap-3" :class="pet.photos && pet.photos.length > 1 ? 'grid-cols-2' : ''">
-                <div v-if="pet.photos && pet.photos.length > 0" v-for="(photo, i) in pet.photos" :key="i" class="aspect-[4/3] overflow-hidden rounded-2xl">
-                    <img
-                        :src="'/storage/' + photo"
-                        :alt="pet.name + ' ' + (i + 1)"
-                        class="h-full w-full object-cover"
-                    />
-                </div>
-                <div
-                    v-else
-                    class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-muted to-muted/80"
-                />
-            </div>
-
-            <div>
-                <div class="flex items-start justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-foreground">
-                            {{ pet.name }}
-                        </h1>
-                        <p class="mt-1 text-muted-foreground">
-                            {{ pet.breed }} &middot;
-                            {{ speciesLabel(pet.species) }}
-                        </p>
-                    </div>
-                    <span
-                        class="rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-700"
-                        >{{ statusLabel(pet.status) }}</span
+            <div class="mt-6 grid gap-10 lg:grid-cols-5">
+                <!-- Photo Gallery -->
+                <div class="lg:col-span-3 space-y-4 animate-[fadeIn_0.6s_ease-out]">
+                    <div
+                        v-if="pet.photos && pet.photos.length > 0"
+                        class="grid gap-4"
+                        :class="pet.photos.length === 1 ? 'grid-cols-1' : pet.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'"
                     >
-                </div>
-
-                <div
-                    class="mt-6 grid grid-cols-2 gap-4 rounded-2xl bg-muted p-5"
-                >
-                    <div>
-                        <span class="text-xs text-muted-foreground/70"
-                            >Edad</span
+                        <div
+                            v-for="(photo, i) in pet.photos"
+                            :key="i"
+                            class="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-100/60 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/10 hover:-translate-y-0.5"
+                            :class="i === 0 && pet.photos.length > 1 ? 'col-span-2 sm:col-span-2 row-span-2' : 'aspect-[4/3]'"
+                            @click="openLightbox(i)"
                         >
-                        <p class="text-sm font-medium text-foreground">
-                            {{ formatAge(pet.age_years, pet.age_months) }}
-                        </p>
+                            <img
+                                :src="'/storage/' + photo"
+                                :alt="pet.name + ' ' + (i + 1)"
+                                class="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
+                                loading="lazy"
+                            />
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <div class="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-sm transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-75">
+                                <svg class="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <span class="text-xs text-muted-foreground/70"
-                            >Tamaño</span
-                        >
-                        <p class="text-sm font-medium text-foreground">
-                            {{ sizeLabel(pet.size) }}
-                        </p>
-                    </div>
-                    <div>
-                        <span class="text-xs text-muted-foreground/70"
-                            >Sexo</span
-                        >
-                        <p class="text-sm font-medium text-foreground">
-                            {{ genderLabel(pet.gender) }}
-                        </p>
-                    </div>
-                    <div>
-                        <span class="text-xs text-muted-foreground/70"
-                            >Color</span
-                        >
-                        <p class="text-sm font-medium text-foreground">
-                            {{ pet.color }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mt-6">
-                    <h3 class="text-sm font-semibold text-foreground">
-                        Descripción
-                    </h3>
-                    <p
-                        class="mt-2 text-sm leading-relaxed text-muted-foreground"
+                    <div
+                        v-else
+                        class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100 via-emerald-50 to-white flex items-center justify-center"
                     >
-                        {{ pet.description }}
-                    </p>
+                        <div class="text-center">
+                            <svg class="mx-auto h-16 w-16 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-emerald-400">Sin foto</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div v-if="pet.medical_notes" class="mt-6">
-                    <h3 class="text-sm font-semibold text-foreground">
-                        Notas médicas
-                    </h3>
-                    <p class="mt-1 text-sm text-muted-foreground">
-                        {{ pet.medical_notes }}
-                    </p>
-                </div>
+                <!-- Pet Info -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Header -->
+                    <div class="animate-[fadeIn_0.6s_ease-out_0.1s_both]">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl">{{ speciesEmoji(pet.species) }}</span>
+                                    <h1 class="text-3xl font-bold text-gray-900">{{ pet.name }}</h1>
+                                </div>
+                                <p class="mt-1 text-muted-foreground">
+                                    {{ pet.breed }} &middot; {{ speciesLabel(pet.species) }}
+                                </p>
+                            </div>
+                            <span
+                                class="shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white shadow-sm"
+                                :class="statusColor(pet.status)"
+                            >
+                                <span class="flex h-1.5 w-1.5 rounded-full bg-white/70" />
+                                {{ statusLabel(pet.status) }}
+                            </span>
+                        </div>
+                    </div>
 
-                <div
-                    class="mt-6 rounded-2xl border border-border bg-muted/50 p-4"
-                >
-                    <p class="text-xs text-muted-foreground/70">
-                        Entidad responsable
-                    </p>
-                    <p class="mt-0.5 text-sm font-medium text-foreground">
-                        {{ pet.team.name }}
-                    </p>
-                    <p class="text-xs text-muted-foreground/70">
-                        {{ pet.team.city }}, {{ pet.team.state }}
-                    </p>
-                    <p
-                        v-if="pet.team.phone"
-                        class="mt-1 text-xs text-muted-foreground/70"
-                    >
-                        {{ pet.team.phone }}
-                    </p>
-                </div>
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 gap-3 animate-[fadeIn_0.6s_ease-out_0.2s_both]">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
+                            <div class="flex items-center gap-2 text-emerald-600">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="text-xs font-medium uppercase tracking-wider">Edad</span>
+                            </div>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ formatAge(pet.age_years, pet.age_months) }}</p>
+                        </div>
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
+                            <div class="flex items-center gap-2 text-emerald-600">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                </svg>
+                                <span class="text-xs font-medium uppercase tracking-wider">Tamaño</span>
+                            </div>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ sizeLabel(pet.size) }}</p>
+                        </div>
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
+                            <div class="flex items-center gap-2 text-emerald-600">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <span class="text-xs font-medium uppercase tracking-wider">Sexo</span>
+                            </div>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ genderLabel(pet.gender) }}</p>
+                        </div>
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
+                            <div class="flex items-center gap-2 text-emerald-600">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                                </svg>
+                                <span class="text-xs font-medium uppercase tracking-wider">Color</span>
+                            </div>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900 capitalize">{{ pet.color || '—' }}</p>
+                        </div>
+                    </div>
 
-                <button
-                    v-if="pet.status === 'available'"
-                    class="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-[#2D6A4F] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#2D6A4F]/25 transition hover:bg-[#246142]"
-                    @click="openForm()"
-                >
-                    Quiero adoptarlo
-                </button>
+                    <!-- Description -->
+                    <div class="animate-[fadeIn_0.6s_ease-out_0.3s_both]">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                                Descripción
+                            </h3>
+                            <p class="mt-3 text-sm leading-relaxed text-gray-600">
+                                {{ pet.description }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Medical Notes -->
+                    <div v-if="pet.medical_notes" class="animate-[fadeIn_0.6s_ease-out_0.35s_both]">
+                        <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-5 shadow-sm">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-amber-800">
+                                <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                                Notas médicas
+                            </h3>
+                            <p class="mt-2 text-sm leading-relaxed text-amber-700/80">{{ pet.medical_notes }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Organization -->
+                    <div class="animate-[fadeIn_0.6s_ease-out_0.4s_both]">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                                Organización responsable
+                            </h3>
+                            <div class="mt-3 space-y-1.5">
+                                <p class="text-sm font-medium text-gray-900">{{ pet.team.name }}</p>
+                                <p v-if="pet.team.city" class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    {{ pet.team.city }}{{ pet.team.state ? ', ' + pet.team.state : '' }}
+                                </p>
+                                <p v-if="pet.team.phone" class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    {{ pet.team.phone }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adopt Button -->
+                    <div class="animate-[fadeIn_0.6s_ease-out_0.45s_both]">
+                        <button
+                            v-if="pet.status === 'available'"
+                            class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.98]"
+                            @click="openForm()"
+                        >
+                            <span class="relative z-10 flex items-center gap-2">
+                                <svg class="h-5 w-5 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                Quiero adoptarlo
+                            </span>
+                            <div class="absolute inset-0 -translate-x-full transition-transform duration-500 group-hover:translate-x-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0" />
+                        </button>
+                        <div
+                            v-else
+                            class="flex items-center justify-center gap-2 rounded-xl bg-gray-50 px-6 py-3.5 text-sm font-medium text-gray-400 border border-gray-100"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            {{ statusLabel(pet.status) }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Lightbox Modal -->
+        <Teleport to="body">
+            <div
+                v-if="lightboxIndex !== null && pet.photos"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                @click="closeLightbox"
+            >
+                <button
+                    class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
+                    @click.stop="closeLightbox"
+                >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <button
+                    v-if="pet.photos.length > 1"
+                    class="absolute left-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
+                    @click.stop="prevPhoto"
+                >
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+
+                <img
+                    :src="'/storage/' + pet.photos[lightboxIndex]"
+                    :alt="pet.name + ' ' + (lightboxIndex + 1)"
+                    class="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl transition-all duration-300"
+                    :class="pet.photos.length > 1 ? 'cursor-default' : ''"
+                    @click.stop
+                />
+
+                <button
+                    v-if="pet.photos.length > 1"
+                    class="absolute right-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
+                    @click.stop="nextPhoto"
+                >
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    <span
+                        v-for="(_, i) in pet.photos"
+                        :key="i"
+                        class="h-2 rounded-full transition-all duration-300"
+                        :class="i === lightboxIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
+                        @click.stop="lightboxIndex = i"
+                    />
+                </div>
+            </div>
+        </Teleport>
+
+        <!-- Adoption Form Modal -->
         <div
             v-if="showForm"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
             @click.self="showForm = false"
         >
-            <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-card p-6 shadow-xl">
+            <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-card p-6 shadow-xl animate-[fadeIn_0.3s_ease-out]">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2D6A4F]/10">
@@ -458,7 +588,7 @@ function statusLabel(status: string): string {
                     </div>
 
                     <button type="submit" :disabled="form.processing"
-                        class="w-full rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#246142]"
+                        class="w-full rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:from-emerald-500 hover:to-emerald-400 hover:shadow-xl active:scale-[0.98]"
                         :class="{ 'opacity-50': form.processing }"
                     >
                         <span class="flex items-center justify-center gap-2">
@@ -477,3 +607,16 @@ function statusLabel(status: string): string {
         </div>
     </div>
 </template>
+
+<style>
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
