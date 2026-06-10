@@ -101,6 +101,20 @@ Route::prefix('{current_team}')
         Route::get('eventos/{id}/editar', [DashboardEventController::class, 'edit'])->name('events.edit');
         Route::put('eventos/{id}', [DashboardEventController::class, 'update'])->name('events.update');
         Route::delete('eventos/{id}', [DashboardEventController::class, 'destroy'])->name('events.destroy');
+
+        Route::get('miembros', function (Team $current_team) {
+            return \Inertia\Inertia::render('Dashboard/Members/Index', [
+                'members' => $current_team->members()->get()->map(fn ($member) => [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                    'avatar' => $member->avatar ?? null,
+                    'role' => $member->pivot->role->value,
+                    'role_label' => $member->pivot->role->label(),
+                ]),
+                'currentTeam' => $current_team,
+            ]);
+        })->name('members.index');
     });
 
 // Rutas del adoptante
