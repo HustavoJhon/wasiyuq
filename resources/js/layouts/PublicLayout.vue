@@ -142,7 +142,7 @@ const websiteSchema = {
                     <a
                         href="/mascotas"
                         class="text-base font-medium transition"
-                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Mascotas</a
                     >
