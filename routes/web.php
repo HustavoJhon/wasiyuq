@@ -24,32 +24,41 @@ Route::get('/auth/google', [App\Http\Controllers\Auth\SocialLoginController::cla
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 Route::prefix('{current_team}')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
-        Route::get('dashboard', function () {
+        Route::get('dashboard', function (Team $current_team) {
+            $teamId = $current_team->id;
+
+            $stats = [
+                'total_pets' => Pet::query()->where('team_id', $teamId)->count(),
+                'available_pets' => Pet::query()->where('team_id', $teamId)->where('status', 'available')->count(),
+                'adopted_pets' => Pet::query()->where('team_id', $teamId)->where('status', 'adopted')->count(),
+                'in_process_pets' => Pet::query()->where('team_id', $teamId)->where('status', 'in_process')->count(),
+                'total_adoptions' => Adoption::query()->where('team_id', $teamId)->count(),
+                'pending_adoptions' => Adoption::query()->where('team_id', $teamId)->where('status', 'pending')->count(),
+                'total_events' => Announcement::query()->where('team_id', $teamId)->count(),
+                'total_blog_posts' => BlogPost::query()->where('team_id', $teamId)->count(),
+                'pending_follow_ups' => FollowUp::query()->whereHas('adoption', fn ($q) => $q->where('team_id', $teamId))->where('status', 'pending')->count(),
+            ];
+
+            $recentAdoptions = Adoption::query()
+                ->where('team_id', $teamId)
+                ->with(['pet:id,name,slug', 'adopter:id,name'])
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $recentPets = Pet::query()
+                ->where('team_id', $teamId)
+                ->latest()
+                ->take(5)
+                ->get();
+
             return \Inertia\Inertia::render('Dashboard', [
-                'stats' => [
-                    'total_pets' => Pet::query()->count(),
-                    'available_pets' => Pet::query()->where('status', 'available')->count(),
-                    'adopted_pets' => Pet::query()->where('status', 'adopted')->count(),
-                    'total_organizations' => Team::query()->where('is_personal', false)->count(),
-                    'total_adoptions' => Adoption::query()->count(),
-                    'pending_adoptions' => Adoption::query()->where('status', 'pending')->count(),
-                    'total_events' => Announcement::query()->count(),
-                    'total_blog_posts' => BlogPost::query()->count(),
-                    'pending_follow_ups' => FollowUp::query()->where('status', 'pending')->count(),
-                    'total_users' => User::query()->count(),
-                ],
-                'recent_adoptions' => Adoption::query()
-                    ->with(['pet:id,name,slug', 'adopter:id,name'])
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-                'recent_pets' => Pet::query()
-                    ->with('team:id,name')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
+                'stats' => $stats,
+                'recent_adoptions' => $recentAdoptions,
+                'recent_pets' => $recentPets,
+                'currentTeam' => $current_team,
             ]);
         })->name('dashboard');
     });
