@@ -37,24 +37,33 @@ const showForm = ref(false);
 const errors = computed(() => page.props.errors as Record<string, string>);
 
 const lightboxIndex = ref<number | null>(null);
+const zoomed = ref(false);
 
 function openLightbox(index: number) {
     lightboxIndex.value = index;
+    zoomed.value = false;
 }
 
 function closeLightbox() {
     lightboxIndex.value = null;
+    zoomed.value = false;
+}
+
+function toggleZoom() {
+    zoomed.value = !zoomed.value;
 }
 
 function prevPhoto() {
     if (lightboxIndex.value !== null && props.pet.photos) {
         lightboxIndex.value = (lightboxIndex.value - 1 + props.pet.photos.length) % props.pet.photos.length;
+        zoomed.value = false;
     }
 }
 
 function nextPhoto() {
     if (lightboxIndex.value !== null && props.pet.photos) {
         lightboxIndex.value = (lightboxIndex.value + 1) % props.pet.photos.length;
+        zoomed.value = false;
     }
 }
 
@@ -135,11 +144,11 @@ function speciesEmoji(species: string): string {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-white via-emerald-50/30 to-white">
+    <div class="min-h-screen bg-gradient-to-b from-white via-emerald-50/30 to-white dark:from-gray-950 dark:via-emerald-950/10 dark:to-gray-950">
         <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
             <a
                 href="/mascotas"
-                class="group inline-flex items-center gap-1.5 text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[#2D6A4F]"
+                class="group inline-flex items-center gap-1.5 text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[#2D6A4F] dark:hover:text-emerald-400"
             >
                 <svg class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -158,7 +167,7 @@ function speciesEmoji(species: string): string {
                         <div
                             v-for="(photo, i) in pet.photos"
                             :key="i"
-                            class="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-100/60 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/10 hover:-translate-y-0.5"
+                            class="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-100/60 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/10 hover:-translate-y-0.5 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:shadow-emerald-900/30"
                             :class="i === 0 && pet.photos.length > 1 ? 'col-span-2 sm:col-span-2 row-span-2' : 'aspect-[4/3]'"
                             @click="openLightbox(i)"
                         >
@@ -168,9 +177,9 @@ function speciesEmoji(species: string): string {
                                 class="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
                                 loading="lazy"
                             />
-                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                            <div class="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-sm transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-75">
-                                <svg class="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <div class="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-sm transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-75 dark:bg-gray-800/90">
+                                <svg class="h-4 w-4 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                                 </svg>
                             </div>
@@ -178,13 +187,13 @@ function speciesEmoji(species: string): string {
                     </div>
                     <div
                         v-else
-                        class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100 via-emerald-50 to-white flex items-center justify-center"
+                        class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100 via-emerald-50 to-white dark:from-gray-800 dark:via-gray-800/50 dark:to-gray-900 flex items-center justify-center"
                     >
                         <div class="text-center">
-                            <svg class="mx-auto h-16 w-16 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="mx-auto h-16 w-16 text-emerald-300 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <p class="mt-2 text-sm text-emerald-400">Sin foto</p>
+                            <p class="mt-2 text-sm text-emerald-400 dark:text-emerald-500">Sin foto</p>
                         </div>
                     </div>
                 </div>
@@ -197,7 +206,7 @@ function speciesEmoji(species: string): string {
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="text-2xl">{{ speciesEmoji(pet.species) }}</span>
-                                    <h1 class="text-3xl font-bold text-gray-900">{{ pet.name }}</h1>
+                                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ pet.name }}</h1>
                                 </div>
                                 <p class="mt-1 text-muted-foreground">
                                     {{ pet.breed }} &middot; {{ speciesLabel(pet.species) }}
@@ -215,54 +224,54 @@ function speciesEmoji(species: string): string {
 
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-2 gap-3 animate-[fadeIn_0.6s_ease-out_0.2s_both]">
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
-                            <div class="flex items-center gap-2 text-emerald-600">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:border-emerald-700">
+                            <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <span class="text-xs font-medium uppercase tracking-wider">Edad</span>
                             </div>
-                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ formatAge(pet.age_years, pet.age_months) }}</p>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ formatAge(pet.age_years, pet.age_months) }}</p>
                         </div>
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
-                            <div class="flex items-center gap-2 text-emerald-600">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:border-emerald-700">
+                            <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                                 </svg>
                                 <span class="text-xs font-medium uppercase tracking-wider">Tamaño</span>
                             </div>
-                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ sizeLabel(pet.size) }}</p>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ sizeLabel(pet.size) }}</p>
                         </div>
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
-                            <div class="flex items-center gap-2 text-emerald-600">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:border-emerald-700">
+                            <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                                 <span class="text-xs font-medium uppercase tracking-wider">Sexo</span>
                             </div>
-                            <p class="mt-1.5 text-lg font-semibold text-gray-900">{{ genderLabel(pet.gender) }}</p>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ genderLabel(pet.gender) }}</p>
                         </div>
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200">
-                            <div class="flex items-center gap-2 text-emerald-600">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:border-emerald-700">
+                            <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                                 </svg>
                                 <span class="text-xs font-medium uppercase tracking-wider">Color</span>
                             </div>
-                            <p class="mt-1.5 text-lg font-semibold text-gray-900 capitalize">{{ pet.color || '—' }}</p>
+                            <p class="mt-1.5 text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">{{ pet.color || '—' }}</p>
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="animate-[fadeIn_0.6s_ease-out_0.3s_both]">
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm">
-                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                                <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm dark:border-emerald-900/30 dark:bg-gray-900">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                <svg class="h-4 w-4 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                                 </svg>
                                 Descripción
                             </h3>
-                            <p class="mt-3 text-sm leading-relaxed text-gray-600">
+                            <p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                                 {{ pet.description }}
                             </p>
                         </div>
@@ -270,28 +279,28 @@ function speciesEmoji(species: string): string {
 
                     <!-- Medical Notes -->
                     <div v-if="pet.medical_notes" class="animate-[fadeIn_0.6s_ease-out_0.35s_both]">
-                        <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-5 shadow-sm">
-                            <h3 class="flex items-center gap-2 text-sm font-semibold text-amber-800">
-                                <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-5 shadow-sm dark:border-amber-900/30 dark:bg-amber-950/20">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-400">
+                                <svg class="h-4 w-4 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                                 </svg>
                                 Notas médicas
                             </h3>
-                            <p class="mt-2 text-sm leading-relaxed text-amber-700/80">{{ pet.medical_notes }}</p>
+                            <p class="mt-2 text-sm leading-relaxed text-amber-700/80 dark:text-amber-300/70">{{ pet.medical_notes }}</p>
                         </div>
                     </div>
 
                     <!-- Organization -->
                     <div class="animate-[fadeIn_0.6s_ease-out_0.4s_both]">
-                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm">
-                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                                <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="rounded-xl border border-emerald-100/60 bg-white p-5 shadow-sm dark:border-emerald-900/30 dark:bg-gray-900">
+                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                <svg class="h-4 w-4 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
                                 Organización responsable
                             </h3>
                             <div class="mt-3 space-y-1.5">
-                                <p class="text-sm font-medium text-gray-900">{{ pet.team.name }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ pet.team.name }}</p>
                                 <p v-if="pet.team.city" class="flex items-center gap-1.5 text-sm text-muted-foreground">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -313,7 +322,7 @@ function speciesEmoji(species: string): string {
                     <div class="animate-[fadeIn_0.6s_ease-out_0.45s_both]">
                         <button
                             v-if="pet.status === 'available'"
-                            class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.98]"
+                            class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.98] dark:from-emerald-700 dark:to-emerald-600 dark:hover:from-emerald-600 dark:hover:to-emerald-500"
                             @click="openForm()"
                         >
                             <span class="relative z-10 flex items-center gap-2">
@@ -326,7 +335,7 @@ function speciesEmoji(species: string): string {
                         </button>
                         <div
                             v-else
-                            class="flex items-center justify-center gap-2 rounded-xl bg-gray-50 px-6 py-3.5 text-sm font-medium text-gray-400 border border-gray-100"
+                            class="flex items-center justify-center gap-2 rounded-xl bg-gray-50 px-6 py-3.5 text-sm font-medium text-gray-400 border border-gray-100 dark:bg-gray-900 dark:text-gray-500 dark:border-gray-800"
                         >
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -342,7 +351,7 @@ function speciesEmoji(species: string): string {
         <Teleport to="body">
             <div
                 v-if="lightboxIndex !== null && pet.photos"
-                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm"
                 @click="closeLightbox"
             >
                 <button
@@ -367,9 +376,9 @@ function speciesEmoji(species: string): string {
                 <img
                     :src="'/storage/' + pet.photos[lightboxIndex]"
                     :alt="pet.name + ' ' + (lightboxIndex + 1)"
-                    class="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl transition-all duration-300"
-                    :class="pet.photos.length > 1 ? 'cursor-default' : ''"
-                    @click.stop
+                    class="rounded-2xl object-contain shadow-2xl transition-all duration-300 cursor-zoom-in"
+                    :class="zoomed ? 'max-h-none max-w-none h-auto w-auto cursor-zoom-out' : 'max-h-[90vh] max-w-[90vw]'"
+                    @click.stop="toggleZoom"
                 />
 
                 <button
@@ -386,11 +395,24 @@ function speciesEmoji(species: string): string {
                     <span
                         v-for="(_, i) in pet.photos"
                         :key="i"
-                        class="h-2 rounded-full transition-all duration-300"
+                        class="h-2 rounded-full transition-all duration-300 cursor-pointer"
                         :class="i === lightboxIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
-                        @click.stop="lightboxIndex = i"
+                        @click.stop="lightboxIndex = i; zoomed = false"
                     />
                 </div>
+
+                <button
+                    class="absolute bottom-6 right-6 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
+                    @click.stop="toggleZoom"
+                    :title="zoomed ? 'Ajustar a pantalla' : 'Ver a tamaño real'"
+                >
+                    <svg v-if="!zoomed" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                    <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 11h-2v-2m0 0h-2m2 0v-2m0 2v2" />
+                    </svg>
+                </button>
             </div>
         </Teleport>
 
