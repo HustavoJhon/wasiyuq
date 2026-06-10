@@ -265,7 +265,7 @@ const websiteSchema = {
                     <template v-if="$page.props.auth.user">
                         <a
                             href="/admin"
-                            class="rounded-full bg-[#2D6A4F] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#246142]"
+                            class="rounded-full bg-[#2D6A4F] px-3 py-1.5 text-sm font-medium text-white transition hover:bg-[#246142]"
                             >Dashboard</a
                         >
                         <Link
