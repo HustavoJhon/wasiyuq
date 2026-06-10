@@ -51,6 +51,11 @@ class DatabaseSeeder extends Seeder
             User::factory()->create(['name' => 'José Condori', 'email' => 'jose.condori@email.com']),
             User::factory()->create(['name' => 'Sofía Vargas', 'email' => 'sofia.vargas@email.com']),
         ];
+
+        $this->regularUser = User::factory()->create([
+            'name' => 'Diego Castillo',
+            'email' => 'diego.castillo@email.com',
+        ]);
     }
 
     private function createOrganizations(): void
