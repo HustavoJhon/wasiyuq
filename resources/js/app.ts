@@ -23,6 +23,7 @@ createInertiaApp({
                 return PublicLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
+            case name.startsWith('Adopter/'):
             case name.startsWith('Dashboard'):
             case name.startsWith('Admin/'):
             case name.startsWith('Teams/'):

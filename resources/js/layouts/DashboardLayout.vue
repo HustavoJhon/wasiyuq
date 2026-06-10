@@ -52,6 +52,7 @@ const page = usePage();
 const user = page.props.auth?.user as User | undefined;
 const isSuperAdmin = !!user?.is_super_admin;
 const currentTeam = computed<CurrentTeam | null>(() => (page.props.currentTeam as CurrentTeam | null) ?? null);
+const isAdopterRoute = computed(() => window.location.pathname.startsWith('/mi-adopcion'));
 
 const teamSlug = computed(() => {
     if (isSuperAdmin) return null;
@@ -80,6 +81,15 @@ const navItems = computed<SidebarItem[]>(() => {
             { type: 'divider' },
             { href: '/admin/adopciones', label: 'Adopciones', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
             { href: '/admin/seguimiento', label: 'Seguimiento', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
+        ];
+    }
+
+    if (isAdopterRoute.value) {
+        return [
+            { href: '/mi-adopcion', label: 'Inicio', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+            { type: 'divider' },
+            { href: '/mi-adopcion/postulaciones', label: 'Mis Postulaciones', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+            { href: '/mi-adopcion/seguimientos', label: 'Mi Seguimiento', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
         ];
     }
 
@@ -113,6 +123,14 @@ function isNavActive(item: NavItem): boolean {
         if (item.href === '/admin') {
             const adminPaths = ['/admin/mascotas', '/admin/organizaciones', '/admin/eventos', '/admin/blog', '/admin/usuarios', '/admin/roles', '/admin/adopciones', '/admin/seguimiento'];
             return window.location.pathname === '/admin' || (isActive('/admin') && !adminPaths.some(p => isActive(p)));
+        }
+        return isActive(item.href);
+    }
+
+    if (isAdopterRoute.value) {
+        if (item.href === '/mi-adopcion') {
+            const adopterPaths = ['/mi-adopcion/postulaciones', '/mi-adopcion/seguimientos'];
+            return window.location.pathname === '/mi-adopcion' || (isActive('/mi-adopcion/') && !adopterPaths.some(p => isActive(p)));
         }
         return isActive(item.href);
     }
@@ -156,7 +174,7 @@ function isNavActive(item: NavItem): boolean {
                     class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2D6A4F] text-sm font-bold text-white"
                 >W</span>
                 <Transition name="fade">
-                    <span v-if="!collapsed || isMobile" class="text-lg font-bold text-card-foreground whitespace-nowrap">{{ isSuperAdmin ? 'Wasiyuq Admin' : 'Mi Organización' }}</span>
+                    <span v-if="!collapsed || isMobile" class="text-lg font-bold text-card-foreground whitespace-nowrap">{{ isSuperAdmin ? 'Wasiyuq Admin' : isAdopterRoute ? 'Mi Panel' : 'Mi Organización' }}</span>
                 </Transition>
             </div>
 

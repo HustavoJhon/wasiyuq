@@ -119,6 +119,9 @@ Route::prefix('{current_team}')
 
 // Rutas del adoptante
 Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')->group(function () {
+    Route::get('', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/inicio', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard.index');
+
     Route::get('/postulaciones', [ApplicationController::class, 'index'])->name('applications.index');
 
     Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');

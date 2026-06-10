@@ -178,7 +178,7 @@ const websiteSchema = {
                     <div class="flex items-center gap-3">
                     <template v-if="$page.props.auth.user">
                         <a
-                            :href="$page.props.auth.user.is_super_admin ? '/admin' : `/${$page.props.currentTeam?.slug ?? ''}/dashboard`"
+                            :href="$page.props.auth.user.is_super_admin ? '/admin' : ($page.props.currentTeam ? `/${$page.props.currentTeam.slug}/dashboard` : '/mi-adopcion')"
                             class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
                             title="Dashboard"
                             @click="mobileOpen = false"
@@ -293,7 +293,7 @@ const websiteSchema = {
                 >
                     <template v-if="$page.props.auth.user">
                         <a
-                            :href="$page.props.auth.user.is_super_admin ? '/admin' : `/${$page.props.currentTeam?.slug ?? ''}/dashboard`"
+                            :href="$page.props.auth.user.is_super_admin ? '/admin' : ($page.props.currentTeam ? `/${$page.props.currentTeam.slug}/dashboard` : '/mi-adopcion')"
                             class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
                             title="Dashboard"
                         >
