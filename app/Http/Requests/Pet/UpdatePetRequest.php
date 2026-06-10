@@ -28,7 +28,7 @@ class UpdatePetRequest extends FormRequest
             'medical_notes' => ['nullable', 'string'],
             'status' => ['required', 'string', 'in:available,adopted,in_process,withheld'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
-            'photo_url' => ['nullable', 'string', 'url', 'max:2048'],
+            'photo_urls' => ['nullable', 'string', 'max:10000'],
         ];
     }
 }

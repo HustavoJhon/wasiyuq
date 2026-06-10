@@ -79,8 +79,10 @@ function speciesIcon(s: string): string {
 
         <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-5">
             <div class="lg:col-span-2">
-                <div v-if="pet.photos && pet.photos.length > 0" class="overflow-hidden rounded-2xl border border-[#2D6A4F]/15">
-                    <img :src="photoUrl(pet.photos[0])" :alt="pet.name" class="w-full object-cover" />
+                <div v-if="pet.photos && pet.photos.length > 0" class="grid gap-3" :class="pet.photos.length === 1 ? '' : 'grid-cols-2'">
+                    <div v-for="(photo, i) in pet.photos" :key="i" class="overflow-hidden rounded-2xl border border-[#2D6A4F]/15">
+                        <img :src="photoUrl(photo)" :alt="pet.name + ' ' + (i + 1)" class="w-full object-cover" />
+                    </div>
                 </div>
                 <div v-else class="flex aspect-[3/4] items-center justify-center rounded-2xl border border-dashed border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 dark:from-[#2D6A4F]/15 dark:to-black/40">
                     <div class="text-center">

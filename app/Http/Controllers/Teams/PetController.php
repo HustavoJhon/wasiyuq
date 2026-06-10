@@ -65,15 +65,15 @@ class PetController extends Controller
         $data['slug'] = $request->slug ?? Str::slug($request->name);
 
         unset($data['photo']);
-        unset($data['photo_url']);
+        unset($data['photo_urls']);
 
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('pets', 'public');
             $data['photos'] = [$path];
-        } elseif ($request->filled('photo_url')) {
-            $path = $this->downloadPhotoFromUrl($request->photo_url);
-            if ($path) {
-                $data['photos'] = [$path];
+        } elseif ($request->filled('photo_urls')) {
+            $paths = $this->downloadMultiplePhotos($request->photo_urls);
+            if (!empty($paths)) {
+                $data['photos'] = $paths;
             }
         }
 
@@ -114,7 +114,7 @@ class PetController extends Controller
         $data['slug'] = $request->slug ?? Str::slug($request->name);
 
         unset($data['photo']);
-        unset($data['photo_url']);
+        unset($data['photo_urls']);
 
         if ($request->hasFile('photo')) {
             if ($pet->photos && count($pet->photos) > 0) {
@@ -123,14 +123,16 @@ class PetController extends Controller
 
             $path = $request->file('photo')->store('pets', 'public');
             $data['photos'] = [$path];
-        } elseif ($request->filled('photo_url')) {
-            if ($pet->photos && count($pet->photos) > 0) {
-                Storage::disk('public')->delete($pet->photos[0]);
+        } elseif ($request->filled('photo_urls')) {
+            if ($pet->photos) {
+                foreach ($pet->photos as $oldPath) {
+                    Storage::disk('public')->delete($oldPath);
+                }
             }
 
-            $path = $this->downloadPhotoFromUrl($request->photo_url);
-            if ($path) {
-                $data['photos'] = [$path];
+            $paths = $this->downloadMultiplePhotos($request->photo_urls);
+            if (!empty($paths)) {
+                $data['photos'] = $paths;
             }
         }
 
@@ -146,6 +148,8 @@ class PetController extends Controller
 
     private function downloadPhotoFromUrl(string $url): ?string
     {
+        $url = $this->convertGoogleDriveUrl($url);
+
         try {
             $response = Http::timeout(15)->get($url);
             if ($response->successful()) {
@@ -163,6 +167,37 @@ class PetController extends Controller
         } catch (\Exception) {
         }
         return null;
+    }
+
+    private function downloadMultiplePhotos(string $urls): array
+    {
+        $urlList = array_filter(array_map('trim', explode("\n", $urls)));
+        $paths = [];
+        foreach ($urlList as $url) {
+            $path = $this->downloadPhotoFromUrl($url);
+            if ($path) {
+                $paths[] = $path;
+            }
+        }
+        return $paths;
+    }
+
+    private function convertGoogleDriveUrl(string $url): string
+    {
+        if (!str_contains($url, 'drive.google.com')) {
+            return $url;
+        }
+
+        preg_match('/\/d\/([a-zA-Z0-9_-]+)/', $url, $matches);
+        if (empty($matches)) {
+            preg_match('/id=([a-zA-Z0-9_-]+)/', $url, $matches);
+        }
+
+        if (!empty($matches[1])) {
+            return 'https://drive.google.com/uc?export=view&id=' . $matches[1];
+        }
+
+        return $url;
     }
 
     public function destroy(Team $current_team, int $id)

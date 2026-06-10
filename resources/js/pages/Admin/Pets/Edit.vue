@@ -50,7 +50,6 @@ const existingPhoto = props.pet.photos?.length ? photoUrl(props.pet.photos[0]) :
 const photoSource = ref<'file' | 'url'>('file');
 const previewUrl = ref<string | null>(null);
 const currentPreview = ref<string | null>(existingPhoto);
-const urlPreviewError = ref(false);
 
 const form = useForm({
     team_id: String(props.pet.team_id),
@@ -66,19 +65,17 @@ const form = useForm({
     description: props.pet.description ?? '',
     medical_notes: props.pet.medical_notes ?? '',
     photo: null as File | null,
-    photo_url: '',
+    photo_urls: '',
 });
 
 function onPhotoChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) {
         form.photo = file;
-        form.photo_url = '';
-        urlPreviewError.value = false;
+        form.photo_urls = '';
         const reader = new FileReader();
         reader.onload = () => {
             previewUrl.value = reader.result as string;
-            currentPreview.value = null;
         };
         reader.readAsDataURL(file);
     }
@@ -86,27 +83,6 @@ function onPhotoChange(e: Event) {
 
 function onUrlInput() {
     form.photo = null;
-    urlPreviewError.value = false;
-    if (form.photo_url && isValidUrl(form.photo_url)) {
-        previewUrl.value = form.photo_url;
-        currentPreview.value = null;
-    } else {
-        previewUrl.value = null;
-    }
-}
-
-function isValidUrl(str: string): boolean {
-    try {
-        const url = new URL(str);
-        return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-        return false;
-    }
-}
-
-function handleUrlError() {
-    urlPreviewError.value = true;
-    previewUrl.value = null;
 }
 
 const speciesOptions = [
@@ -399,22 +375,33 @@ const ageInMonths = computed({
                 </div>
 
                 <div v-else class="grid gap-2">
-                    <Label for="photo_url">Pegá el enlace de la imagen</Label>
+                    <Label for="photo_urls">Pegá los enlaces de las imágenes (uno por línea)</Label>
                     <div class="relative">
-                        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
-                        <Input id="photo_url" v-model="form.photo_url" type="url" placeholder="https://ejemplo.com/foto.jpg" class="pl-9" @input="onUrlInput" />
+                        <textarea
+                            id="photo_urls"
+                            v-model="form.photo_urls"
+                            rows="4"
+                            placeholder="https://ejemplo.com/foto1.jpg&#10;https://ejemplo.com/foto2.jpg&#10;https://drive.google.com/file/d/..."
+                            class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2.5 pl-4 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @input="onUrlInput"
+                        ></textarea>
                     </div>
-                    <p class="text-xs text-muted-foreground">Podés usar enlaces de Facebook, Instagram, Google Drive, etc.</p>
-                    <InputError :message="form.errors.photo_url" />
+                    <p class="text-xs text-muted-foreground">
+                        Podés usar enlaces directos o de Google Drive (uno por línea). Se reemplazarán todas las fotos actuales.
+                    </p>
+                    <InputError :message="form.errors.photo_urls" />
                 </div>
 
-                <div v-if="previewUrl" class="mt-4 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
-                    <img :src="previewUrl" class="max-h-64 w-full object-cover" :class="{ 'opacity-60': urlPreviewError }" @error="handleUrlError" alt="Vista previa" />
+                <div v-if="photoSource === 'url' && form.photo_urls" class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div v-for="(url, i) in form.photo_urls.split('\n').filter(u => u.trim())" :key="i" class="overflow-hidden rounded-xl border border-[#2D6A4F]/15">
+                        <img :src="url.trim()" class="h-24 w-full object-cover" @error="(e) => (e.target as HTMLImageElement).style.display = 'none'" :alt="'Vista previa ' + (i + 1)" />
+                    </div>
                 </div>
-                <div v-else-if="currentPreview" class="mt-4 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
-                    <img :src="currentPreview" class="max-h-64 w-full object-cover" alt="Foto actual" />
+
+                <div v-else-if="currentPreview" class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div v-for="(photo, i) in props.pet.photos || []" :key="i" class="overflow-hidden rounded-xl border border-[#2D6A4F]/15">
+                        <img :src="photoUrl(photo)" class="h-24 w-full object-cover" :alt="'Foto ' + (i + 1)" />
+                    </div>
                 </div>
             </div>
 

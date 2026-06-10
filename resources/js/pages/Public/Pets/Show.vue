@@ -147,20 +147,19 @@ function statusLabel(status: string): string {
         </a>
 
         <div class="mt-6 grid gap-12 lg:grid-cols-2">
-            <div
-                v-if="pet.photos && pet.photos.length > 0"
-                class="aspect-[4/3] overflow-hidden rounded-2xl"
-            >
-                <img
-                    :src="'/storage/' + pet.photos[0]"
-                    :alt="pet.name"
-                    class="h-full w-full object-cover"
+            <div class="grid gap-3" :class="pet.photos && pet.photos.length > 1 ? 'grid-cols-2' : ''">
+                <div v-if="pet.photos && pet.photos.length > 0" v-for="(photo, i) in pet.photos" :key="i" class="aspect-[4/3] overflow-hidden rounded-2xl">
+                    <img
+                        :src="'/storage/' + photo"
+                        :alt="pet.name + ' ' + (i + 1)"
+                        class="h-full w-full object-cover"
+                    />
+                </div>
+                <div
+                    v-else
+                    class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-muted to-muted/80"
                 />
             </div>
-            <div
-                v-else
-                class="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-muted to-muted/80"
-            />
 
             <div>
                 <div class="flex items-start justify-between">
