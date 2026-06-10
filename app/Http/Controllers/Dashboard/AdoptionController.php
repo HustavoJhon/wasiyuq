@@ -42,7 +42,7 @@ class AdoptionController extends Controller
 
     public function show(Team $current_team, Adoption $adoption)
     {
-        abort_if($adoption->team_id !== $current_team->id, 403);
+        abort_if((int) $adoption->team_id !== $current_team->id, 403);
 
         $adoption->load(['pet', 'adopter', 'followUps']);
 
@@ -54,7 +54,7 @@ class AdoptionController extends Controller
 
     public function approve(Team $current_team, Adoption $adoption)
     {
-        abort_if($adoption->team_id !== $current_team->id, 403);
+        abort_if((int) $adoption->team_id !== $current_team->id, 403);
 
         $this->adoptionService->approve($adoption, Auth::id());
 
@@ -68,7 +68,7 @@ class AdoptionController extends Controller
 
     public function reject(Team $current_team, Adoption $adoption, Request $request)
     {
-        abort_if($adoption->team_id !== $current_team->id, 403);
+        abort_if((int) $adoption->team_id !== $current_team->id, 403);
 
         $request->validate(['notes' => 'nullable|string|max:1000']);
 
