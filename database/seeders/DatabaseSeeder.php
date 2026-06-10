@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->org1 = Team::factory()->create([
             'name' => 'Patitas Felices',
+            'slug' => 'patitas-felices',
             'bio' => 'Refugio dedicado al rescate y rehabilitación de animales abandonados en la ciudad de Cusco. Contamos con un equipo de voluntarios comprometidos con el bienestar animal.',
             'website' => 'https://patitasfelices.org',
             'phone' => '+51 984 123 456',
@@ -67,6 +68,7 @@ class DatabaseSeeder extends Seeder
 
         $this->org2 = Team::factory()->create([
             'name' => 'Huellas del Cusco',
+            'slug' => 'huellas-del-cusco',
             'bio' => 'Asociación sin fines de lucro que promueve la adopción responsable y el cuidado de mascotas en el Valle Sagrado. Organizamos ferias y campañas de concientización.',
             'website' => 'https://huellasdelcusco.org',
             'phone' => '+51 984 789 012',
@@ -85,6 +87,11 @@ class DatabaseSeeder extends Seeder
         $this->org2->members()->attach($this->superAdmin, ['role' => TeamRole::Owner]);
         $this->org2->members()->attach($this->orgAdmins[1], ['role' => TeamRole::Admin]);
         $this->org2->members()->attach($this->orgMembers[1], ['role' => TeamRole::Member]);
+
+        $this->orgAdmins[0]->forceFill(['current_team_id' => $this->org1->id])->save();
+        $this->orgAdmins[1]->forceFill(['current_team_id' => $this->org2->id])->save();
+        $this->orgMembers[0]->forceFill(['current_team_id' => $this->org1->id])->save();
+        $this->orgMembers[1]->forceFill(['current_team_id' => $this->org2->id])->save();
     }
 
     private function createPets(): void
