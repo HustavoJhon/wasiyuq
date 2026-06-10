@@ -175,72 +175,82 @@ const websiteSchema = {
                         >Contacto</a
                     >
                     <hr class="border-border/50" />
-                    <template v-if="$page.props.auth.user">
-                        <a
-                            href="/admin"
-                            class="inline-flex items-center justify-center rounded-lg bg-[#2D6A4F] px-4 py-2 text-center text-sm font-medium text-white"
-                            @click="mobileOpen = false"
-                            >Dashboard</a
+                    <div class="flex items-center gap-3">
+                        <template v-if="$page.props.auth.user">
+                            <a
+                                href="/admin"
+                                class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                                title="Dashboard"
+                                @click="mobileOpen = false"
+                            >
+                                <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </a>
+                            <Link
+                                href="/logout"
+                                method="post"
+                                as="button"
+                                class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                                title="Cerrar sesión"
+                                @click="mobileOpen = false"
+                            >
+                                <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                            </Link>
+                        </template>
+                        <template v-else>
+                            <a
+                                href="/login"
+                                class="rounded-lg bg-[#2D6A4F] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#246142]"
+                                @click="mobileOpen = false"
+                                >Ingresar</a
+                            >
+                        </template>
+                        <button
+                            @click="toggleAppearance"
+                            class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                            :title="
+                                resolvedAppearance === 'dark'
+                                    ? 'Modo claro'
+                                    : 'Modo oscuro'
+                            "
                         >
-                        <Link
-                            href="/logout"
-                            method="post"
-                            as="button"
-                            class="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-center text-sm font-medium text-muted-foreground"
-                            @click="mobileOpen = false"
-                            >Salir</Link
-                        >
-                    </template>
-                    <template v-else>
-                        <a
-                            href="/login"
-                            class="inline-flex items-center justify-center rounded-lg bg-[#2D6A4F] px-4 py-2 text-center text-sm font-medium text-white"
-                            @click="mobileOpen = false"
-                            >Ingresar</a
-                        >
-                    </template>
-                    <button
-                        @click="toggleAppearance"
-                        class="flex h-8 w-8 items-center justify-center self-start rounded-full font-medium text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                        :title="
-                            resolvedAppearance === 'dark'
-                                ? 'Modo claro'
-                                : 'Modo oscuro'
-                        "
-                    >
-                        <svg
-                            v-if="resolvedAppearance !== 'dark'"
-                            class="h-4 w-4 shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
-                            />
-                        </svg>
-                        <svg
-                            v-else
-                            class="h-4 w-4 shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle cx="12" cy="12" r="4" />
-                            <path d="M12 8a2 2 0 1 0 4 4" />
-                            <path d="M12 2v2" />
-                            <path d="M12 20v2" />
-                            <path d="m4.93 4.93 1.41 1.41" />
-                            <path d="m17.66 17.66 1.41 1.41" />
-                            <path d="M2 12h2" />
-                            <path d="M20 12h2" />
-                            <path d="m6.34 17.66-1.41 1.41" />
-                            <path d="m19.07 4.93-1.41 1.41" />
-                        </svg>
-                    </button>
+                            <svg
+                                v-if="resolvedAppearance !== 'dark'"
+                                class="h-4 w-4 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
+                                />
+                            </svg>
+                            <svg
+                                v-else
+                                class="h-4 w-4 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle cx="12" cy="12" r="4" />
+                                <path d="M12 8a2 2 0 1 0 4 4" />
+                                <path d="M12 2v2" />
+                                <path d="M12 20v2" />
+                                <path d="m4.93 4.93 1.41 1.41" />
+                                <path d="m17.66 17.66 1.41 1.41" />
+                                <path d="M2 12h2" />
+                                <path d="M20 12h2" />
+                                <path d="m6.34 17.66-1.41 1.41" />
+                                <path d="m19.07 4.93-1.41 1.41" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -279,14 +289,18 @@ const websiteSchema = {
                 </div>
 
                 <div
-                    class="hidden md:flex md:items-center md:gap-3"
+                    class="hidden md:flex md:items-center md:gap-2"
                 >
                     <template v-if="$page.props.auth.user">
                         <a
                             href="/admin"
-                            class="rounded-full bg-[#2D6A4F] px-3 py-1.5 text-sm font-medium text-white transition hover:bg-[#246142]"
-                            >Dashboard</a
+                            class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                            title="Dashboard"
                         >
+                            <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        </a>
                         <Link
                             href="/logout"
                             method="post"
@@ -308,7 +322,7 @@ const websiteSchema = {
                     </template>
                     <button
                         @click="toggleAppearance"
-                        class="flex h-8 w-8 items-center justify-center rounded-full font-medium text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        class="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-neutral-200 dark:hover:bg-neutral-700"
                         :title="
                             resolvedAppearance === 'dark'
                                 ? 'Modo claro'
