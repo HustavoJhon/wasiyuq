@@ -235,7 +235,7 @@ const websiteSchema = {
                 </div>
 
                 <div
-                    class="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-5 lg:gap-8"
+                    class="hidden md:flex md:flex-1 md:items-center md:justify-center md:gap-5 lg:gap-8"
                 >
                     <a
                         href="/mascotas"
@@ -262,6 +262,11 @@ const websiteSchema = {
                         class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
                         >Contacto</a
                     >
+                </div>
+
+                <div
+                    class="hidden md:flex md:items-center md:gap-3"
+                >
                     <template v-if="$page.props.auth.user">
                         <a
                             href="/admin"
