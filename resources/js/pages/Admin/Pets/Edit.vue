@@ -413,7 +413,7 @@ const ageInMonths = computed({
                 <div v-if="previewUrl" class="mt-4 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
                     <img :src="previewUrl" class="max-h-64 w-full object-cover" :class="{ 'opacity-60': urlPreviewError }" @error="handleUrlError" alt="Vista previa" />
                 </div>
-                <div v-else-if="currentPreview && photoSource === 'file'" class="mt-4 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
+                <div v-else-if="currentPreview" class="mt-4 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
                     <img :src="currentPreview" class="max-h-64 w-full object-cover" alt="Foto actual" />
                 </div>
             </div>
