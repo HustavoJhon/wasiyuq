@@ -16,9 +16,6 @@ class PetController extends Controller
 {
     public function index(Team $current_team)
     {
-        // Verificar pertenencia al equipo
-        $this->authorize('viewAny', [Pet::class, $current_team]);
-
         $pets = $current_team->pets()
             ->with('team:id,name,slug')
             ->latest()
@@ -49,8 +46,6 @@ class PetController extends Controller
 
     public function create(Team $current_team)
     {
-        $this->authorize('create', [Pet::class, $current_team]);
-
         return Inertia::render('Teams/Pets/Create', [
             'team' => $current_team,
         ]);
@@ -58,8 +53,6 @@ class PetController extends Controller
 
     public function store(Team $current_team, StorePetRequest $request)
     {
-        $this->authorize('create', [Pet::class, $current_team]);
-
         $data = $request->validated();
         $data['team_id'] = $current_team->id;
         $data['slug'] = $request->slug ?? Str::slug($request->name);
@@ -94,8 +87,6 @@ class PetController extends Controller
             ->with('team:id,name,slug')
             ->firstOrFail();
 
-        $this->authorize('update', [$pet, $current_team]);
-
         return Inertia::render('Teams/Pets/Edit', [
             'pet' => $pet,
             'team' => $current_team,
@@ -107,8 +98,6 @@ class PetController extends Controller
         $pet = $current_team->pets()
             ->where('id', $id)
             ->firstOrFail();
-
-        $this->authorize('update', [$pet, $current_team]);
 
         $data = $request->validated();
         $data['slug'] = $request->slug ?? Str::slug($request->name);
@@ -205,8 +194,6 @@ class PetController extends Controller
         $pet = $current_team->pets()
             ->where('id', $id)
             ->firstOrFail();
-
-        $this->authorize('delete', [$pet, $current_team]);
 
         $pet->delete();
 

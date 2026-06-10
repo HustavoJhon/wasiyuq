@@ -95,6 +95,8 @@ const navItems = computed<SidebarItem[]>(() => {
         { type: 'divider' },
         { href: `/${slug}/adopciones`, label: 'Adopciones', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
         { href: `/${slug}/seguimientos`, label: 'Seguimiento', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
+        { type: 'divider' },
+        { href: `/settings/teams/${slug}`, label: 'Miembros', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
     ];
 });
 
@@ -119,7 +121,7 @@ function isNavActive(item: NavItem): boolean {
     if (!slug) return false;
 
     if (item.href === `/${slug}/dashboard`) {
-        const teamPaths = [`/${slug}/mascotas`, `/${slug}/eventos`, `/${slug}/blog`, `/${slug}/adopciones`, `/${slug}/seguimientos`];
+        const teamPaths = [`/${slug}/mascotas`, `/${slug}/eventos`, `/${slug}/blog`, `/${slug}/adopciones`, `/${slug}/seguimientos`, `/settings/teams/${slug}`];
         return window.location.pathname === item.href || (isActive(`/${slug}/`) && !teamPaths.some(p => isActive(p)));
     }
     return isActive(item.href);
