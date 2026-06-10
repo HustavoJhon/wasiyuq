@@ -33,7 +33,7 @@ class FollowUpController extends Controller
         ]);
     }
 
-    public function show(Request $request, FollowUp $followUp)
+    public function show(Request $request, Team $current_team, FollowUp $followUp)
     {
         $followUp->load([
             'adoption.pet:id,name,slug,species,photos',
@@ -43,11 +43,11 @@ class FollowUpController extends Controller
 
         return Inertia::render('Dashboard/FollowUp/Show', [
             'followUp' => $followUp,
-            'currentTeam' => Team::where('slug', $request->route('current_team'))->firstOrFail(),
+            'currentTeam' => $current_team,
         ]);
     }
 
-    public function markCompleted(Request $request, FollowUp $followUp)
+    public function markCompleted(Request $request, Team $current_team, FollowUp $followUp)
     {
         $this->followUpService->markCompleted($followUp);
 
@@ -56,7 +56,7 @@ class FollowUpController extends Controller
         ]);
     }
 
-    public function markMissed(Request $request, FollowUp $followUp)
+    public function markMissed(Request $request, Team $current_team, FollowUp $followUp)
     {
         $this->followUpService->markMissed($followUp);
 
