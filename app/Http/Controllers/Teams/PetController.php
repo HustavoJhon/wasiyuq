@@ -156,8 +156,9 @@ class PetController extends Controller
                 elseif (str_contains($contentType, 'gif')) $extension = 'gif';
 
                 $filename = 'pets/' . Str::random(40) . '.' . $extension;
-                Storage::disk('public')->put($filename, $response->body());
-                return $filename;
+                if (Storage::disk('public')->put($filename, $response->body())) {
+                    return $filename;
+                }
             }
         } catch (\Exception) {
         }
