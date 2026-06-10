@@ -25,6 +25,7 @@ createInertiaApp({
                 return AuthLayout;
             case name.startsWith('Dashboard'):
             case name.startsWith('Admin/'):
+            case name.startsWith('Teams/'):
                 return DashboardLayout;
             default:
                 return PublicLayout;
