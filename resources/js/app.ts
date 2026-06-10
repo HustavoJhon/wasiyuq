@@ -26,6 +26,8 @@ createInertiaApp({
             case name.startsWith('Dashboard'):
             case name.startsWith('Admin/'):
             case name.startsWith('Teams/'):
+            case name.startsWith('teams/'):
+            case name.startsWith('settings/'):
                 return DashboardLayout;
             default:
                 return PublicLayout;
