@@ -23,6 +23,19 @@ require __DIR__.'/public.php';
 Route::get('/auth/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
+// Rutas del adoptante (antes que {current_team} para evitar que
+// /mi-adopcion/* sea interpretado como {team}/seguimientos, etc.)
+Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')->group(function () {
+    Route::get('', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/inicio', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard.index');
+
+    Route::get('/postulaciones', [ApplicationController::class, 'index'])->name('applications.index');
+
+    Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
+    Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
+    Route::post('/seguimientos/{followUp}/reportar', [FollowUpReportController::class, 'report'])->name('follow-ups.report');
+});
+
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     $user = request()->user();
 
@@ -132,18 +145,6 @@ Route::prefix('{current_team}')
             ]);
         })->name('members.index');
     });
-
-// Rutas del adoptante
-Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')->group(function () {
-    Route::get('', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/inicio', [\App\Http\Controllers\Adopter\DashboardController::class, 'index'])->name('dashboard.index');
-
-    Route::get('/postulaciones', [ApplicationController::class, 'index'])->name('applications.index');
-
-    Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
-    Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
-    Route::post('/seguimientos/{followUp}/reportar', [FollowUpReportController::class, 'report'])->name('follow-ups.report');
-});
 
 // Postulación pública (requiere auth)
 Route::post('/mascotas/{slug}/postular', [ApplicationController::class, 'store'])
