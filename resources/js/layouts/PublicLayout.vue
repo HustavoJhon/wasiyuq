@@ -15,6 +15,10 @@ function toggleAppearance() {
 
 const page = usePage();
 
+function isActive(path: string): boolean {
+    return page.url.startsWith(path);
+}
+
 const pageJsonLd = computed(() => {
     const props = page.props as Record<string, unknown>;
 
@@ -137,31 +141,36 @@ const websiteSchema = {
                 >
                     <a
                         href="/mascotas"
-                        class="text-base font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="text-base font-medium transition"
+                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Mascotas</a
                     >
                     <a
                         href="/eventos"
-                        class="text-base font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="text-base font-medium transition"
+                        :class="isActive('/eventos') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Eventos</a
                     >
                     <a
                         href="/blog"
-                        class="text-base font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="text-base font-medium transition"
+                        :class="isActive('/blog') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Blog</a
                     >
                     <a
                         href="/sobre-nosotros"
-                        class="text-base font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="text-base font-medium transition"
+                        :class="isActive('/sobre-nosotros') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Sobre Nosotros</a
                     >
                     <a
                         href="/contacto"
-                        class="text-base font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="text-base font-medium transition"
+                        :class="isActive('/contacto') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Contacto</a
                     >
@@ -239,27 +248,32 @@ const websiteSchema = {
                 >
                     <a
                         href="/mascotas"
-                        class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Mascotas</a
                     >
                     <a
                         href="/eventos"
-                        class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/eventos') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Eventos</a
                     >
                     <a
                         href="/blog"
-                        class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/blog') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Blog</a
                     >
                     <a
                         href="/sobre-nosotros"
-                        class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/sobre-nosotros') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Sobre Nosotros</a
                     >
                     <a
                         href="/contacto"
-                        class="rounded-lg py-3 text-sm font-medium text-muted-foreground transition hover:text-[#2D6A4F]"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/contacto') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Contacto</a
                     >
                 </div>
