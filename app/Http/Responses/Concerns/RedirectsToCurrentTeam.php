@@ -12,6 +12,10 @@ trait RedirectsToCurrentTeam
 
         URL::defaults(['current_team' => $team->slug]);
 
+        if ($team->is_personal) {
+            return '/mi-adopcion';
+        }
+
         return "/{$team->slug}{$redirect}";
     }
 
