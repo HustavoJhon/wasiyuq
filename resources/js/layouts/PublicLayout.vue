@@ -248,44 +248,34 @@ const websiteSchema = {
                 >
                     <a
                         href="/mascotas"
-                        class="relative rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-semibold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        >Mascotas</a
                     >
-                        Mascotas
-                        <span v-if="isActive('/mascotas')" class="absolute -bottom-0.5 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-[#2D6A4F]" />
-                    </a>
                     <a
                         href="/eventos"
-                        class="relative rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/eventos') ? 'text-[#2D6A4F] font-semibold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/eventos') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        >Eventos</a
                     >
-                        Eventos
-                        <span v-if="isActive('/eventos')" class="absolute -bottom-0.5 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-[#2D6A4F]" />
-                    </a>
                     <a
                         href="/blog"
-                        class="relative rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/blog') ? 'text-[#2D6A4F] font-semibold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/blog') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        >Blog</a
                     >
-                        Blog
-                        <span v-if="isActive('/blog')" class="absolute -bottom-0.5 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-[#2D6A4F]" />
-                    </a>
                     <a
                         href="/sobre-nosotros"
-                        class="relative rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/sobre-nosotros') ? 'text-[#2D6A4F] font-semibold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/sobre-nosotros') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        >Sobre Nosotros</a
                     >
-                        Sobre Nosotros
-                        <span v-if="isActive('/sobre-nosotros')" class="absolute -bottom-0.5 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-[#2D6A4F]" />
-                    </a>
                     <a
                         href="/contacto"
-                        class="relative rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/contacto') ? 'text-[#2D6A4F] font-semibold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/contacto') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        >Contacto</a
                     >
-                        Contacto
-                        <span v-if="isActive('/contacto')" class="absolute -bottom-0.5 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-[#2D6A4F]" />
-                    </a>
                 </div>
 
                 <div
