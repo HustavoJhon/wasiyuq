@@ -23,6 +23,22 @@ require __DIR__.'/public.php';
 Route::get('/auth/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
+Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
+    $user = request()->user();
+
+    if ($user->is_super_admin) {
+        return redirect('/admin');
+    }
+
+    $team = $user->currentTeam;
+
+    if ($team && ! $team->is_personal) {
+        return redirect("/{$team->slug}/dashboard");
+    }
+
+    return redirect('/mi-adopcion');
+});
+
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
