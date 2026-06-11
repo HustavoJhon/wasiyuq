@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
+
 interface Application {
     id: number;
     status: string;
@@ -92,7 +96,7 @@ function formatDate(d: string): string {
                         class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted"
                     >
                         <img
-                            :src="'/storage/' + app.pet.photos[0]"
+                            :src="photoUrl(app.pet.photos[0])"
                             :alt="app.pet.name"
                             class="h-full w-full object-cover"
                         />

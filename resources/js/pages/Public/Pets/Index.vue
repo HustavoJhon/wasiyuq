@@ -12,6 +12,9 @@ import {
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
 
 interface Pet {
     id: number;
@@ -300,7 +303,7 @@ const placeholderSrc =
                     <div class="aspect-[4/3] overflow-hidden">
                         <img
                             v-if="pet.photos && pet.photos.length > 0"
-                            :src="'/storage/' + pet.photos[0]"
+                            :src="photoUrl(pet.photos[0])"
                             :alt="pet.name"
                             loading="lazy"
                             class="h-full w-full object-cover transition duration-500 group-hover:scale-110"

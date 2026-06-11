@@ -22,6 +22,9 @@ import {
 } from 'lucide-vue-next';
 import { ref, onMounted } from 'vue';
 import type { Component } from 'vue';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
 
 interface Pet {
     id: number;
@@ -262,7 +265,7 @@ clearInterval(timer);
                                     <div v-for="(pet, i) in recentPets.filter((_, idx) => idx % 2 === 0)" :key="pet.id" class="group overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-lg shadow-black/5 backdrop-blur-sm transition-all hover:bg-white/15 hover:-translate-y-1 hover:shadow-xl" :style="{ animationDelay: `${i * 150}ms` }">
                                         <a :href="'/mascotas/' + pet.slug">
                                             <div class="aspect-[4/3] overflow-hidden">
-                                                <img v-if="pet.photos?.[0]" :src="'/storage/' + pet.photos[0]" :alt="pet.name" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                                                <img v-if="pet.photos?.[0]" :src="photoUrl(pet.photos[0])" :alt="pet.name" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
                                                 <div v-else class="flex h-full items-center justify-center bg-gradient-to-br from-[#40916C] to-[#2D6A4F]">
                                                     <component :is="speciesIcon(pet.species)" class="h-10 w-10 text-white/60" />
                                                 </div>
@@ -281,7 +284,7 @@ clearInterval(timer);
                                     <div v-for="(pet, i) in recentPets.filter((_, idx) => idx % 2 === 1)" :key="pet.id" class="group overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-lg shadow-black/5 backdrop-blur-sm transition-all hover:bg-white/15 hover:-translate-y-1 hover:shadow-xl" :style="{ animationDelay: `${i * 150}ms` }">
                                         <a :href="'/mascotas/' + pet.slug">
                                             <div class="aspect-[4/3] overflow-hidden">
-                                                <img v-if="pet.photos?.[0]" :src="'/storage/' + pet.photos[0]" :alt="pet.name" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                                                <img v-if="pet.photos?.[0]" :src="photoUrl(pet.photos[0])" :alt="pet.name" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
                                                 <div v-else class="flex h-full items-center justify-center bg-gradient-to-br from-[#52B788] to-[#40916C]">
                                                     <component :is="speciesIcon(pet.species)" class="h-10 w-10 text-white/60" />
                                                 </div>
@@ -536,7 +539,7 @@ clearInterval(timer);
                         :style="{ transitionDelay: `${i * 150}ms` }">
                         <div class="overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-black/5">
                             <div class="aspect-[4/3] overflow-hidden">
-                                <img v-if="pet.photos?.[0]" :src="'/storage/' + pet.photos[0]" :alt="pet.name" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                                <img v-if="pet.photos?.[0]" :src="photoUrl(pet.photos[0])" :alt="pet.name" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
                                 <div v-else class="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
                                     <component :is="speciesIcon(pet.species)" class="h-10 w-10 text-muted-foreground/30" />
                                 </div>

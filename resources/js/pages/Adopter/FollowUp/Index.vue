@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
+
 interface FollowUp {
     id: number;
     scheduled_date: string;
@@ -98,7 +102,7 @@ function formatDate(d: string): string {
                         class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted"
                     >
                         <img
-                            :src="'/storage/' + fu.adoption.pet.photos[0]"
+                            :src="photoUrl(fu.adoption.pet.photos[0])"
                             :alt="fu.adoption.pet.name"
                             class="h-full w-full object-cover"
                         />

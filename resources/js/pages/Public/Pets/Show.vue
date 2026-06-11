@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
 
 interface Pet {
     id: number;
@@ -172,7 +175,7 @@ function speciesEmoji(species: string): string {
                             @click="openLightbox(i)"
                         >
                             <img
-                                :src="'/storage/' + photo"
+                                :src="photoUrl(photo)"
                                 :alt="pet.name + ' ' + (i + 1)"
                                 class="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
                                 loading="lazy"
@@ -374,7 +377,7 @@ function speciesEmoji(species: string): string {
                 </button>
 
                 <img
-                    :src="'/storage/' + pet.photos[lightboxIndex]"
+                    :src="photoUrl(pet.photos[lightboxIndex])"
                     :alt="pet.name + ' ' + (lightboxIndex + 1)"
                     class="rounded-2xl object-contain shadow-2xl transition-all duration-300 cursor-zoom-in"
                     :class="zoomed ? 'max-h-none max-w-none h-auto w-auto cursor-zoom-out' : 'max-h-[90vh] max-w-[90vw]'"
