@@ -28,6 +28,10 @@ class EnsureTeamMembership
 
         abort_if(! $user || ! $team || ! $user->belongsToTeam($team), 403);
 
+        if ($team->is_personal) {
+            return redirect('/mi-adopcion');
+        }
+
         $this->ensureTeamMemberHasRequiredRole($user, $team, $minimumRole);
 
         if ($request->route('current_team') && ! $user->isCurrentTeam($team)) {
