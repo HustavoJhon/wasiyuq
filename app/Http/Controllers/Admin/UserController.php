@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\TeamPermission;
+use App\Enums\TeamRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\UpdateUserRoleRequest;
 use App\Models\Adoption;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -20,12 +25,11 @@ class UserController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Transform teamMemberships to memberships for frontend consistency
         $usersArray = collect($users->items())->map(function ($user) {
             $user->memberships = $user->teamMemberships->map(function ($membership) {
                 return [
                     'team' => $membership->team,
-                    'role' => $membership->role ?? 'member',
+                    'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
                 ];
             });
             unset($user->teamMemberships);
@@ -45,15 +49,66 @@ class UserController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('Admin/Users/Create', [
+            'teams' => Team::query()->where('is_personal', false)->get(['id', 'name']),
+            'teamRoles' => [
+                ['value' => 'member', 'label' => 'Miembro'],
+                ['value' => 'admin', 'label' => 'Administrador'],
+                ['value' => 'owner', 'label' => 'Propietario'],
+            ],
+        ]);
+    }
+
+    public function store(StoreUserRequest $request)
+    {
+        $user = User::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'email_verified_at' => $request->boolean('verified') ? now() : null,
+            'is_super_admin' => $request->boolean('is_super_admin'),
+        ]);
+
+        if ($request->team_id) {
+            $user->teams()->attach($request->team_id, [
+                'role' => $request->team_role ?? 'member',
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('flash', [
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Usuario creado exitosamente',
+            ],
+        ]);
+    }
+
     public function show(User $user)
     {
         $user->load(['teamMemberships.team:id,name,slug,is_personal']);
-        
-        // Transform teamMemberships to memberships
-        $user->memberships = $user->teamMemberships->map(function ($membership) {
+
+        $allPermissions = [];
+        $user->memberships = $user->teamMemberships->map(function ($membership) use (&$allPermissions) {
+            $role = $membership->role instanceof TeamRole ? $membership->role : TeamRole::tryFrom($membership->role);
+            $modules = $role ? $role->modules() : [];
+
+            $allPermissions[$membership->team->name] = $modules;
+
             return [
+                'id' => $membership->id,
                 'team' => $membership->team,
                 'role' => $membership->role ?? 'member',
+                'role_label' => $role?->label() ?? $membership->role,
+                'role_description' => $role?->description() ?? '',
+                'modules' => collect($modules)->map(fn($m) => [
+                    'name' => $m['name'],
+                    'permissions' => collect($m['permissions'])->map(fn($p) => [
+                        'key' => $p,
+                        'label' => TeamPermission::tryFrom($p)?->label() ?? $p,
+                    ]),
+                ])->values(),
             ];
         });
         unset($user->teamMemberships);
@@ -62,6 +117,53 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
+            'teams' => Team::query()->where('is_personal', false)->get(['id', 'name']),
+        ]);
+    }
+
+    public function edit(User $user)
+    {
+        $user->load(['teamMemberships.team:id,name,slug,is_personal']);
+
+        $user->memberships = $user->teamMemberships->map(function ($membership) {
+            return [
+                'id' => $membership->id,
+                'team' => $membership->team,
+                'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
+            ];
+        });
+        unset($user->teamMemberships);
+
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user,
+            'teams' => Team::query()->where('is_personal', false)->get(['id', 'name']),
+            'teamRoles' => [
+                ['value' => 'member', 'label' => 'Miembro'],
+                ['value' => 'admin', 'label' => 'Administrador'],
+                ['value' => 'owner', 'label' => 'Propietario'],
+            ],
+        ]);
+    }
+
+    public function update(User $user, UpdateUserRequest $request)
+    {
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'is_super_admin' => $request->boolean('is_super_admin'),
+        ];
+
+        if ($request->password) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users.index')->with('flash', [
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Usuario actualizado exitosamente',
+            ],
         ]);
     }
 

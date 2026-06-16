@@ -52,6 +52,7 @@ function statusLabel(s: string): string {
         completed: 'Completada', cancelled: 'Cancelada',
         available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso',
     };
+
     return map[s] ?? s;
 }
 
@@ -66,6 +67,7 @@ function statusClass(s: string): string {
         adopted: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
         in_process: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
     };
+
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 

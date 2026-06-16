@@ -28,16 +28,19 @@ const { photoUrl } = usePhotoUrl();
 
 function speciesLabel(s: string): string {
     const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };
+
     return labels[s] ?? s;
 }
 
 function genderLabel(s: string): string {
     const labels: Record<string, string> = { male: 'Macho', female: 'Hembra' };
+
     return labels[s] ?? s;
 }
 
 function sizeLabel(s: string): string {
     const labels: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
+
     return labels[s] ?? s;
 }
 
@@ -48,11 +51,13 @@ function statusClass(s: string): string {
         in_process: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
         withheld: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return colors[s] ?? 'bg-gray-100 text-gray-600';
 }
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { available: 'Disponible', adopted: 'Adoptado', in_process: 'En proceso', withheld: 'Retenido' };
+
     return labels[s] ?? s;
 }
 
@@ -64,6 +69,7 @@ function speciesIcon(s: string): string {
     const icons: Record<string, string> = {
         dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾',
     };
+
     return icons[s] ?? '🐾';
 }
 </script>

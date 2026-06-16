@@ -1,6 +1,35 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+interface Permission {
+    key: string;
+    label: string;
+}
+
+interface ModuleInfo {
+    name: string;
+    permissions: Permission[];
+}
+
+interface Membership {
+    id: number;
+    team: { id: number; name: string; slug: string };
+    role: string;
+    role_label: string;
+    role_description: string;
+    modules: ModuleInfo[];
+}
 
 interface UserDetail {
     id: number;
@@ -9,21 +38,46 @@ interface UserDetail {
     is_super_admin: boolean;
     email_verified_at: string | null;
     created_at: string;
-    memberships: {
-        id: number;
-        team: { id: number; name: string; slug: string };
-        role: string;
-    }[];
+    memberships: Membership[];
     adoptions_count: number;
 }
 
-const props = defineProps<{ user: UserDetail }>();
+interface Team {
+    id: number;
+    name: string;
+}
 
-const form = useForm({ is_super_admin: props.user.is_super_admin });
+const props = defineProps<{
+    user: UserDetail;
+    teams: Team[];
+}>();
 
-function toggleSuperAdmin() {
-    form.is_super_admin = !form.is_super_admin;
-    form.put('/admin/usuarios/' + props.user.id + '/role');
+const form = useForm({
+    name: props.user.name,
+    email: props.user.email,
+    password: '',
+    is_super_admin: props.user.is_super_admin,
+});
+
+const openModules = ref<Record<string, boolean>>({});
+
+function toggleModule(teamName: string, moduleName: string) {
+    const key = `${teamName}-${moduleName}`;
+    openModules.value[key] = !openModules.value[key];
+}
+
+function isModuleOpen(teamName: string, moduleName: string): boolean {
+    return !!openModules.value[`${teamName}-${moduleName}`];
+}
+
+function saveUser() {
+    form.put('/admin/usuarios/' + props.user.id);
+}
+
+function destroyUser() {
+    if (confirm(`¿Eliminar a "${props.user.name}"? Esta acción no se puede deshacer.`)) {
+        router.delete('/admin/usuarios/' + props.user.id);
+    }
 }
 
 function formatDate(d: string): string {
@@ -34,9 +88,43 @@ function initials(name: string): string {
     return name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
 }
 
-function roleLabel(r: string): string {
-    const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' };
-    return labels[r] ?? r;
+function roleBadgeClass(role: string): string {
+    const map: Record<string, string> = {
+        owner: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+        admin: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
+        organization_manager: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
+        pet_manager: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+        blog_editor: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-400',
+        adoptions_coordinator: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-400',
+        member: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+        viewer: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+    };
+
+    return map[role] ?? 'bg-gray-100 text-gray-600';
+}
+
+function moduleIcon(module: string): string {
+    const icons: Record<string, string> = {
+        team: '🏢', members: '👥', invitations: '📨',
+        pets: '🐾', adoptions: '❤️',
+        'follow-ups': '📋', blog: '📝',
+        events: '📅', announcements: '📢',
+        reports: '📊', data: '📁',
+    };
+
+    return icons[module] ?? '📌';
+}
+
+function permissionActionIcon(key: string): string {
+    const action = key.split(':')[1];
+    const icons: Record<string, string> = {
+        view: '👁️', create: '➕', update: '✏️',
+        delete: '🗑️', add: '➕', remove: '➖',
+        cancel: '❌', 'update-status': '🔄',
+        'generate-docs': '📄', export: '📥',
+    };
+
+    return icons[action] ?? '•';
 }
 </script>
 
@@ -75,9 +163,12 @@ function roleLabel(r: string): string {
                         <p class="mt-1 text-sm text-muted-foreground">{{ user.email }} · Registrado {{ formatDate(user.created_at) }}</p>
                     </div>
                 </div>
-                <Button variant="outline" size="sm" @click="toggleSuperAdmin" :disabled="form.processing" class="shrink-0">
-                    {{ form.processing ? 'Actualizando...' : form.is_super_admin ? 'Remover Super Admin' : 'Hacer Super Admin' }}
-                </Button>
+                <div class="flex items-center gap-2">
+                    <Link :href="'/admin/usuarios/' + user.id + '/editar'">
+                        <Button variant="outline" size="sm" class="shrink-0">Editar Usuario</Button>
+                    </Link>
+                    <Button variant="outline" size="sm" class="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950/30" @click="destroyUser">Eliminar</Button>
+                </div>
             </div>
         </div>
 
@@ -111,26 +202,83 @@ function roleLabel(r: string): string {
             </div>
         </div>
 
-        <div class="mt-6 rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
-            <div class="mb-5 flex items-center gap-2">
-                <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <h2 class="text-base font-semibold text-foreground">Membresías ({{ user.memberships.length }})</h2>
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <h2 class="text-base font-semibold text-foreground">Datos del Usuario</h2>
+                </div>
+                <form @submit.prevent="saveUser" class="space-y-4">
+                    <div>
+                        <Label for="show-name">Nombre</Label>
+                        <Input id="show-name" v-model="form.name" class="mt-1" />
+                    </div>
+                    <div>
+                        <Label for="show-email">Correo electrónico</Label>
+                        <Input id="show-email" v-model="form.email" type="email" class="mt-1" />
+                    </div>
+                    <div>
+                        <Label for="show-password">Nueva contraseña <span class="text-muted-foreground/60">(dejá vacío para mantener la actual)</span></Label>
+                        <Input id="show-password" v-model="form.password" type="password" class="mt-1" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <Checkbox id="show-super-admin" :checked="form.is_super_admin" @update:checked="form.is_super_admin = !!$event" />
+                        <Label for="show-super-admin" class="text-sm font-normal">Super Admin</Label>
+                    </div>
+                    <p v-if="form.recentlySuccessful" class="text-xs text-emerald-600">Datos guardados correctamente.</p>
+                    <Button type="submit" :disabled="form.processing" class="bg-[#2D6A4F] hover:bg-[#245a40]">
+                        {{ form.processing ? 'Guardando...' : 'Guardar Cambios' }}
+                    </Button>
+                </form>
             </div>
 
-            <div v-if="user.memberships.length === 0" class="text-sm text-muted-foreground/60">Sin membresías.</div>
-            <div v-else class="divide-y divide-[#2D6A4F]/10 dark:divide-[#2D6A4F]/20">
-                <div v-for="m in user.memberships" :key="m.id" class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2D6A4F]/10 text-xs font-bold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
-                            {{ m.team.name.charAt(0).toUpperCase() }}
-                        </div>
-                        <a :href="'/admin/organizaciones/' + m.team.slug" class="text-sm font-medium text-foreground transition hover:text-[#2D6A4F]">{{ m.team.name }}</a>
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <h2 class="text-base font-semibold text-foreground">Membresías y Permisos</h2>
                     </div>
-                    <span class="rounded-full px-3 py-0.5 text-xs font-medium"
-                        :class="m.role === 'owner' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' : m.role === 'admin' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'"
-                    >{{ roleLabel(m.role) }}</span>
+                </div>
+
+                <div v-if="user.memberships.length === 0" class="text-sm text-muted-foreground/60">Sin membresías.</div>
+                <div v-else class="space-y-4">
+                    <div v-for="m in user.memberships" :key="m.id" class="rounded-xl border border-[#2D6A4F]/10 p-4 dark:border-[#2D6A4F]/20">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2D6A4F]/10 text-xs font-bold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
+                                    {{ m.team.name.charAt(0).toUpperCase() }}
+                                </div>
+                                <div>
+                                    <a :href="'/admin/organizaciones/' + m.team.slug" class="text-sm font-medium text-foreground transition hover:text-[#2D6A4F]">{{ m.team.name }}</a>
+                                    <span class="ml-2 rounded-full px-2 py-0.5 text-[10px] font-medium" :class="roleBadgeClass(m.role)">{{ m.role_label }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="mt-2 text-xs text-muted-foreground/70">{{ m.role_description }}</p>
+
+                        <div class="mt-3 space-y-1.5">
+                            <div v-for="mod in m.modules" :key="mod.name" class="rounded-lg border border-[#2D6A4F]/5 bg-[#2D6A4F]/3 px-3 py-2 dark:border-[#2D6A4F]/10 dark:bg-[#2D6A4F]/5">
+                                <button @click="toggleModule(m.team.name, mod.name)" class="flex w-full items-center justify-between text-left">
+                                    <span class="text-xs font-medium text-foreground">
+                                        {{ moduleIcon(mod.name) }} {{ mod.name.charAt(0).toUpperCase() + mod.name.slice(1) }}
+                                    </span>
+                                    <svg class="h-3 w-3 text-muted-foreground/60 transition" :class="isModuleOpen(m.team.name, mod.name) ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div v-if="isModuleOpen(m.team.name, mod.name)" class="mt-2 flex flex-wrap gap-1.5 border-t border-[#2D6A4F]/5 pt-2 dark:border-[#2D6A4F]/10">
+                                    <span v-for="p in mod.permissions" :key="p.key" class="inline-flex items-center gap-1 rounded-md bg-white/60 px-2 py-0.5 text-[10px] text-muted-foreground dark:bg-black/20">
+                                        {{ permissionActionIcon(p.key) }} {{ p.label }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

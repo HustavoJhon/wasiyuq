@@ -51,6 +51,7 @@ function destroy(id: number) {
 
 function roleLabel(r: string): string {
     const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' };
+
     return labels[r] ?? r;
 }
 
@@ -60,6 +61,7 @@ function roleColor(r: string): string {
         admin: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
         member: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return colors[r] ?? 'bg-gray-100 text-gray-600';
 }
 

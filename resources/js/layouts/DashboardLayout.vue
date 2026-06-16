@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { ref, computed, watch } from 'vue';
 import { useMediaQuery } from '@/composables/useMediaQuery';
 
 const collapsed = ref(false);
@@ -10,12 +10,17 @@ const isMobile = useMediaQuery('(max-width: 767px)');
 
 const sidebarWidth = computed(() => (collapsed.value ? 'w-16' : 'w-64'));
 const mainMargin = computed(() => {
-    if (isMobile.value) return 'ml-0';
+    if (isMobile.value) {
+return 'ml-0';
+}
+
     return collapsed.value ? 'ml-16' : 'ml-64';
 });
 
 watch(isMobile, (mobile) => {
-    if (mobile) mobileOpen.value = false;
+    if (mobile) {
+mobileOpen.value = false;
+}
 });
 
 function toggleSidebar() {
@@ -55,7 +60,10 @@ const currentTeam = computed<CurrentTeam | null>(() => (page.props.currentTeam a
 const isAdopterRoute = computed(() => window.location.pathname.startsWith('/mi-adopcion'));
 
 const teamSlug = computed(() => {
-    if (isSuperAdmin) return null;
+    if (isSuperAdmin) {
+return null;
+}
+
     return currentTeam.value?.slug ?? null;
 });
 
@@ -94,7 +102,10 @@ const navItems = computed<SidebarItem[]>(() => {
     }
 
     const slug = teamSlug.value;
-    if (!slug) return [];
+
+    if (!slug) {
+return [];
+}
 
     return [
         { href: `/${slug}/dashboard`, label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -115,6 +126,7 @@ const bottomItems = computed<NavItem[]>(() => {
         { href: '/settings/profile', label: 'Mi Perfil', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
         { href: '/', label: 'Volver al sitio', icon: 'M10 19l-7-7m0 0l7-7m-7 7h18' },
     ];
+
     return items;
 });
 
@@ -122,26 +134,35 @@ function isNavActive(item: NavItem): boolean {
     if (isSuperAdmin) {
         if (item.href === '/admin') {
             const adminPaths = ['/admin/mascotas', '/admin/organizaciones', '/admin/eventos', '/admin/blog', '/admin/usuarios', '/admin/roles', '/admin/adopciones', '/admin/seguimiento'];
+
             return window.location.pathname === '/admin' || (isActive('/admin') && !adminPaths.some(p => isActive(p)));
         }
+
         return isActive(item.href);
     }
 
     if (isAdopterRoute.value) {
         if (item.href === '/mi-adopcion') {
             const adopterPaths = ['/mi-adopcion/postulaciones', '/mi-adopcion/seguimientos'];
+
             return window.location.pathname === '/mi-adopcion' || (isActive('/mi-adopcion/') && !adopterPaths.some(p => isActive(p)));
         }
+
         return isActive(item.href);
     }
 
     const slug = teamSlug.value;
-    if (!slug) return false;
+
+    if (!slug) {
+return false;
+}
 
     if (item.href === `/${slug}/dashboard`) {
         const teamPaths = [`/${slug}/mascotas`, `/${slug}/eventos`, `/${slug}/blog`, `/${slug}/adopciones`, `/${slug}/seguimientos`, `/${slug}/miembros`];
+
         return window.location.pathname === item.href || (isActive(`/${slug}/`) && !teamPaths.some(p => isActive(p)));
     }
+
     return isActive(item.href);
 }
 </script>
@@ -157,7 +178,7 @@ function isNavActive(item: NavItem): boolean {
         </Transition>
 
         <aside
-            class="fixed top-0 left-0 z-40 flex h-screen flex-col border-r border-border bg-card shadow-lg transition-all duration-300 md:shadow-none"
+            class="fixed top-0 left-0 z-40 flex h-screen flex-col border-r border-border/60 bg-card/95 backdrop-blur-sm shadow-xl transition-all duration-300 md:shadow-none"
             :class="[
                 isMobile
                     ? mobileOpen
@@ -167,34 +188,43 @@ function isNavActive(item: NavItem): boolean {
             ]"
         >
             <div
-                class="flex h-16 items-center border-b border-border/50 px-3"
-                :class="collapsed && !isMobile ? 'justify-center' : 'gap-2 px-6'"
+                class="flex h-16 items-center border-b border-border/40 px-3"
+                :class="collapsed && !isMobile ? 'justify-center' : 'gap-3 px-6'"
             >
                 <span
-                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2D6A4F] text-sm font-bold text-white"
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2D6A4F] to-[#40916C] text-sm font-bold text-white shadow-sm ring-1 ring-[#2D6A4F]/20"
                 >W</span>
                 <Transition name="fade">
-                    <span v-if="!collapsed || isMobile" class="text-lg font-bold text-card-foreground whitespace-nowrap">{{ isSuperAdmin ? 'Wasiyuq Admin' : isAdopterRoute ? 'Mi Panel' : 'Mi Organización' }}</span>
+                    <span v-if="!collapsed || isMobile" class="text-lg font-bold text-card-foreground whitespace-nowrap tracking-tight">{{ isSuperAdmin ? 'Wasiyuq Admin' : isAdopterRoute ? 'Mi Panel' : 'Mi Organización' }}</span>
                 </Transition>
             </div>
 
-            <nav class="flex-1 space-y-1 overflow-y-auto p-3">
+            <nav class="flex-1 space-y-1 overflow-y-auto p-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-track]:bg-transparent">
                 <template v-for="item in navItems" :key="'href' in item ? item.href : item.type">
-                    <div v-if="'type' in item && item.type === 'divider'" class="my-3 border-t border-border/50" />
+                    <div v-if="'type' in item && item.type === 'divider'" class="my-3 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
 
                     <a
                         v-else
                         :href="(item as NavItem).href"
-                        class="group relative flex items-center rounded-lg text-sm font-medium transition"
+                        class="group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200"
                         :class="[
                             collapsed && !isMobile ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5',
                             isNavActive(item as NavItem)
-                                ? 'bg-[#2D6A4F] text-white'
-                                : 'text-muted-foreground hover:bg-accent'
+                                ? 'bg-[#2D6A4F]/10 text-[#2D6A4F]'
+                                : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                         ]"
                         :title="collapsed && !isMobile ? (item as NavItem).label : undefined"
                     >
-                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span
+                            v-if="isNavActive(item as NavItem) && (!collapsed || isMobile)"
+                            class="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-[#2D6A4F] transition-all duration-200"
+                        />
+                        <svg
+                            class="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="(item as NavItem).icon" />
                         </svg>
                         <Transition name="fade">
@@ -204,21 +234,26 @@ function isNavActive(item: NavItem): boolean {
                 </template>
             </nav>
 
-            <div class="space-y-1 border-t border-border/50 p-3">
+            <div class="space-y-1 border-t border-border/40 p-3">
                 <a
                     v-for="item in bottomItems"
                     :key="item.href"
                     :href="item.href"
-                    class="group relative flex items-center rounded-lg text-sm transition"
+                    class="group relative flex items-center rounded-lg text-sm transition-all duration-200"
                     :class="[
                         collapsed && !isMobile ? 'justify-center p-2.5' : 'gap-3 px-3 py-2',
                         isActive(item.href)
-                            ? 'bg-[#2D6A4F] text-white'
-                            : 'text-muted-foreground hover:bg-accent'
+                            ? 'bg-[#2D6A4F]/10 text-[#2D6A4F]'
+                            : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                     ]"
                     :title="collapsed && !isMobile ? item.label : undefined"
                 >
-                    <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                        class="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                     </svg>
                     <Transition name="fade">
@@ -236,7 +271,7 @@ function isNavActive(item: NavItem): boolean {
                 class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/95 backdrop-blur-sm px-4 sm:px-6"
             >
                 <button
-                    class="rounded-lg p-2 text-muted-foreground transition hover:bg-accent"
+                    class="rounded-lg p-2 text-muted-foreground transition-all duration-200 hover:bg-accent hover:scale-105"
                     @click="toggleSidebar"
                 >
                     <svg

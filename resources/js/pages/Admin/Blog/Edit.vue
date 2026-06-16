@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
 import { marked } from 'marked';
+import { ref, computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

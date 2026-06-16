@@ -47,11 +47,13 @@ function statusClass(status: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         cancelled: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[status] ?? 'bg-gray-100 text-gray-600';
 }
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada', completed: 'Completada', cancelled: 'Cancelada' };
+
     return labels[s] ?? s;
 }
 
@@ -61,11 +63,13 @@ function fuStatusClass(s: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         missed: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
     };
+
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 
 function fuStatusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' };
+
     return labels[s] ?? s;
 }
 

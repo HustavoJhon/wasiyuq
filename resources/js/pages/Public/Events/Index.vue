@@ -30,9 +30,13 @@ const props = defineProps<{
 
 function applyFilters(newFilters: { type?: string }) {
     const params = new URLSearchParams();
+
     for (const [key, value] of Object.entries(newFilters)) {
-        if (value) params.set(key, value);
+        if (value) {
+params.set(key, value);
+}
     }
+
     const qs = params.toString();
     router.get('/eventos' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
 }

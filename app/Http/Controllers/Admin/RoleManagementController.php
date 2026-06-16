@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Enums\TeamRole;
 use App\Enums\TeamPermission;
-use Illuminate\Http\Request;
+use App\Enums\TeamRole;
+use App\Http\Controllers\Controller;
+use App\Models\Membership;
+use App\Models\User;
 use Inertia\Inertia;
 
 class RoleManagementController extends Controller
 {
     public function index()
     {
+        $roleCounts = Membership::query()
+            ->selectRaw('role, count(distinct user_id) as total')
+            ->groupBy('role')
+            ->pluck('total', 'role');
+
         $roles = collect(TeamRole::cases())
             ->map(fn (TeamRole $role) => [
                 'value' => $role->value,
@@ -20,6 +26,7 @@ class RoleManagementController extends Controller
                 'level' => $role->level(),
                 'modules' => $role->modules(),
                 'total_permissions' => count($role->permissions()),
+                'total_users' => $roleCounts->get($role->value, 0),
             ])
             ->sortByDesc('level')
             ->values();
@@ -48,12 +55,27 @@ class RoleManagementController extends Controller
             ])
             ->values();
 
+        $totalUsers = Membership::query()
+            ->where('role', $role->value)
+            ->selectRaw('count(distinct user_id) as total')
+            ->value('total');
+
+        $users = User::query()
+            ->whereIn('id', Membership::query()
+                ->where('role', $role->value)
+                ->select('user_id')
+                ->distinct()
+            )
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
         return Inertia::render('Admin/Roles/Show', [
             'role' => [
                 'value' => $role->value,
                 'label' => $role->label(),
                 'description' => $role->description(),
                 'level' => $role->level(),
+                'total_users' => $totalUsers,
             ],
             'permissions' => $permissions,
             'all_permissions' => collect(TeamPermission::cases())
@@ -63,6 +85,7 @@ class RoleManagementController extends Controller
                     'count' => count($group),
                 ])
                 ->values(),
+            'users' => $users,
         ]);
     }
 }

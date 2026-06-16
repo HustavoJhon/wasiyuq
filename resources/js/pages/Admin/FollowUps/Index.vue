@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface FollowUp {
     id: number;
@@ -17,6 +17,11 @@ interface FollowUp {
     created_by: { id: number; name: string };
 }
 
+interface Team {
+    id: number;
+    name: string;
+}
+
 interface Meta {
     current_page: number;
     last_page: number;
@@ -24,13 +29,26 @@ interface Meta {
     per_page: number;
 }
 
+interface Filters {
+    search?: string;
+    status?: string;
+    team_id?: string;
+    date_from?: string;
+    date_to?: string;
+}
+
 const props = defineProps<{
     followUps: FollowUp[];
     meta: Meta;
-    filters?: { search?: string };
+    filters?: Filters;
+    teams: Team[];
 }>();
 
 const search = ref(props.filters?.search ?? '');
+const selectedStatus = ref(props.filters?.status ?? '');
+const selectedTeam = ref(props.filters?.team_id ?? '');
+const dateFrom = ref(props.filters?.date_from ?? '');
+const dateTo = ref(props.filters?.date_to ?? '');
 
 function statusClass(status: string): string {
     const map: Record<string, string> = {
@@ -38,11 +56,13 @@ function statusClass(status: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         missed: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
     };
+
     return map[status] ?? 'bg-gray-100 text-gray-600';
 }
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' };
+
     return labels[s] ?? s;
 }
 
@@ -56,12 +76,27 @@ function destroy(id: number): void {
     }
 }
 
-let debounceTimer: ReturnType<typeof setTimeout>;
-function onSearchInput() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        router.get('/admin/seguimiento', { search: search.value || undefined }, { preserveState: true, replace: true });
-    }, 300);
+function hasFilters(): boolean {
+    return !!(props.filters?.search || props.filters?.status || props.filters?.team_id || props.filters?.date_from || props.filters?.date_to);
+}
+
+function applyFilters() {
+    router.get('/admin/seguimiento', {
+        search: search.value || undefined,
+        status: selectedStatus.value || undefined,
+        team_id: selectedTeam.value || undefined,
+        date_from: dateFrom.value || undefined,
+        date_to: dateTo.value || undefined,
+    }, { preserveState: true, replace: true });
+}
+
+function clearFilters() {
+    search.value = '';
+    selectedStatus.value = '';
+    selectedTeam.value = '';
+    dateFrom.value = '';
+    dateTo.value = '';
+    router.get('/admin/seguimiento', { page: 1 }, { preserveState: true, replace: true });
 }
 </script>
 
@@ -87,15 +122,83 @@ function onSearchInput() {
             </a>
         </div>
 
-        <div class="mb-6">
-            <div class="relative max-w-md">
-                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input v-model="search" type="text" placeholder="Buscar seguimientos..."
-                    class="h-10 w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 pl-9 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                    @input="onSearchInput"
-                />
+        <div class="mb-6 rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+            <div class="flex flex-wrap items-end gap-3">
+                <div class="w-full">
+                    <label for="search" class="text-xs font-medium text-muted-foreground">Buscar</label>
+                    <div class="relative mt-1">
+                        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input
+                            id="search"
+                            v-model="search"
+                            type="text"
+                            placeholder="Buscar por mascota, adoptante o creador..."
+                            class="block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-9 pr-4 text-sm text-foreground transition outline-none placeholder:text-muted-foreground/40 focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @input="applyFilters"
+                        />
+                    </div>
+                </div>
+                <div class="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:flex-1 sm:grid-cols-none">
+                    <div>
+                        <label for="filter-status" class="text-xs font-medium text-muted-foreground">Estado</label>
+                        <select
+                            id="filter-status"
+                            v-model="selectedStatus"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        >
+                            <option value="">Todos</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="completed">Completado</option>
+                            <option value="missed">No Realizado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-team" class="text-xs font-medium text-muted-foreground">Organización</label>
+                        <select
+                            id="filter-team"
+                            v-model="selectedTeam"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        >
+                            <option value="">Todas</option>
+                            <option v-for="team in teams" :key="team.id" :value="String(team.id)">{{ team.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-date-from" class="text-xs font-medium text-muted-foreground">Desde</label>
+                        <input
+                            id="filter-date-from"
+                            v-model="dateFrom"
+                            type="date"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        />
+                    </div>
+                    <div>
+                        <label for="filter-date-to" class="text-xs font-medium text-muted-foreground">Hasta</label>
+                        <input
+                            id="filter-date-to"
+                            v-model="dateTo"
+                            type="date"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        />
+                    </div>
+                </div>
+                <button
+                    v-if="hasFilters()"
+                    type="button"
+                    class="flex h-[38px] w-full items-center justify-center gap-1 self-end rounded-xl border border-[#2D6A4F]/15 px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted sm:w-auto"
+                    @click="clearFilters"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Limpiar filtros
+                </button>
             </div>
         </div>
 
@@ -169,7 +272,7 @@ function onSearchInput() {
 
         <div v-if="meta.last_page > 1" class="mt-8 flex items-center justify-center gap-2">
             <a v-for="page in meta.last_page" :key="page"
-                :href="'/admin/seguimiento?page=' + page + (search ? '&search=' + encodeURIComponent(search) : '')"
+                :href="'/admin/seguimiento?page=' + page + (filters?.search ? '&search=' + encodeURIComponent(filters.search) : '') + (filters?.status ? '&status=' + filters.status : '') + (filters?.team_id ? '&team_id=' + filters.team_id : '') + (filters?.date_from ? '&date_from=' + filters.date_from : '') + (filters?.date_to ? '&date_to=' + filters.date_to : '')"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all"
                 :class="page === meta.current_page ? 'bg-[#2D6A4F] text-white shadow-sm shadow-[#2D6A4F]/20' : 'border border-[#2D6A4F]/15 text-muted-foreground hover:border-[#2D6A4F]/30 hover:text-foreground dark:border-[#2D6A4F]/30'"
             >{{ page }}</a>

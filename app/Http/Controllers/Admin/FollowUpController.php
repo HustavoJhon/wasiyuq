@@ -30,7 +30,28 @@ class FollowUpController extends Controller
             });
         }
 
+        if ($status = request('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($teamId = request('team_id')) {
+            $query->whereHas('adoption', fn($q) => $q->where('team_id', $teamId));
+        }
+
+        if ($dateFrom = request('date_from')) {
+            $query->whereDate('scheduled_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo = request('date_to')) {
+            $query->whereDate('scheduled_date', '<=', $dateTo);
+        }
+
         $followUps = $query->latest()->paginate(15)->withQueryString();
+
+        $teams = \App\Models\Team::query()
+            ->where('is_personal', false)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/FollowUps/Index', [
             'followUps' => $followUps->items(),
@@ -40,7 +61,8 @@ class FollowUpController extends Controller
                 'total' => $followUps->total(),
                 'per_page' => $followUps->perPage(),
             ],
-            'filters' => request()->only(['search']),
+            'filters' => request()->only(['search', 'status', 'team_id', 'date_from', 'date_to']),
+            'teams' => $teams,
         ]);
     }
 

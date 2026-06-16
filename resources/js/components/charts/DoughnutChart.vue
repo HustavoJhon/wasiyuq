@@ -41,6 +41,7 @@ function polarToCartesian(
     angleDeg: number,
 ): { x: number; y: number } {
     const rad = ((angleDeg - 90) * Math.PI) / 180;
+
     return {
         x: cx + r * Math.cos(rad),
         y: cy + r * Math.sin(rad),
@@ -65,6 +66,7 @@ function describeArc(startAngle: number, endAngle: number): string {
 
 const slices = computed(() => {
     let currentAngle = 0;
+
     return props.data.map((d, i) => {
         const angle = (d.value / total.value) * 360;
         const slice = {
@@ -75,6 +77,7 @@ const slices = computed(() => {
             percent: ((d.value / total.value) * 100).toFixed(1),
         };
         currentAngle += angle;
+
         return slice;
     });
 });

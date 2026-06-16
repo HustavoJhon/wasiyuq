@@ -24,7 +24,11 @@ Route::prefix('admin')
         Route::get('/roles/{role}', [RoleManagementController::class, 'show'])->name('roles.show');
 
         Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
+        Route::get('/usuarios/crear', [UserController::class, 'create'])->name('users.create');
+        Route::post('/usuarios', [UserController::class, 'store'])->name('users.store');
         Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/usuarios/{user}/editar', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('users.update');
         Route::put('/usuarios/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 

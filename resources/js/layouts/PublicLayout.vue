@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { ArrowRight, MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Sonner from '@/components/ui/sonner/Sonner.vue';
 import { useAppearance } from '@/composables/useAppearance';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import { ArrowRight, MapPin } from 'lucide-vue-next';
 
 const mobileOpen = ref(false);
 const { resolvedAppearance, updateAppearance } = useAppearance();

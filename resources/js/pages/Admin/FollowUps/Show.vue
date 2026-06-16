@@ -35,11 +35,13 @@ function statusClass(s: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         missed: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
     };
+
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', completed: 'Completado', missed: 'No Realizado' };
+
     return labels[s] ?? s;
 }
 
@@ -49,11 +51,13 @@ function healthClass(s: string | null): string {
         fair: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
         poor: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
     };
+
     return map[s ?? ''] ?? '';
 }
 
 function healthLabel(s: string | null): string {
     const labels: Record<string, string> = { good: 'Bueno', fair: 'Regular', poor: 'Malo' };
+
     return s ? labels[s] ?? s : '—';
 }
 

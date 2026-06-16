@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3';
 import {
     Dog,
     Cat,
@@ -11,7 +12,6 @@ import {
     ChevronRight,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 const { photoUrl } = usePhotoUrl();
@@ -58,9 +58,13 @@ const props = defineProps<{
 
 function applyFilters(newFilters: Record<string, string>) {
     const params = new URLSearchParams();
+
     for (const [key, value] of Object.entries(newFilters)) {
-        if (value) params.set(key, value);
+        if (value) {
+params.set(key, value);
+}
     }
+
     const qs = params.toString();
     router.get('/mascotas' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
 }
@@ -68,7 +72,11 @@ function applyFilters(newFilters: Record<string, string>) {
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 function onSearchInput(e: Event) {
     const value = (e.target as HTMLInputElement).value;
-    if (searchTimeout) clearTimeout(searchTimeout);
+
+    if (searchTimeout) {
+clearTimeout(searchTimeout);
+}
+
     searchTimeout = setTimeout(() => {
         applyFilters({ ...props.filters, search: value });
     }, 400);

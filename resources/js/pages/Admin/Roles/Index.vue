@@ -18,15 +18,28 @@ interface Role {
     level: number;
     modules: Record<string, any>;
     total_permissions: number;
+    total_users: number;
 }
 
 const props = defineProps<{ roles: Role[] }>();
 
 function levelIcon(level: number) {
-    if (level >= 9) return ShieldCheck;
-    if (level >= 7) return Shield;
-    if (level >= 5) return ShieldHalf;
-    if (level >= 3) return Settings;
+    if (level >= 9) {
+return ShieldCheck;
+}
+
+    if (level >= 7) {
+return Shield;
+}
+
+    if (level >= 5) {
+return ShieldHalf;
+}
+
+    if (level >= 3) {
+return Settings;
+}
+
     return Eye;
 }
 
@@ -41,11 +54,13 @@ function levelColor(level: number): string {
         '2': 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
         '1': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[String(level)] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-800';
 }
 
 function roleIcon(level: number) {
     const Icon = levelIcon(level);
+
     return Icon;
 }
 
@@ -105,7 +120,7 @@ const moduleIcons: Record<string, string> = {
                 </div>
 
                 <div class="mt-4 flex items-center justify-between border-t border-[#2D6A4F]/10 pt-3 dark:border-[#2D6A4F]/20">
-                    <span class="text-xs text-muted-foreground/60">{{ role.total_permissions }} permisos · {{ Object.keys(role.modules).length }} módulos</span>
+                    <span class="text-xs text-muted-foreground/60">{{ role.total_users }} usuario{{ role.total_users !== 1 ? 's' : '' }} · {{ role.total_permissions }} permisos · {{ Object.keys(role.modules).length }} módulos</span>
                     <ArrowRight class="h-4 w-4 text-[#2D6A4F]/50 transition group-hover:translate-x-1" />
                 </div>
             </a>

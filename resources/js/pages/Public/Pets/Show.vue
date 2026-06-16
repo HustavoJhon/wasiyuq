@@ -99,34 +99,46 @@ function openForm(): void {
     if (!isAuthenticated) {
         window.location.href =
             '/login?redirect=' + encodeURIComponent(window.location.pathname);
+
         return;
     }
+
     showForm.value = true;
 }
 
 function formatAge(years: number, months: number): string {
-    if (years > 0) return years + ' año' + (years > 1 ? 's' : '');
-    if (months > 0) return months + ' mes' + (months > 1 ? 'es' : '');
+    if (years > 0) {
+return years + ' año' + (years > 1 ? 's' : '');
+}
+
+    if (months > 0) {
+return months + ' mes' + (months > 1 ? 'es' : '');
+}
+
     return 'Cachorro';
 }
 
 function speciesLabel(species: string): string {
     const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };
+
     return labels[species] ?? species;
 }
 
 function sizeLabel(size: string): string {
     const labels: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
+
     return labels[size] ?? size;
 }
 
 function genderLabel(gender: string): string {
     const labels: Record<string, string> = { male: 'Macho', female: 'Hembra' };
+
     return labels[gender] ?? gender;
 }
 
 function statusLabel(status: string): string {
     const labels: Record<string, string> = { available: 'Disponible', in_process: 'En Proceso', adopted: 'Adoptado', withheld: 'Reservado' };
+
     return labels[status] ?? status;
 }
 
@@ -137,11 +149,13 @@ function statusColor(status: string): string {
         adopted: 'bg-blue-500',
         withheld: 'bg-gray-400',
     };
+
     return colors[status] ?? 'bg-gray-400';
 }
 
 function speciesEmoji(species: string): string {
     const icons: Record<string, string> = { dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾' };
+
     return icons[species] ?? '🐾';
 }
 </script>

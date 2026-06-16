@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
 interface Adoption {
     id: number;
@@ -82,16 +82,19 @@ function statusClass(status: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         cancelled: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[status] ?? 'bg-gray-100 text-gray-600';
 }
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada', completed: 'Completada', cancelled: 'Cancelada' };
+
     return labels[s] ?? s;
 }
 
 function speciesLabel(s: string): string {
     const labels: Record<string, string> = { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' };
+
     return labels[s] ?? s;
 }
 
@@ -102,6 +105,7 @@ function formatDate(d: string): string {
 function formatMonth(m: string): string {
     const [y, mon] = m.split('-');
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
     return months[parseInt(mon) - 1] + ' ' + y;
 }
 
