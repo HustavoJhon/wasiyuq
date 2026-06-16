@@ -136,16 +136,18 @@ const CHART_RADIUS = 36;
 const CHART_STROKE = 14;
 const CHART_CIRCUMFERENCE = 2 * Math.PI * CHART_RADIUS;
 
-function donutSegments(data: Record<string, number>, colorMap: Record<string, string>) {
-    const total = Object.values(data).reduce((a, b) => a + b, 0);
-    if (total === 0) return [];
+function donutSegments(data: Record<string, number>, colorMap: Record<string, string>, nameMap?: Record<string, string>) {
     const entries = Object.entries(data);
+    if (entries.length === 0) return [];
+    const total = entries.reduce((sum, [, val]) => sum + Number(val), 0);
+    if (total === 0) return [];
     const gap = 4;
     const totalGap = entries.length * gap;
     const available = 360 - totalGap;
     let currentAngle = 0;
-    return entries.map(([key, value]) => {
-        const pct = total > 0 ? value / total : 0;
+    return entries.map(([key, val]) => {
+        const numVal = Number(val);
+        const pct = numVal / total;
         const angle = pct * available + gap;
         const startAngle = currentAngle + gap / 2;
         const offset = (startAngle / 360) * CHART_CIRCUMFERENCE;
@@ -153,12 +155,12 @@ function donutSegments(data: Record<string, number>, colorMap: Record<string, st
         currentAngle += angle;
         return {
             key,
-            value,
+            value: numVal,
             pct: Math.round(pct * 100),
             dasharray: `${Math.max(length, 0.5)} ${CHART_CIRCUMFERENCE}`,
             dashoffset: -offset,
             color: colorMap[key] ?? '#78716c',
-            name: speciesLabels[key] ?? statusLabels[key] ?? key,
+            name: nameMap?.[key] ?? speciesLabels[key] ?? statusLabels[key] ?? key,
         };
     });
 }
@@ -174,7 +176,7 @@ const teamChart = computed(() => {
         teamColorMap[teamId] = palette[i % palette.length];
         i++;
     }
-    return donutSegments(byTeam, teamColorMap);
+    return donutSegments(byTeam, teamColorMap, teamNames.value);
 });
 
 const pageLinks = computed(() => {
