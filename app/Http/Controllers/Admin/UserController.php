@@ -29,7 +29,7 @@ class UserController extends Controller
             $user->memberships = $user->teamMemberships->map(function ($membership) {
                 return [
                     'team' => $membership->team,
-                    'role' => $membership->role ?? 'member',
+                    'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
                 ];
             });
             unset($user->teamMemberships);
@@ -91,7 +91,7 @@ class UserController extends Controller
 
         $allPermissions = [];
         $user->memberships = $user->teamMemberships->map(function ($membership) use (&$allPermissions) {
-            $role = TeamRole::tryFrom($membership->role);
+            $role = $membership->role instanceof TeamRole ? $membership->role : TeamRole::tryFrom($membership->role);
             $modules = $role ? $role->modules() : [];
 
             $allPermissions[$membership->team->name] = $modules;
@@ -129,7 +129,7 @@ class UserController extends Controller
             return [
                 'id' => $membership->id,
                 'team' => $membership->team,
-                'role' => $membership->role ?? 'member',
+                'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
             ];
         });
         unset($user->teamMemberships);
