@@ -1,26 +1,34 @@
 <script setup lang="ts">
 import { Link, useForm, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
-interface Team {
-    id: number;
+interface Permission {
+    key: string;
+    label: string;
+}
+
+interface ModuleInfo {
     name: string;
+    permissions: Permission[];
 }
 
 interface Membership {
     id: number;
     team: { id: number; name: string; slug: string };
     role: string;
+    role_label: string;
+    role_description: string;
+    modules: ModuleInfo[];
 }
 
 interface UserDetail {
@@ -32,6 +40,11 @@ interface UserDetail {
     created_at: string;
     memberships: Membership[];
     adoptions_count: number;
+}
+
+interface Team {
+    id: number;
+    name: string;
 }
 
 const props = defineProps<{
@@ -46,12 +59,18 @@ const form = useForm({
     is_super_admin: props.user.is_super_admin,
 });
 
-function saveUser() {
-    form.put('/admin/usuarios/' + props.user.id);
+const openModules = ref<Record<string, boolean>>({});
+
+function toggleModule(teamName: string, moduleName: string) {
+    const key = `${teamName}-${moduleName}`;
+    openModules.value[key] = !openModules.value[key];
 }
 
-function toggleSuperAdmin() {
-    form.is_super_admin = !form.is_super_admin;
+function isModuleOpen(teamName: string, moduleName: string): boolean {
+    return !!openModules.value[`${teamName}-${moduleName}`];
+}
+
+function saveUser() {
     form.put('/admin/usuarios/' + props.user.id);
 }
 
@@ -69,9 +88,40 @@ function initials(name: string): string {
     return name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
 }
 
-function roleLabel(r: string): string {
-    const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' };
-    return labels[r] ?? r;
+function roleBadgeClass(role: string): string {
+    const map: Record<string, string> = {
+        owner: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+        admin: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
+        organization_manager: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
+        pet_manager: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+        blog_editor: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-400',
+        adoptions_coordinator: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-400',
+        member: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+        viewer: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+    };
+    return map[role] ?? 'bg-gray-100 text-gray-600';
+}
+
+function moduleIcon(module: string): string {
+    const icons: Record<string, string> = {
+        team: '🏢', members: '👥', invitations: '📨',
+        pets: '🐾', adoptions: '❤️',
+        'follow-ups': '📋', blog: '📝',
+        events: '📅', announcements: '📢',
+        reports: '📊', data: '📁',
+    };
+    return icons[module] ?? '📌';
+}
+
+function permissionActionIcon(key: string): string {
+    const action = key.split(':')[1];
+    const icons: Record<string, string> = {
+        view: '👁️', create: '➕', update: '✏️',
+        delete: '🗑️', add: '➕', remove: '➖',
+        cancel: '❌', 'update-status': '🔄',
+        'generate-docs': '📄', export: '📥',
+    };
+    return icons[action] ?? '•';
 }
 </script>
 
@@ -112,13 +162,9 @@ function roleLabel(r: string): string {
                 </div>
                 <div class="flex items-center gap-2">
                     <Link :href="'/admin/usuarios/' + user.id + '/editar'">
-                        <Button variant="outline" size="sm" class="shrink-0">
-                            Editar Usuario
-                        </Button>
+                        <Button variant="outline" size="sm" class="shrink-0">Editar Usuario</Button>
                     </Link>
-                    <Button variant="outline" size="sm" class="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950/30" @click="destroyUser">
-                        Eliminar
-                    </Button>
+                    <Button variant="outline" size="sm" class="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950/30" @click="destroyUser">Eliminar</Button>
                 </div>
             </div>
         </div>
@@ -191,25 +237,44 @@ function roleLabel(r: string): string {
                         <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        <h2 class="text-base font-semibold text-foreground">Membresías ({{ user.memberships.length }})</h2>
+                        <h2 class="text-base font-semibold text-foreground">Membresías y Permisos</h2>
                     </div>
                 </div>
 
                 <div v-if="user.memberships.length === 0" class="text-sm text-muted-foreground/60">Sin membresías.</div>
-                <div v-else class="divide-y divide-[#2D6A4F]/10 dark:divide-[#2D6A4F]/20">
-                    <div v-for="m in user.memberships" :key="m.id" class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2D6A4F]/10 text-xs font-bold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
-                                {{ m.team.name.charAt(0).toUpperCase() }}
-                            </div>
-                            <div>
-                                <a :href="'/admin/organizaciones/' + m.team.slug" class="text-sm font-medium text-foreground transition hover:text-[#2D6A4F]">{{ m.team.name }}</a>
-                                <p class="text-xs text-muted-foreground/60">ID: {{ m.team.id }}</p>
+                <div v-else class="space-y-4">
+                    <div v-for="m in user.memberships" :key="m.id" class="rounded-xl border border-[#2D6A4F]/10 p-4 dark:border-[#2D6A4F]/20">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2D6A4F]/10 text-xs font-bold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
+                                    {{ m.team.name.charAt(0).toUpperCase() }}
+                                </div>
+                                <div>
+                                    <a :href="'/admin/organizaciones/' + m.team.slug" class="text-sm font-medium text-foreground transition hover:text-[#2D6A4F]">{{ m.team.name }}</a>
+                                    <span class="ml-2 rounded-full px-2 py-0.5 text-[10px] font-medium" :class="roleBadgeClass(m.role)">{{ m.role_label }}</span>
+                                </div>
                             </div>
                         </div>
-                        <span class="rounded-full px-3 py-0.5 text-xs font-medium"
-                            :class="m.role === 'owner' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' : m.role === 'admin' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'"
-                        >{{ roleLabel(m.role) }}</span>
+
+                        <p class="mt-2 text-xs text-muted-foreground/70">{{ m.role_description }}</p>
+
+                        <div class="mt-3 space-y-1.5">
+                            <div v-for="mod in m.modules" :key="mod.name" class="rounded-lg border border-[#2D6A4F]/5 bg-[#2D6A4F]/3 px-3 py-2 dark:border-[#2D6A4F]/10 dark:bg-[#2D6A4F]/5">
+                                <button @click="toggleModule(m.team.name, mod.name)" class="flex w-full items-center justify-between text-left">
+                                    <span class="text-xs font-medium text-foreground">
+                                        {{ moduleIcon(mod.name) }} {{ mod.name.charAt(0).toUpperCase() + mod.name.slice(1) }}
+                                    </span>
+                                    <svg class="h-3 w-3 text-muted-foreground/60 transition" :class="isModuleOpen(m.team.name, mod.name) ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div v-if="isModuleOpen(m.team.name, mod.name)" class="mt-2 flex flex-wrap gap-1.5 border-t border-[#2D6A4F]/5 pt-2 dark:border-[#2D6A4F]/10">
+                                    <span v-for="p in mod.permissions" :key="p.key" class="inline-flex items-center gap-1 rounded-md bg-white/60 px-2 py-0.5 text-[10px] text-muted-foreground dark:bg-black/20">
+                                        {{ permissionActionIcon(p.key) }} {{ p.label }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

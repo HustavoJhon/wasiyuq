@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\TeamPermission;
+use App\Enums\TeamRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -86,12 +88,27 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load(['teamMemberships.team:id,name,slug,is_personal']);
-        
-        $user->memberships = $user->teamMemberships->map(function ($membership) {
+
+        $allPermissions = [];
+        $user->memberships = $user->teamMemberships->map(function ($membership) use (&$allPermissions) {
+            $role = TeamRole::tryFrom($membership->role);
+            $modules = $role ? $role->modules() : [];
+
+            $allPermissions[$membership->team->name] = $modules;
+
             return [
                 'id' => $membership->id,
                 'team' => $membership->team,
                 'role' => $membership->role ?? 'member',
+                'role_label' => $role?->label() ?? $membership->role,
+                'role_description' => $role?->description() ?? '',
+                'modules' => collect($modules)->map(fn($m) => [
+                    'name' => $m['name'],
+                    'permissions' => collect($m['permissions'])->map(fn($p) => [
+                        'key' => $p,
+                        'label' => TeamPermission::tryFrom($p)?->label() ?? $p,
+                    ]),
+                ])->values(),
             ];
         });
         unset($user->teamMemberships);
