@@ -47,7 +47,10 @@ const selectedTeam = ref(props.filters.team_id ?? '');
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function applyFilters() {
-    if (searchTimeout) clearTimeout(searchTimeout);
+    if (searchTimeout) {
+clearTimeout(searchTimeout);
+}
+
     searchTimeout = setTimeout(() => {
         router.get('/admin/mascotas', {
             search: searchInput.value || '',
@@ -76,9 +79,11 @@ function hasFilters(): boolean {
 
 const teamNames = computed(() => {
     const map: Record<string, string> = {};
+
     for (const t of props.teams) {
         map[String(t.id)] = t.name;
     }
+
     return map;
 });
 
@@ -119,6 +124,7 @@ function statusColor(s: string): string {
         in_process: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
         withheld: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return colors[s] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -138,13 +144,22 @@ const CHART_CIRCUMFERENCE = 2 * Math.PI * CHART_RADIUS;
 
 function donutSegments(data: Record<string, number>, colorMap: Record<string, string>, nameMap?: Record<string, string>) {
     const entries = Object.entries(data);
-    if (entries.length === 0) return [];
+
+    if (entries.length === 0) {
+return [];
+}
+
     const total = entries.reduce((sum, [, val]) => sum + Number(val), 0);
-    if (total === 0) return [];
+
+    if (total === 0) {
+return [];
+}
+
     const gap = 4;
     const totalGap = entries.length * gap;
     const available = 360 - totalGap;
     let currentAngle = 0;
+
     return entries.map(([key, val]) => {
         const numVal = Number(val);
         const pct = numVal / total;
@@ -153,6 +168,7 @@ function donutSegments(data: Record<string, number>, colorMap: Record<string, st
         const offset = (startAngle / 360) * CHART_CIRCUMFERENCE;
         const length = (angle / 360) * CHART_CIRCUMFERENCE;
         currentAngle += angle;
+
         return {
             key,
             value: numVal,
@@ -172,18 +188,22 @@ const teamChart = computed(() => {
     const palette = ['#16a34a', '#2563eb', '#d97706', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4'];
     const teamColorMap: Record<string, string> = {};
     let i = 0;
+
     for (const teamId of Object.keys(byTeam)) {
         teamColorMap[teamId] = palette[i % palette.length];
         i++;
     }
+
     return donutSegments(byTeam, teamColorMap, teamNames.value);
 });
 
 const pageLinks = computed(() => {
     const links = [];
+
     for (let i = 1; i <= props.meta.last_page; i++) {
         links.push(i);
     }
+
     return links;
 });
 </script>
