@@ -124,7 +124,7 @@ function clearFilters() {
 
         <div class="mb-6 rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
             <div class="flex flex-wrap items-end gap-3">
-                <div class="min-w-0 flex-1">
+                <div class="w-full">
                     <label for="search" class="text-xs font-medium text-muted-foreground">Buscar</label>
                     <div class="relative mt-1">
                         <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,62 +140,64 @@ function clearFilters() {
                         />
                     </div>
                 </div>
-                <div class="w-full sm:w-36">
-                    <label for="filter-status" class="text-xs font-medium text-muted-foreground">Estado</label>
-                    <select
-                        id="filter-status"
-                        v-model="selectedStatus"
-                        class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                        @change="applyFilters"
-                    >
-                        <option value="">Todos</option>
-                        <option value="pending">Pendiente</option>
-                        <option value="completed">Completado</option>
-                        <option value="missed">No Realizado</option>
-                    </select>
-                </div>
-                <div class="w-full sm:w-44">
-                    <label for="filter-team" class="text-xs font-medium text-muted-foreground">Organización</label>
-                    <select
-                        id="filter-team"
-                        v-model="selectedTeam"
-                        class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                        @change="applyFilters"
-                    >
-                        <option value="">Todas</option>
-                        <option v-for="team in teams" :key="team.id" :value="String(team.id)">{{ team.name }}</option>
-                    </select>
-                </div>
-                <div class="w-full sm:w-36">
-                    <label for="filter-date-from" class="text-xs font-medium text-muted-foreground">Desde</label>
-                    <input
-                        id="filter-date-from"
-                        v-model="dateFrom"
-                        type="date"
-                        class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                        @change="applyFilters"
-                    />
-                </div>
-                <div class="w-full sm:w-36">
-                    <label for="filter-date-to" class="text-xs font-medium text-muted-foreground">Hasta</label>
-                    <input
-                        id="filter-date-to"
-                        v-model="dateTo"
-                        type="date"
-                        class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
-                        @change="applyFilters"
-                    />
+                <div class="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:flex-1 sm:grid-cols-none">
+                    <div>
+                        <label for="filter-status" class="text-xs font-medium text-muted-foreground">Estado</label>
+                        <select
+                            id="filter-status"
+                            v-model="selectedStatus"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        >
+                            <option value="">Todos</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="completed">Completado</option>
+                            <option value="missed">No Realizado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-team" class="text-xs font-medium text-muted-foreground">Organización</label>
+                        <select
+                            id="filter-team"
+                            v-model="selectedTeam"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-8 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        >
+                            <option value="">Todas</option>
+                            <option v-for="team in teams" :key="team.id" :value="String(team.id)">{{ team.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-date-from" class="text-xs font-medium text-muted-foreground">Desde</label>
+                        <input
+                            id="filter-date-from"
+                            v-model="dateFrom"
+                            type="date"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        />
+                    </div>
+                    <div>
+                        <label for="filter-date-to" class="text-xs font-medium text-muted-foreground">Hasta</label>
+                        <input
+                            id="filter-date-to"
+                            v-model="dateTo"
+                            type="date"
+                            class="mt-1 block w-full rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2 pl-3 pr-3 text-sm text-foreground transition outline-none focus:border-[#2D6A4F] focus:ring-2 focus:ring-[#2D6A4F]/20 dark:border-[#2D6A4F]/30 dark:bg-black/20"
+                            @change="applyFilters"
+                        />
+                    </div>
                 </div>
                 <button
                     v-if="hasFilters()"
                     type="button"
-                    class="flex h-[38px] items-center gap-1 self-end rounded-xl border border-[#2D6A4F]/15 px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted"
+                    class="flex h-[38px] w-full items-center justify-center gap-1 self-end rounded-xl border border-[#2D6A4F]/15 px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted sm:w-auto"
                     @click="clearFilters"
                 >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Limpiar
+                    Limpiar filtros
                 </button>
             </div>
         </div>
