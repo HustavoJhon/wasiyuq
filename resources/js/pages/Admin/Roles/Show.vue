@@ -23,17 +23,25 @@ import {
 interface Permission { value: string; label: string }
 interface PermissionGroup { module: string; permissions: Permission[] }
 interface ModuleInfo { module: string; count: number }
+interface UserRow {
+    id: number;
+    name: string;
+    email: string;
+}
+
 interface Role {
     value: string;
     label: string;
     description: string;
     level: number;
+    total_users: number;
 }
 
 const props = defineProps<{
     role: Role;
     permissions: PermissionGroup[];
     all_permissions: ModuleInfo[];
+    users: UserRow[];
 }>();
 
 function levelColor(level: number): string {
@@ -47,14 +55,27 @@ function levelColor(level: number): string {
         '2': 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
         '1': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[String(level)] ?? 'bg-gray-100 text-gray-600';
 }
 
 function roleIcon(level: number) {
-    if (level >= 9) return ShieldCheck;
-    if (level >= 7) return Shield;
-    if (level >= 5) return ShieldHalf;
-    if (level >= 3) return Settings;
+    if (level >= 9) {
+return ShieldCheck;
+}
+
+    if (level >= 7) {
+return Shield;
+}
+
+    if (level >= 5) {
+return ShieldHalf;
+}
+
+    if (level >= 3) {
+return Settings;
+}
+
     return Eye;
 }
 
@@ -87,6 +108,7 @@ function permissionAction(p: string): string {
         'update-status': 'Cambiar estado', 'generate-docs': 'Generar documentos',
         export: 'Exportar',
     };
+
     return map[action] ?? action;
 }
 
@@ -130,8 +152,8 @@ function totalPermissions() {
                 <p class="mt-1 text-2xl font-bold text-foreground">{{ totalPermissions() }}</p>
             </div>
             <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-4 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
-                <p class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">Módulos Disponibles</p>
-                <p class="mt-1 text-2xl font-bold text-foreground">{{ all_permissions.length }}</p>
+                <p class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">Usuarios con este rol</p>
+                <p class="mt-1 text-2xl font-bold text-foreground">{{ role.total_users }}</p>
             </div>
         </div>
 
@@ -160,6 +182,27 @@ function totalPermissions() {
             </div>
 
             <div class="space-y-4">
+                <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                    <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+                        <Users class="h-4 w-4 text-[#2D6A4F]" />
+                        Usuarios ({{ users.length }})
+                    </h3>
+                    <div v-if="users.length === 0" class="py-6 text-center text-sm text-muted-foreground">
+                        Ningún usuario tiene este rol actualmente.
+                    </div>
+                    <ul v-else class="space-y-1.5">
+                        <li v-for="user in users" :key="user.id">
+                            <a :href="'/admin/usuarios/' + user.id"
+                                class="flex items-center justify-between rounded-lg border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 px-3 py-2.5 transition hover:border-[#2D6A4F]/30 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10 dark:hover:border-[#2D6A4F]/40">
+                                <span class="flex items-center gap-2 text-sm text-foreground">
+                                    {{ user.name }}
+                                </span>
+                                <span class="text-xs text-muted-foreground/60">{{ user.email }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-5 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
                     <h3 class="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
                         <BarChart3 class="h-4 w-4 text-[#2D6A4F]" />
