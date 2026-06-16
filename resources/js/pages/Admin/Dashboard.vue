@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import {
     PawPrint,
@@ -14,6 +13,7 @@ import {
     Dog,
     Activity,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import admin from '@/routes/admin';
 
@@ -65,6 +65,7 @@ function statusLabel(s: string): string {
         completed: 'Completada', cancelled: 'Cancelada',
         available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso',
     };
+
     return map[s] ?? s;
 }
 
@@ -78,6 +79,7 @@ function statusClass(s: string): string {
         available: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         adopted: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
     };
+
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -87,6 +89,7 @@ function formatDate(d: string): string {
 
 const petStatusPct = computed(() => {
     const total = props.stats.total_pets || 1;
+
     return {
         available: (props.stats.available_pets / total * 100),
         adopted: (props.stats.adopted_pets / total * 100),

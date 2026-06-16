@@ -2,7 +2,6 @@
 import { useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import InputError from '@/components/InputError.vue';
-import { usePhotoUrl } from '@/composables/usePhotoUrl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 interface Team {
     id: number;
@@ -70,6 +70,7 @@ const form = useForm({
 
 function onPhotoChange(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
+
     if (file) {
         form.photo = file;
         form.photo_urls = '';
@@ -123,12 +124,16 @@ function deletePet() {
 
 const ageInYears = computed({
     get: () => form.age_years,
-    set: (val: number) => { form.age_years = Math.min(50, Math.max(0, val || 0)); },
+    set: (val: number) => {
+ form.age_years = Math.min(50, Math.max(0, val || 0)); 
+},
 });
 
 const ageInMonths = computed({
     get: () => form.age_months,
-    set: (val: number) => { form.age_months = Math.min(11, Math.max(0, val || 0)); },
+    set: (val: number) => {
+ form.age_months = Math.min(11, Math.max(0, val || 0)); 
+},
 });
 </script>
 

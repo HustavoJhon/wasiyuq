@@ -49,8 +49,12 @@ const props = defineProps<{
 const petSearch = ref('');
 
 const filteredPets = computed(() => {
-    if (!petSearch.value) return props.organization.pets;
+    if (!petSearch.value) {
+return props.organization.pets;
+}
+
     const q = petSearch.value.toLowerCase();
+
     return props.organization.pets.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.species.toLowerCase().includes(q)
@@ -74,6 +78,7 @@ function statusColor(s: string): string {
         in_process: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
         withheld: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return colors[s] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -87,6 +92,7 @@ function initials(name: string): string {
 
 function roleLabel(r: string): string {
     const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' };
+
     return labels[r] ?? r;
 }
 
@@ -96,6 +102,7 @@ function roleColor(r: string): string {
         admin: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
         member: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return colors[r] ?? 'bg-gray-100 text-gray-600';
 }
 

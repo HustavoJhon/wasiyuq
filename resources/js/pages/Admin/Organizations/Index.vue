@@ -40,7 +40,10 @@ const searchInput = ref(props.filters.search ?? '');
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function applyFilters() {
-    if (searchTimeout) clearTimeout(searchTimeout);
+    if (searchTimeout) {
+clearTimeout(searchTimeout);
+}
+
     searchTimeout = setTimeout(() => {
         router.get('/admin/organizaciones', {
             search: searchInput.value || '',
@@ -79,9 +82,11 @@ function initials(name: string): string {
 
 const pageLinks = () => {
     const links = [];
+
     for (let i = 1; i <= props.meta.last_page; i++) {
         links.push(i);
     }
+
     return links;
 };
 </script>

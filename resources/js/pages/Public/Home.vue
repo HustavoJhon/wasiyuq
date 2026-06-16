@@ -57,7 +57,9 @@ function goSearch() {
 }
 
 function onSearchKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') goSearch();
+    if (e.key === 'Enter') {
+goSearch();
+}
 }
 
 const speciesInfo: { key: string; icon: Component; label: string }[] = [

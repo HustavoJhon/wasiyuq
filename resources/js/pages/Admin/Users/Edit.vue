@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useForm, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 
 interface Team {
     id: number;
@@ -50,6 +50,7 @@ function initials(name: string): string {
 
 function roleLabel(r: string): string {
     const labels: Record<string, string> = { owner: 'Propietario', admin: 'Administrador', member: 'Miembro' };
+
     return labels[r] ?? r;
 }
 </script>

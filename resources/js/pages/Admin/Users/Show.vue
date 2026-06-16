@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Link, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Permission {
     key: string;
@@ -99,6 +99,7 @@ function roleBadgeClass(role: string): string {
         member: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
         viewer: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[role] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -110,6 +111,7 @@ function moduleIcon(module: string): string {
         events: '📅', announcements: '📢',
         reports: '📊', data: '📁',
     };
+
     return icons[module] ?? '📌';
 }
 
@@ -121,6 +123,7 @@ function permissionActionIcon(key: string): string {
         cancel: '❌', 'update-status': '🔄',
         'generate-docs': '📄', export: '📥',
     };
+
     return icons[action] ?? '•';
 }
 </script>

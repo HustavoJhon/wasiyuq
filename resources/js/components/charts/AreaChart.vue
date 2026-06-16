@@ -44,27 +44,36 @@ const linePoints = computed(() => {
 });
 
 const areaPath = computed(() => {
-    if (props.data.length === 0) return '';
+    if (props.data.length === 0) {
+return '';
+}
+
     const first = props.data[0];
     const last = props.data[props.data.length - 1];
     let d = `M${xPos(0)},${yPos(first.value)}`;
+
     for (let i = 1; i < props.data.length; i++) {
         d += ` L${xPos(i)},${yPos(props.data[i].value)}`;
     }
+
     d += ` L${xPos(props.data.length - 1)},${padding.top + innerHeight.value}`;
     d += ` L${xPos(0)},${padding.top + innerHeight.value} Z`;
+
     return d;
 });
 
 const lineLength = ref(0);
 
 function setLineLength(el: SVGPathElement | null) {
-    if (el) lineLength.value = el.getTotalLength();
+    if (el) {
+lineLength.value = el.getTotalLength();
+}
 }
 
 const gridLines = computed(() => {
     const lines: { y: number; label: string }[] = [];
     const steps = 4;
+
     for (let i = 0; i <= steps; i++) {
         const y = padding.top + (i / steps) * innerHeight.value;
         const val = maxVal.value - (i / steps) * maxVal.value;
@@ -73,6 +82,7 @@ const gridLines = computed(() => {
             label: props.formatValue ? props.formatValue(Math.round(val)) : Math.round(val).toString(),
         });
     }
+
     return lines;
 });
 </script>

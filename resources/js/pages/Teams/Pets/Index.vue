@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import type { Team } from '@/types';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
+import type { Team } from '@/types';
 
 interface Pet {
     id: number;

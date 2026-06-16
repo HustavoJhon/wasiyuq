@@ -49,6 +49,7 @@ function statusLabel(s: string): string {
         completed: 'Completada',
         cancelled: 'Cancelada',
     };
+
     return labels[s] ?? s;
 }
 
@@ -60,6 +61,7 @@ function statusClass(s: string): string {
         completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
         cancelled: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     };
+
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -69,11 +71,13 @@ function formatDate(d: string): string {
 
 function speciesEmoji(s: string): string {
     const map: Record<string, string> = { dog: '🐕', cat: '🐈', rabbit: '🐇', bird: '🐦', other: '🐾' };
+
     return map[s] ?? '🐾';
 }
 
 function roleLabel(r: string): string {
     const labels: Record<string, string> = { owner: 'Dueña', admin: 'Admin', member: 'Miembro' };
+
     return labels[r] ?? r;
 }
 
