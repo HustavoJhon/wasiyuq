@@ -73,6 +73,12 @@ const props = defineProps<{
     roles: string[];
 }>();
 
+function destroyUser(userId: number, userName: string) {
+    if (confirm(`¿Eliminar a "${userName}"? Esta acción no se puede deshacer.`)) {
+        router.delete(admin.users.destroy(userId).url);
+    }
+}
+
 const globalFilter = ref('');
 const teamFilter = ref('all');
 const roleFilter = ref('all');
@@ -100,8 +106,12 @@ const filteredUsers = computed(() => {
 });
 
 const searchedUsers = computed(() => {
-    if (!globalFilter.value) return filteredUsers.value;
+    if (!globalFilter.value) {
+return filteredUsers.value;
+}
+
     const q = globalFilter.value.toLowerCase();
+
     return filteredUsers.value.filter(
         (u) =>
             u.name.toLowerCase().includes(q) ||
@@ -142,6 +152,12 @@ function goToPage(page: number) {
                     Todos los usuarios registrados en la plataforma.
                 </p>
             </div>
+            <Link :href="admin.users.create().url" class="inline-flex shrink-0 items-center justify-center rounded-lg bg-[#2D6A4F] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#246142]">
+                <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Nuevo Usuario
+            </Link>
         </div>
 
         <Card class="mt-6">
@@ -209,7 +225,7 @@ function goToPage(page: number) {
                                     <ArrowUpDown class="size-3 text-muted-foreground/60" />
                                 </div>
                             </TableHead>
-                            <TableHead class="w-24" />
+                            <TableHead class="w-36" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -250,9 +266,17 @@ function goToPage(page: number) {
                             </TableCell>
                             <TableCell class="text-muted-foreground">{{ formatDate(row.created_at) }}</TableCell>
                             <TableCell>
-                                <Button variant="outline" size="sm" as-child>
-                                    <Link :href="admin.users.show(row.id).url">Ver</Link>
-                                </Button>
+                                <div class="flex items-center gap-1.5">
+                                    <Button variant="outline" size="sm" as-child>
+                                        <Link :href="admin.users.show(row.id).url">Ver</Link>
+                                    </Button>
+                                    <Button variant="outline" size="sm" as-child>
+                                        <Link :href="admin.users.edit(row.id).url">Editar</Link>
+                                    </Button>
+                                    <Button variant="outline" size="sm" class="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950/30" @click="destroyUser(row.id, row.name)">
+                                        Eliminar
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                         <TableRow v-if="searchedUsers.length === 0">
@@ -296,13 +320,27 @@ function goToPage(page: number) {
                         <Calendar class="size-3" />
                         {{ formatDate(row.created_at) }}
                     </span>
-                    <Link :href="admin.users.show(row.id).url" class="flex items-center gap-1 text-xs font-medium text-[#2D6A4F] dark:text-emerald-400">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        Ver perfil
-                    </Link>
+                    <div class="flex items-center gap-2">
+                        <Link :href="admin.users.show(row.id).url" class="flex items-center gap-1 text-xs font-medium text-[#2D6A4F] dark:text-emerald-400">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Ver
+                        </Link>
+                        <Link :href="admin.users.edit(row.id).url" class="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-[#2D6A4F]">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Editar
+                        </Link>
+                        <button @click="destroyUser(row.id, row.name)" class="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
                 </div>
             </div>
             <div v-if="searchedUsers.length === 0" class="rounded-xl border border-border bg-card px-5 py-8 text-center text-sm text-muted-foreground/70">
