@@ -43,103 +43,116 @@ class DatabaseSeeder extends Seeder
 
     private function createUsers(): void
     {
-        $this->superAdmin = User::factory()->create([
-            'name' => 'Gustavo Jhons',
-            'email' => 'hustavojhon@gmail.com',
-            'is_super_admin' => true,
-        ]);
+        $this->superAdmin = User::firstOrCreate(
+            ['email' => 'hustavojhon@gmail.com'],
+            User::factory()->raw(['name' => 'Gustavo Jhons', 'email' => 'hustavojhon@gmail.com', 'is_super_admin' => true]),
+        );
 
         // Org admins (existing)
         $this->orgAdmins = [
-            User::factory()->create(['name' => 'María García', 'email' => 'maria.garcia@email.com']),
-            User::factory()->create(['name' => 'Carlos López', 'email' => 'carlos.lopez@email.com']),
+            User::firstOrCreate(['email' => 'maria.garcia@email.com'], User::factory()->raw(['name' => 'María García', 'email' => 'maria.garcia@email.com'])),
+            User::firstOrCreate(['email' => 'carlos.lopez@email.com'], User::factory()->raw(['name' => 'Carlos López', 'email' => 'carlos.lopez@email.com'])),
         ];
 
         // Org members (existing)
         $this->orgMembers = [
-            User::factory()->create(['name' => 'Ana Martínez', 'email' => 'ana.martinez@email.com']),
-            User::factory()->create(['name' => 'Pedro Quispe', 'email' => 'pedro.quispe@email.com']),
+            User::firstOrCreate(['email' => 'ana.martinez@email.com'], User::factory()->raw(['name' => 'Ana Martínez', 'email' => 'ana.martinez@email.com'])),
+            User::firstOrCreate(['email' => 'pedro.quispe@email.com'], User::factory()->raw(['name' => 'Pedro Quispe', 'email' => 'pedro.quispe@email.com'])),
         ];
 
         // Adopters (existing)
         $this->adopters = [
-            User::factory()->create(['name' => 'Lucía Ramos', 'email' => 'lucia.ramos@email.com']),
-            User::factory()->create(['name' => 'José Condori', 'email' => 'jose.condori@email.com']),
-            User::factory()->create(['name' => 'Sofía Vargas', 'email' => 'sofia.vargas@email.com']),
+            User::firstOrCreate(['email' => 'lucia.ramos@email.com'], User::factory()->raw(['name' => 'Lucía Ramos', 'email' => 'lucia.ramos@email.com'])),
+            User::firstOrCreate(['email' => 'jose.condori@email.com'], User::factory()->raw(['name' => 'José Condori', 'email' => 'jose.condori@email.com'])),
+            User::firstOrCreate(['email' => 'sofia.vargas@email.com'], User::factory()->raw(['name' => 'Sofía Vargas', 'email' => 'sofia.vargas@email.com'])),
         ];
 
-        $this->regularUser = User::factory()->create([
-            'name' => 'Diego Castillo',
-            'email' => 'diego.castillo@email.com',
-        ]);
+        $this->regularUser = User::firstOrCreate(
+            ['email' => 'diego.castillo@email.com'],
+            User::factory()->raw(['name' => 'Diego Castillo', 'email' => 'diego.castillo@email.com']),
+        );
 
         // New org admins
-        $this->orgAdmins[] = User::factory()->create(['name' => 'Elena Huamán', 'email' => 'elena.huaman@email.com']);
-        $this->orgAdmins[] = User::factory()->create(['name' => 'Roberto Sotomayor', 'email' => 'roberto.sotomayor@email.com']);
+        $this->orgAdmins[] = User::firstOrCreate(['email' => 'elena.huaman@email.com'], User::factory()->raw(['name' => 'Elena Huamán', 'email' => 'elena.huaman@email.com']));
+        $this->orgAdmins[] = User::firstOrCreate(['email' => 'roberto.sotomayor@email.com'], User::factory()->raw(['name' => 'Roberto Sotomayor', 'email' => 'roberto.sotomayor@email.com']));
 
         // New org members
-        $this->orgMembers[] = User::factory()->create(['name' => 'Carmen Flores', 'email' => 'carmen.flores@email.com']);
-        $this->orgMembers[] = User::factory()->create(['name' => 'Luis Chacón', 'email' => 'luis.chacon@email.com']);
-        $this->orgMembers[] = User::factory()->create(['name' => 'Rosa Huillca', 'email' => 'rosa.huillca@email.com']);
-        $this->orgMembers[] = User::factory()->create(['name' => 'Miguel Arce', 'email' => 'miguel.arce@email.com']);
+        $this->orgMembers[] = User::firstOrCreate(['email' => 'carmen.flores@email.com'], User::factory()->raw(['name' => 'Carmen Flores', 'email' => 'carmen.flores@email.com']));
+        $this->orgMembers[] = User::firstOrCreate(['email' => 'luis.chacon@email.com'], User::factory()->raw(['name' => 'Luis Chacón', 'email' => 'luis.chacon@email.com']));
+        $this->orgMembers[] = User::firstOrCreate(['email' => 'rosa.huillca@email.com'], User::factory()->raw(['name' => 'Rosa Huillca', 'email' => 'rosa.huillca@email.com']));
+        $this->orgMembers[] = User::firstOrCreate(['email' => 'miguel.arce@email.com'], User::factory()->raw(['name' => 'Miguel Arce', 'email' => 'miguel.arce@email.com']));
 
         // New adopters
-        $this->adopters[] = User::factory()->create(['name' => 'Camila Torres', 'email' => 'camila.torres@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Fernando Gutiérrez', 'email' => 'fernando.gutierrez@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Valeria Cárdenas', 'email' => 'valeria.cardenas@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Bruno Mendoza', 'email' => 'bruno.mendoza@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Paula Mercado', 'email' => 'paula.mercado@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Martín Quispe', 'email' => 'martin.quispe@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Daniela Núñez', 'email' => 'daniela.nunez@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Ricardo Pineda', 'email' => 'ricardo.pineda@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Andrea Castillo', 'email' => 'andrea.castillo@email.com']);
-        $this->adopters[] = User::factory()->create(['name' => 'Jorge Mamani', 'email' => 'jorge.mamani@email.com']);
+        $this->adopters[] = User::firstOrCreate(['email' => 'camila.torres@email.com'], User::factory()->raw(['name' => 'Camila Torres', 'email' => 'camila.torres@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'fernando.gutierrez@email.com'], User::factory()->raw(['name' => 'Fernando Gutiérrez', 'email' => 'fernando.gutierrez@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'valeria.cardenas@email.com'], User::factory()->raw(['name' => 'Valeria Cárdenas', 'email' => 'valeria.cardenas@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'bruno.mendoza@email.com'], User::factory()->raw(['name' => 'Bruno Mendoza', 'email' => 'bruno.mendoza@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'paula.mercado@email.com'], User::factory()->raw(['name' => 'Paula Mercado', 'email' => 'paula.mercado@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'martin.quispe@email.com'], User::factory()->raw(['name' => 'Martín Quispe', 'email' => 'martin.quispe@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'daniela.nunez@email.com'], User::factory()->raw(['name' => 'Daniela Núñez', 'email' => 'daniela.nunez@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'ricardo.pineda@email.com'], User::factory()->raw(['name' => 'Ricardo Pineda', 'email' => 'ricardo.pineda@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'andrea.castillo@email.com'], User::factory()->raw(['name' => 'Andrea Castillo', 'email' => 'andrea.castillo@email.com']));
+        $this->adopters[] = User::firstOrCreate(['email' => 'jorge.mamani@email.com'], User::factory()->raw(['name' => 'Jorge Mamani', 'email' => 'jorge.mamani@email.com']));
     }
 
     private function createOrganizations(): void
     {
-        $this->org1 = Team::factory()->create([
-            'name' => 'Patitas Felices',
-            'slug' => 'patitas-felices',
-            'bio' => 'Refugio dedicado al rescate y rehabilitación de animales abandonados en la ciudad de Cusco. Contamos con un equipo de voluntarios comprometidos con el bienestar animal.',
-            'website' => 'https://patitasfelices.org',
-            'phone' => '+51 984 123 456',
-            'address' => 'Av. Los Incas 456',
-            'city' => 'Cusco',
-            'state' => 'Cusco',
-        ]);
+        $this->org1 = Team::firstOrCreate(
+            ['slug' => 'patitas-felices'],
+            Team::factory()->raw([
+                'name' => 'Patitas Felices',
+                'slug' => 'patitas-felices',
+                'bio' => 'Refugio dedicado al rescate y rehabilitación de animales abandonados en la ciudad de Cusco. Contamos con un equipo de voluntarios comprometidos con el bienestar animal.',
+                'website' => 'https://patitasfelices.org',
+                'phone' => '+51 984 123 456',
+                'address' => 'Av. Los Incas 456',
+                'city' => 'Cusco',
+                'state' => 'Cusco',
+            ]),
+        );
 
-        $this->org2 = Team::factory()->create([
-            'name' => 'Huellas del Cusco',
-            'slug' => 'huellas-del-cusco',
-            'bio' => 'Asociación sin fines de lucro que promueve la adopción responsable y el cuidado de mascotas en el Valle Sagrado. Organizamos ferias y campañas de concientización.',
-            'website' => 'https://huellasdelcusco.org',
-            'phone' => '+51 984 789 012',
-            'address' => 'Calle Real 234',
-            'city' => 'Urubamba',
-            'state' => 'Cusco',
-        ]);
+        $this->org2 = Team::firstOrCreate(
+            ['slug' => 'huellas-del-cusco'],
+            Team::factory()->raw([
+                'name' => 'Huellas del Cusco',
+                'slug' => 'huellas-del-cusco',
+                'bio' => 'Asociación sin fines de lucro que promueve la adopción responsable y el cuidado de mascotas en el Valle Sagrado. Organizamos ferias y campañas de concientización.',
+                'website' => 'https://huellasdelcusco.org',
+                'phone' => '+51 984 789 012',
+                'address' => 'Calle Real 234',
+                'city' => 'Urubamba',
+                'state' => 'Cusco',
+            ]),
+        );
     }
 
     private function assignMembers(): void
     {
-        $this->org1->members()->attach($this->superAdmin, ['role' => TeamRole::Owner]);
-        $this->org1->members()->attach($this->orgAdmins[0], ['role' => TeamRole::Admin]);
-        $this->org1->members()->attach($this->orgMembers[0], ['role' => TeamRole::Member]);
+        $this->org1->members()->syncWithoutDetaching([
+            $this->superAdmin->id => ['role' => TeamRole::Owner],
+            $this->orgAdmins[0]->id => ['role' => TeamRole::Admin],
+            $this->orgMembers[0]->id => ['role' => TeamRole::Member],
+        ]);
 
-        $this->org2->members()->attach($this->superAdmin, ['role' => TeamRole::Owner]);
-        $this->org2->members()->attach($this->orgAdmins[1], ['role' => TeamRole::Admin]);
-        $this->org2->members()->attach($this->orgMembers[1], ['role' => TeamRole::Member]);
+        $this->org2->members()->syncWithoutDetaching([
+            $this->superAdmin->id => ['role' => TeamRole::Owner],
+            $this->orgAdmins[1]->id => ['role' => TeamRole::Admin],
+            $this->orgMembers[1]->id => ['role' => TeamRole::Member],
+        ]);
 
         // New members for org1 (Patitas Felices)
-        $this->org1->members()->attach($this->orgAdmins[2], ['role' => TeamRole::Admin]);
-        $this->org1->members()->attach($this->orgMembers[2], ['role' => TeamRole::Member]);
-        $this->org1->members()->attach($this->orgMembers[3], ['role' => TeamRole::Member]);
+        $this->org1->members()->syncWithoutDetaching([
+            $this->orgAdmins[2]->id => ['role' => TeamRole::Admin],
+            $this->orgMembers[2]->id => ['role' => TeamRole::Member],
+            $this->orgMembers[3]->id => ['role' => TeamRole::Member],
+        ]);
 
         // New members for org2 (Huellas del Cusco)
-        $this->org2->members()->attach($this->orgAdmins[3], ['role' => TeamRole::Admin]);
-        $this->org2->members()->attach($this->orgMembers[4], ['role' => TeamRole::Member]);
-        $this->org2->members()->attach($this->orgMembers[5], ['role' => TeamRole::Member]);
+        $this->org2->members()->syncWithoutDetaching([
+            $this->orgAdmins[3]->id => ['role' => TeamRole::Admin],
+            $this->orgMembers[4]->id => ['role' => TeamRole::Member],
+            $this->orgMembers[5]->id => ['role' => TeamRole::Member],
+        ]);
 
         $usersWithTeams = [
             [$this->orgAdmins[0], $this->org1->id],
