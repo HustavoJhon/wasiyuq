@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 export const login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ login.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 login.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ login.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::login
-* @see app/Http/Controllers/Auth/SocialLoginController.php:13
+* @see app/Http/Controllers/Auth/SocialLoginController.php:15
 * @route '/auth/google'
 */
 loginForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ login.form = loginForm
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 export const callback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ callback.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 callback.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ callback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 const callbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const callbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 callbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ callbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Auth\SocialLoginController::callback
-* @see app/Http/Controllers/Auth/SocialLoginController.php:18
+* @see app/Http/Controllers/Auth/SocialLoginController.php:20
 * @route '/auth/google/callback'
 */
 callbackForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
