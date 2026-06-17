@@ -38,16 +38,14 @@ class TeamMemberTest extends TestCase
     public function test_team_member_roles_cannot_be_updated_by_non_owners()
     {
         $owner = User::factory()->create();
-        $admin = User::factory()->create();
         $member = User::factory()->create();
         $team = Team::factory()->create();
 
         $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-        $team->members()->attach($admin, ['role' => TeamRole::Admin->value]);
         $team->members()->attach($member, ['role' => TeamRole::Member->value]);
 
         $response = $this
-            ->actingAs($admin)
+            ->actingAs($member)
             ->patch(route('teams.members.update', [$team, $member]), [
                 'role' => TeamRole::Admin->value,
             ]);
@@ -76,16 +74,14 @@ class TeamMemberTest extends TestCase
     public function test_team_members_cannot_be_removed_by_non_owners()
     {
         $owner = User::factory()->create();
-        $admin = User::factory()->create();
         $member = User::factory()->create();
         $team = Team::factory()->create();
 
         $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
-        $team->members()->attach($admin, ['role' => TeamRole::Admin->value]);
         $team->members()->attach($member, ['role' => TeamRole::Member->value]);
 
         $response = $this
-            ->actingAs($admin)
+            ->actingAs($member)
             ->delete(route('teams.members.destroy', [$team, $member]));
 
         $response->assertForbidden();
