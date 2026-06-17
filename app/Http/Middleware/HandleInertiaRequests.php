@@ -34,6 +34,10 @@ class HandleInertiaRequests extends Middleware
 
     private function getAllowedModules($user, $team): array
     {
+        if ($team->is_personal) {
+            return [];
+        }
+
         $modules = [];
 
         if ($user->hasTeamPermission($team, TeamPermission::ViewPets)) {
