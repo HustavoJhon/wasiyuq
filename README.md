@@ -42,25 +42,26 @@
 git clone <url> wasiyuq
 cd wasiyuq
 
-# 2. Iniciar contenedores
+# 2. Copiar variables de entorno
+cp .env.example .env
+
+# 3. Iniciar contenedores
 make up
 
-# 3. Instalar dependencias PHP dentro del contenedor
+# 4. Instalar dependencias PHP dentro del contenedor
 make shell
 composer install
 exit
 
-# 4. Migrar base de datos
+# 5. Migrar base de datos
 make migrate
 
-# 5. (Opcional) Compilar assets frontend
+# 6. (Opcional) Compilar assets frontend
 make build
 
-# 6. (Opcional) Iniciar dev server de Vite con HMR
+# 7. (Opcional) Iniciar dev server de Vite con HMR
 make dev
 ```
-
-> **Nota:** El archivo `.env` con la configuración para Docker local ya viene incluido en el repositorio. No es necesario copiar `.env.example`.
 
 La aplicación estará disponible en `http://localhost:8080`.
 
