@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import DoughnutChart from '@/components/charts/DoughnutChart.vue';
 
 interface Stats {
     total_pets: number;
@@ -36,8 +38,9 @@ interface Team {
     slug: string;
 }
 
-defineProps<{
+const props = defineProps<{
     stats: Stats;
+    species_counts?: Record<string, number>;
     recent_adoptions: RecentAdoption[];
     recent_pets: RecentPet[];
     currentTeam: Team;
@@ -46,13 +49,29 @@ defineProps<{
 const page = usePage();
 const user = page.props.auth?.user as { is_super_admin?: boolean } | undefined;
 
+const speciesChart = computed(() => {
+    if (!props.species_counts) return [];
+    const labels: Record<string, string> = { dog: 'Perros', cat: 'Gatos', rabbit: 'Conejos', bird: 'Aves', other: 'Otros' };
+    const colors: Record<string, string> = { dog: '#0EA5E9', cat: '#F59E0B', rabbit: '#EC4899', bird: '#8B5CF6', other: '#2D6A4F' };
+    return Object.entries(props.species_counts).map(([k, v]) => ({
+        label: labels[k] ?? k, value: Number(v), color: colors[k] ?? '#2D6A4F',
+    }));
+});
+
+const petStatusData = computed(() => [
+    { label: 'Disponibles', value: Number(props.stats.available_pets), color: '#10B981' },
+    { label: 'En Proceso', value: Number(props.stats.in_process_pets), color: '#F59E0B' },
+    { label: 'Adoptados', value: Number(props.stats.adopted_pets), color: '#3B82F6' },
+].filter(d => d.value > 0));
+
+const total = computed(() => props.stats.total_pets || 1);
+
 function statusLabel(s: string): string {
     const map: Record<string, string> = {
         pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada',
         completed: 'Completada', cancelled: 'Cancelada',
         available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso',
     };
-
     return map[s] ?? s;
 }
 
@@ -67,7 +86,6 @@ function statusClass(s: string): string {
         adopted: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
         in_process: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
     };
-
     return map[s] ?? 'bg-gray-100 text-gray-600';
 }
 
@@ -151,6 +169,20 @@ function formatDate(d: string): string {
                 </svg>
                 Ir al panel global de administración
             </Link>
+        </div>
+
+        <!-- Charts -->
+        <div v-if="speciesChart.length > 0 || petStatusData.length > 0" class="mt-8 grid gap-6 lg:grid-cols-2">
+            <div v-if="petStatusData.length > 0" class="rounded-2xl border border-border/50 bg-card p-5 sm:p-6">
+                <h2 class="mb-4 text-base font-semibold text-foreground">Distribución de mascotas por estado</h2>
+                <DoughnutChart v-if="petStatusData.length > 1" :data="petStatusData" :size="180" :innerRadius="50" />
+                <div v-else class="py-6 text-center text-sm text-muted-foreground">No hay suficientes datos para mostrar.</div>
+            </div>
+            <div v-if="speciesChart.length > 0" class="rounded-2xl border border-border/50 bg-card p-5 sm:p-6">
+                <h2 class="mb-4 text-base font-semibold text-foreground">Mascotas por especie</h2>
+                <DoughnutChart v-if="speciesChart.length > 1" :data="speciesChart" :size="180" :innerRadius="50" />
+                <div v-else class="py-6 text-center text-sm text-muted-foreground">No hay suficientes datos para mostrar.</div>
+            </div>
         </div>
 
         <div class="mt-10 grid gap-8 lg:grid-cols-2">
