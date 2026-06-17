@@ -49,6 +49,7 @@ interface CurrentTeam {
     id: number;
     name: string;
     slug: string;
+    isPersonal: boolean;
 }
 
 type SidebarItem = NavItem | Divider;
@@ -57,7 +58,12 @@ const page = usePage();
 const user = page.props.auth?.user as User | undefined;
 const isSuperAdmin = !!user?.is_super_admin;
 const currentTeam = computed<CurrentTeam | null>(() => (page.props.currentTeam as CurrentTeam | null) ?? null);
-const isAdopterRoute = computed(() => window.location.pathname.startsWith('/mi-adopcion'));
+const isAdopterRoute = computed(() => {
+    if (window.location.pathname.startsWith('/mi-adopcion')) {
+        return true;
+    }
+    return currentTeam.value?.isPersonal ?? false;
+});
 
 const teamSlug = computed(() => {
     if (isSuperAdmin) {
