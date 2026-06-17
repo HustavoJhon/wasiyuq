@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TeamRole;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,7 +24,9 @@ class DashboardTest extends TestCase
     public function test_authenticated_users_can_visit_the_dashboard()
     {
         $user = User::factory()->create();
-        $team = $user->currentTeam;
+        $team = Team::factory()->create(['is_personal' => false]);
+        $team->members()->attach($user, ['role' => TeamRole::Owner->value]);
+        $user->update(['current_team_id' => $team->id]);
 
         $response = $this
             ->actingAs($user)
