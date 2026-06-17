@@ -68,7 +68,7 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function show(int $id)
+    public function show($id)
     {
         $post = BlogPost::query()->with(['team:id,name,slug', 'author:id,name'])->findOrFail($id);
 
@@ -77,7 +77,7 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         $post = BlogPost::query()->with('team:id,name,slug')->findOrFail($id);
 
@@ -91,7 +91,7 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function update(int $id, UpdateBlogPostRequest $request)
+    public function update($id, UpdateBlogPostRequest $request)
     {
         $post = BlogPost::query()->findOrFail($id);
 
@@ -108,7 +108,7 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $post = BlogPost::query()->findOrFail($id);
         $post->delete();

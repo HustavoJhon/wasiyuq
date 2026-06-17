@@ -68,7 +68,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function show(int $id)
+    public function show($id)
     {
         $event = Announcement::query()->with(['team:id,name,slug', 'author:id,name'])->findOrFail($id);
 
@@ -77,7 +77,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         $event = Announcement::query()->with('team:id,name,slug')->findOrFail($id);
 
@@ -91,7 +91,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function update(int $id, UpdateAnnouncementRequest $request)
+    public function update($id, UpdateAnnouncementRequest $request)
     {
         $event = Announcement::query()->findOrFail($id);
 
@@ -108,7 +108,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $event = Announcement::query()->findOrFail($id);
         $event->delete();

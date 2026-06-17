@@ -32,7 +32,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function show(Team $current_team, int $id)
+    public function show(Team $current_team, $id)
     {
         $pet = $current_team->pets()
             ->where('id', $id)
@@ -80,7 +80,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function edit(Team $current_team, int $id)
+    public function edit(Team $current_team, $id)
     {
         $pet = $current_team->pets()
             ->where('id', $id)
@@ -93,7 +93,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function update(Team $current_team, int $id, UpdatePetRequest $request)
+    public function update(Team $current_team, $id, UpdatePetRequest $request)
     {
         $pet = $current_team->pets()
             ->where('id', $id)
@@ -189,7 +189,7 @@ class PetController extends Controller
         return $url;
     }
 
-    public function destroy(Team $current_team, int $id)
+    public function destroy(Team $current_team, $id)
     {
         $pet = $current_team->pets()
             ->where('id', $id)
