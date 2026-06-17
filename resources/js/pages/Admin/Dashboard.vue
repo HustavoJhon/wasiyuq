@@ -1,20 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
-    PawPrint,
-    Building2,
-    Handshake,
-    Users,
-    CalendarDays,
-    FileText,
-    ClipboardList,
-    TrendingUp,
-    Heart,
-    Dog,
-    Activity,
+    PawPrint, Building2, Handshake, Users, CalendarDays, FileText,
+    ClipboardList, TrendingUp, Heart, Dog, Activity,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
+import DoughnutChart from '@/components/charts/DoughnutChart.vue';
 import admin from '@/routes/admin';
 
 interface Stats {
@@ -52,12 +44,22 @@ interface RecentPet {
 
 const props = defineProps<{
     stats: Stats;
+    species_counts?: Record<string, number>;
     recent_adoptions: RecentAdoption[];
     recent_pets: RecentPet[];
     adoptions_trend: TrendItem[];
 }>();
 
 const maxTrend = computed(() => Math.max(...props.adoptions_trend.map(t => t.value), 1));
+
+const speciesChart = computed(() => {
+    if (!props.species_counts) return [];
+    const labels: Record<string, string> = { dog: 'Perros', cat: 'Gatos', rabbit: 'Conejos', bird: 'Aves', other: 'Otros' };
+    const colors: Record<string, string> = { dog: '#0EA5E9', cat: '#F59E0B', rabbit: '#EC4899', bird: '#8B5CF6', other: '#2D6A4F' };
+    return Object.entries(props.species_counts).map(([k, v]) => ({
+        label: labels[k] ?? k, value: Number(v), color: colors[k] ?? '#2D6A4F',
+    }));
+});
 
 function statusLabel(s: string): string {
     const map: Record<string, string> = {
@@ -198,6 +200,14 @@ const metricCards = [
                     <span class="text-sm text-muted-foreground">Total mascotas</span>
                     <span class="text-lg font-bold text-foreground">{{ stats.total_pets }}</span>
                 </div>
+            </div>
+
+            <div v-if="speciesChart.length > 1" class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-4 flex items-center gap-2">
+                    <Dog class="h-5 w-5 text-[#2D6A4F]" />
+                    <h2 class="text-base font-semibold text-foreground">Mascotas por especie</h2>
+                </div>
+                <DoughnutChart :data="speciesChart" :size="160" :innerRadius="45" />
             </div>
         </div>
 

@@ -43,14 +43,14 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
         return redirect('/admin');
     }
 
-    $team = $user->currentTeam;
+    $team = $user->currentTeam ?? $user->personalTeam();
 
     if ($team && ! $team->is_personal) {
         return redirect("/{$team->slug}/dashboard");
     }
 
     return redirect('/mi-adopcion');
-});
+})->name('dashboard');
 
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
@@ -70,6 +70,12 @@ Route::prefix('{current_team}')
                 'pending_follow_ups' => FollowUp::query()->whereHas('adoption', fn ($q) => $q->where('team_id', $teamId))->where('status', 'pending')->count(),
             ];
 
+            $speciesCounts = Pet::query()
+                ->where('team_id', $teamId)
+                ->selectRaw('species, count(*) as total')
+                ->groupBy('species')
+                ->pluck('total', 'species');
+
             $recentAdoptions = Adoption::query()
                 ->where('team_id', $teamId)
                 ->with(['pet:id,name,slug', 'adopter:id,name'])
@@ -85,11 +91,12 @@ Route::prefix('{current_team}')
 
             return \Inertia\Inertia::render('Dashboard', [
                 'stats' => $stats,
+                'species_counts' => $speciesCounts->all(),
                 'recent_adoptions' => $recentAdoptions,
                 'recent_pets' => $recentPets,
                 'currentTeam' => $current_team,
             ]);
-        })->name('dashboard');
+        });
     });
 
 Route::prefix('{current_team}')

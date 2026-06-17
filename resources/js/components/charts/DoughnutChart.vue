@@ -20,7 +20,7 @@ onMounted(() => {
     });
 });
 
-const total = computed(() => props.data.reduce((s, d) => s + d.value, 0) || 1);
+const total = computed(() => props.data.reduce((s, d) => s + Number(d.value), 0) || 1);
 const cx = computed(() => props.size / 2);
 const cy = computed(() => props.size / 2);
 const outerR = computed(() => props.size / 2 - 10);
@@ -68,13 +68,13 @@ const slices = computed(() => {
     let currentAngle = 0;
 
     return props.data.map((d, i) => {
-        const angle = (d.value / total.value) * 360;
+        const angle = (Number(d.value) / total.value) * 360;
         const slice = {
             label: d.label,
             value: d.value,
             color: sliceColor(i),
             path: describeArc(currentAngle, currentAngle + angle),
-            percent: ((d.value / total.value) * 100).toFixed(1),
+            percent: ((Number(d.value) / total.value) * 100).toFixed(1),
         };
         currentAngle += angle;
 
