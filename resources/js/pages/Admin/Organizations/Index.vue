@@ -64,9 +64,9 @@ function formatDate(d: string): string {
     return new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' }).format(new Date(d));
 }
 
-function destroy(id: number): void {
+function destroy(slug: string): void {
     if (confirm('¿Eliminar esta organización?')) {
-        router.delete('/admin/organizaciones/' + id);
+        router.delete('/admin/organizaciones/' + slug);
     }
 }
 
@@ -252,7 +252,7 @@ const pageLinks = () => {
                             Ver
                         </a>
                         <a :href="'/admin/organizaciones/' + org.slug + '/editar'" class="rounded-lg px-2.5 py-1 text-xs font-medium text-muted-foreground transition hover:text-[#2D6A4F] dark:hover:text-emerald-400">Editar</a>
-                        <button @click="destroy(org.id)" class="rounded-lg px-2.5 py-1 text-xs font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30">Eliminar</button>
+                        <button @click="destroy(org.slug)" class="rounded-lg px-2.5 py-1 text-xs font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30">Eliminar</button>
                     </div>
                 </div>
             </div>
