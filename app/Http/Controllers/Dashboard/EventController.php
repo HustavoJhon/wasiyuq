@@ -65,9 +65,10 @@ class EventController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $event = Announcement::query()
             ->where('team_id', $team->id)
@@ -80,9 +81,10 @@ class EventController extends Controller
         ]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $event = Announcement::query()
             ->where('team_id', $team->id)
@@ -94,9 +96,10 @@ class EventController extends Controller
         ]);
     }
 
-    public function update(Request $request, int $id, UpdateAnnouncementRequest $updateRequest)
+    public function update(Request $request, UpdateAnnouncementRequest $updateRequest)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $event = Announcement::query()
             ->where('team_id', $team->id)
@@ -116,9 +119,10 @@ class EventController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $event = Announcement::query()
             ->where('team_id', $team->id)
