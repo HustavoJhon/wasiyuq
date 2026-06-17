@@ -31,7 +31,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect('/mi-adopcion');
     }
 
     public function test_passkey_login_response_redirects_to_the_current_team_dashboard(): void
@@ -47,7 +47,7 @@ class AuthenticationTest extends TestCase
         $jsonResponse = app(PasskeyLoginResponse::class)->toResponse($request);
 
         $this->assertSame(
-            route('dashboard', ['current_team' => $user->personalTeam()->slug]),
+            url('/mi-adopcion'),
             $jsonResponse->getData()->redirect,
         );
     }
