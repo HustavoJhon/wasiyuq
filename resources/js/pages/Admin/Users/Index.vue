@@ -8,7 +8,6 @@ import {
     ChevronsRight,
     Search,
     ShieldCheck,
-    ShieldX,
     MailCheck,
     MailX,
     User as UserIcon,
@@ -126,20 +125,25 @@ function initials(name: string): string {
 
 function userRoleLabel(u: User): string {
     if (u.is_super_admin) return 'Super Admin';
+    if (u.memberships.length === 0) return 'Sin rol';
     const roles = u.memberships.map(m => m.role);
     if (roles.includes('owner')) return 'Propietario';
     if (roles.includes('admin')) return 'Administrador';
-    if (roles.length > 0) return 'Miembro';
-    return 'Sin rol';
+    if (roles.includes('organization_manager')) return 'Organizador';
+    if (roles.includes('pet_manager')) return 'Gestor';
+    if (roles.includes('blog_editor') || roles.includes('adoptions_coordinator')) return 'Editor';
+    return 'Miembro';
 }
 
 function userRoleBadgeClass(u: User): string {
-    if (u.is_super_admin) return 'bg-amber-600 text-white';
+    if (u.is_super_admin) return 'bg-purple-600 text-white';
+    if (u.memberships.length === 0) return 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500';
     const roles = u.memberships.map(m => m.role);
-    if (roles.includes('owner')) return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400';
-    if (roles.includes('admin')) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400';
-    if (roles.length > 0) return 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
-    return 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500';
+    if (roles.includes('owner')) return 'bg-amber-500 text-white';
+    if (roles.includes('admin')) return 'bg-blue-500 text-white';
+    if (roles.includes('organization_manager')) return 'bg-teal-500 text-white';
+    if (roles.includes('pet_manager') || roles.includes('blog_editor') || roles.includes('adoptions_coordinator')) return 'bg-emerald-500 text-white';
+    return 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300';
 }
 
 function formatDate(d: string): string {
@@ -228,7 +232,7 @@ function goToPage(page: number) {
                             </TableHead>
                             <TableHead class="cursor-pointer select-none">
                                 <div class="flex items-center gap-1">
-                                    Admin
+                                    Rol
                                     <ArrowUpDown class="size-3 text-muted-foreground/60" />
                                 </div>
                             </TableHead>
