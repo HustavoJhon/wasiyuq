@@ -108,6 +108,22 @@ function roleColor(r: string): string {
 
 const speciesEntries = computed(() => Object.entries(props.speciesStats));
 const statusEntries = computed(() => Object.entries(props.statusStats));
+
+const speciesLabels: Record<string, string> = {
+    dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro',
+};
+
+const speciesColors: Record<string, string> = {
+    dog: '#0EA5E9', cat: '#F59E0B', rabbit: '#EC4899', bird: '#8B5CF6', other: '#78716c',
+};
+
+const statusLabels: Record<string, string> = {
+    available: 'Disponible', adopted: 'Adoptado', in_process: 'En Proceso', withheld: 'Reservado',
+};
+
+const statusColors: Record<string, string> = {
+    available: '#10B981', adopted: '#3B82F6', in_process: '#F59E0B', withheld: '#78716c',
+};
 </script>
 
 <template>
