@@ -7,7 +7,6 @@ import {
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
-import DoughnutChart from '@/components/charts/DoughnutChart.vue';
 
 const { photoUrl } = usePhotoUrl();
 
@@ -109,19 +108,6 @@ const activeSpecies = computed(() => speciesOptions.find(o => o.value === (props
 
 const hasActiveFilters = computed(() => !!(props.filters.species || props.filters.size || props.filters.gender || props.filters.search || props.filters.sort));
 
-const chartData = computed(() => {
-    const labels: Record<string, string> = { dog: 'Perros', cat: 'Gatos', rabbit: 'Conejos', bird: 'Aves', other: 'Otros' };
-    const colors: Record<string, string> = { dog: '#0EA5E9', cat: '#F59E0B', rabbit: '#EC4899', bird: '#8B5CF6', other: '#2D6A4F' };
-    return speciesOptions
-        .filter(o => o.value !== '')
-        .map(o => ({
-            label: labels[o.value] ?? o.label,
-            value: Number(props.speciesCounts[o.value] ?? 0),
-            color: colors[o.value] ?? '#2D6A4F',
-        }))
-        .filter(d => d.value > 0);
-});
-
 const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="#e5e7eb"/><g transform="translate(200,150)"><circle cx="0" cy="-20" r="40" fill="#d1d5db"/><ellipse cx="-25" cy="15" rx="20" ry="25" fill="#d1d5db"/><ellipse cx="25" cy="15" rx="20" ry="25" fill="#d1d5db"/></g></svg>');
 </script>
 
@@ -172,20 +158,9 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
                 </div>
             </div>
 
-            <!-- Chart + filters row -->
-            <div class="mb-8 grid gap-6 lg:grid-cols-3">
-                <!-- Donut chart (desktop sidebar) -->
-                <div v-if="chartData.length > 1" class="hidden lg:block">
-                    <div class="rounded-2xl border border-border/50 bg-card/80 p-5 shadow-sm">
-                        <h3 class="mb-3 text-sm font-semibold text-foreground">Distribución por especie</h3>
-                        <DoughnutChart :data="chartData" :size="180" :innerRadius="50" />
-                    </div>
-                </div>
-
-                <!-- Main content area -->
-                <div :class="chartData.length > 1 ? 'lg:col-span-2' : 'lg:col-span-3'">
-                    <!-- Filter bar -->
-                    <div class="rounded-2xl border border-border/50 bg-card/80 p-3 shadow-sm">
+            <!-- Filters row -->
+            <div class="mb-8">
+                <div class="rounded-2xl border border-border/50 bg-card/80 p-3 shadow-sm">
                         <!-- Desktop filters -->
                         <div class="hidden items-center gap-3 sm:flex">
                             <div class="flex items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
@@ -275,7 +250,6 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
                                 <option value="female">Hembra</option>
                                 <option value="male">Macho</option>
                             </select>
-                        </div>
                     </div>
                 </div>
             </div>
