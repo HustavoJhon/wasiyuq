@@ -37,7 +37,10 @@ class CreateDatabase extends Command
         } catch (PdoException) {
         }
 
-        $dsn = "sqlsrv:Server=$host,$port";
+        $encrypt = config("database.connections.$connection.encrypt", 'no');
+        $trustCert = config("database.connections.$connection.trust_server_certificate", 'true');
+
+        $dsn = "sqlsrv:Server=$host,$port;Encrypt=$encrypt;TrustServerCertificate=$trustCert";
 
         try {
             $pdo = new \PDO($dsn, $username, $password, [
