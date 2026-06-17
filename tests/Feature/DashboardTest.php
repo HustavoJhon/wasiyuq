@@ -26,7 +26,7 @@ class DashboardTest extends TestCase
         $user = User::factory()->create();
         $team = Team::factory()->create(['is_personal' => false]);
         $team->members()->attach($user, ['role' => TeamRole::Owner->value]);
-        $user->update(['current_team_id' => $team->id]);
+        $user->switchTeam($team);
 
         $response = $this
             ->actingAs($user)
