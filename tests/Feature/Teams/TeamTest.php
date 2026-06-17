@@ -268,7 +268,7 @@ class TeamTest extends TestCase
                 'name' => $personalTeam->name,
             ]);
 
-        $response->assertForbidden();
+        $response->assertRedirect('/mi-adopcion');
 
         $this->assertDatabaseHas('teams', [
             'id' => $personalTeam->id,
