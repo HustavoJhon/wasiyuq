@@ -13,6 +13,7 @@ class PetRepository
         ?string $size = null,
         ?string $gender = null,
         ?string $search = null,
+        string $sort = 'recent',
         int $perPage = 12
     ): LengthAwarePaginator {
         return Pet::query()
@@ -25,7 +26,7 @@ class PetRepository
                     ->orWhere('breed', 'like', "%{$v}%");
             }))
             ->with('team:id,name,slug,city,state')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', $sort === 'oldest' ? 'asc' : 'desc')
             ->paginate($perPage);
     }
 
