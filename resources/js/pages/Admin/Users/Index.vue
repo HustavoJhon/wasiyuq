@@ -71,6 +71,7 @@ const props = defineProps<{
     meta: Meta;
     teams: Record<string, string>;
     roles: string[];
+    filters?: { search?: string; team_id?: string; role?: string };
 }>();
 
 function destroyUser(userId: number, userName: string) {
@@ -79,45 +80,40 @@ function destroyUser(userId: number, userName: string) {
     }
 }
 
-const globalFilter = ref('');
-const teamFilter = ref('all');
-const roleFilter = ref('all');
+const globalFilter = ref(props.filters?.search ?? '');
+const teamFilter = ref(props.filters?.team_id ?? 'all');
+const roleFilter = ref(props.filters?.role ?? 'all');
 
-const filteredUsers = computed(() => {
-    return props.users.filter((u) => {
-        if (
-            teamFilter.value !== 'all' &&
-            !u.memberships.some(
-                (m) => m.team.id.toString() === teamFilter.value,
-            )
-        ) {
-            return false;
-        }
+let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
-        if (
-            roleFilter.value !== 'all' &&
-            !u.memberships.some((m) => m.role === roleFilter.value)
-        ) {
-            return false;
-        }
-
-        return true;
-    });
-});
-
-const searchedUsers = computed(() => {
-    if (!globalFilter.value) {
-return filteredUsers.value;
+function applyFilters() {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        router.get(admin.users.index().url, {
+            search: globalFilter.value || undefined,
+            team_id: teamFilter.value !== 'all' ? teamFilter.value : undefined,
+            role: roleFilter.value !== 'all' ? roleFilter.value : undefined,
+        }, { preserveState: true, replace: true, preserveScroll: true });
+    }, 300);
 }
 
-    const q = globalFilter.value.toLowerCase();
+function onTeamChange(value: string) {
+    teamFilter.value = value;
+    router.get(admin.users.index().url, {
+        search: globalFilter.value || undefined,
+        team_id: value !== 'all' ? value : undefined,
+        role: roleFilter.value !== 'all' ? roleFilter.value : undefined,
+    }, { preserveState: true, replace: true, preserveScroll: true });
+}
 
-    return filteredUsers.value.filter(
-        (u) =>
-            u.name.toLowerCase().includes(q) ||
-            u.email.toLowerCase().includes(q),
-    );
-});
+function onRoleChange(value: string) {
+    roleFilter.value = value;
+    router.get(admin.users.index().url, {
+        search: globalFilter.value || undefined,
+        team_id: teamFilter.value !== 'all' ? teamFilter.value : undefined,
+        role: value !== 'all' ? value : undefined,
+    }, { preserveState: true, replace: true, preserveScroll: true });
+}
 
 function initials(name: string): string {
     return name
@@ -137,7 +133,12 @@ function formatDate(d: string): string {
 function goToPage(page: number) {
     router.get(
         admin.users.index().url,
-        { page },
+        {
+            page,
+            search: globalFilter.value || undefined,
+            team_id: teamFilter.value !== 'all' ? teamFilter.value : undefined,
+            role: roleFilter.value !== 'all' ? roleFilter.value : undefined,
+        },
         { preserveState: true, preserveScroll: true },
     );
 }
@@ -169,9 +170,9 @@ function goToPage(page: number) {
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div class="relative w-full sm:max-w-sm">
                         <Search class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input v-model="globalFilter" placeholder="Buscar usuarios..." class="pl-9" />
+                        <Input v-model="globalFilter" placeholder="Buscar usuarios..." class="pl-9" @input="applyFilters" />
                     </div>
-                    <Select v-model="teamFilter">
+                    <Select v-model="teamFilter" @update:model-value="onTeamChange">
                         <SelectTrigger class="w-full sm:w-44">
                             <SelectValue placeholder="Todos los equipos" />
                         </SelectTrigger>
@@ -180,7 +181,7 @@ function goToPage(page: number) {
                             <SelectItem v-for="(name, id) in teams" :key="id" :value="id">{{ name }}</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Select v-model="roleFilter">
+                    <Select v-model="roleFilter" @update:model-value="onRoleChange">
                         <SelectTrigger class="w-full sm:w-36">
                             <SelectValue placeholder="Todos los roles" />
                         </SelectTrigger>
@@ -229,7 +230,7 @@ function goToPage(page: number) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="row in searchedUsers" :key="row.id">
+                        <TableRow v-for="row in users" :key="row.id">
                             <TableCell>
                                 <div class="flex items-center gap-3">
                                     <Avatar class="size-8">
@@ -279,7 +280,7 @@ function goToPage(page: number) {
                                 </div>
                             </TableCell>
                         </TableRow>
-                        <TableRow v-if="searchedUsers.length === 0">
+                        <TableRow v-if="users.length === 0">
                             <TableCell colspan="6" class="py-12 text-center text-muted-foreground">
                                 No se encontraron usuarios.
                             </TableCell>
@@ -289,8 +290,8 @@ function goToPage(page: number) {
             </CardContent>
         </Card>
 
-        <div v-if="searchedUsers.length > 0" class="mt-6 space-y-3 md:hidden">
-            <div v-for="row in searchedUsers" :key="row.id" class="rounded-xl border border-border bg-card p-4 transition hover:shadow-sm">
+        <div v-if="users.length > 0" class="mt-6 space-y-3 md:hidden">
+            <div v-for="row in users" :key="row.id" class="rounded-xl border border-border bg-card p-4 transition hover:shadow-sm">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <Avatar class="size-10">
@@ -343,7 +344,7 @@ function goToPage(page: number) {
                     </div>
                 </div>
             </div>
-            <div v-if="searchedUsers.length === 0" class="rounded-xl border border-border bg-card px-5 py-8 text-center text-sm text-muted-foreground/70">
+            <div v-if="users.length === 0" class="rounded-xl border border-border bg-card px-5 py-8 text-center text-sm text-muted-foreground/70">
                 No se encontraron usuarios.
             </div>
         </div>

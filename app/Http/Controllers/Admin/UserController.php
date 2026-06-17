@@ -20,6 +20,12 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()
+            ->when(request('search'), fn ($q, $v) => $q->where(function ($q) use ($v) {
+                $q->where('name', 'like', "%{$v}%")
+                    ->orWhere('email', 'like', "%{$v}%");
+            }))
+            ->when(request('team_id'), fn ($q, $v) => $q->whereHas('teamMemberships', fn ($q) => $q->where('team_id', $v)))
+            ->when(request('role'), fn ($q, $v) => $q->whereHas('teamMemberships', fn ($q) => $q->where('role', $v)))
             ->with('teamMemberships.team:id,name,slug')
             ->withCount(['teamMemberships'])
             ->latest()
@@ -33,6 +39,7 @@ class UserController extends Controller
                 ];
             });
             unset($user->teamMemberships);
+
             return $user;
         })->toArray();
 
@@ -46,6 +53,7 @@ class UserController extends Controller
             ],
             'teams' => Team::query()->where('is_personal', false)->pluck('name', 'id'),
             'roles' => ['member', 'admin'],
+            'filters' => request()->only(['search', 'team_id', 'role']),
         ]);
     }
 
@@ -102,9 +110,9 @@ class UserController extends Controller
                 'role' => $membership->role ?? 'member',
                 'role_label' => $role?->label() ?? $membership->role,
                 'role_description' => $role?->description() ?? '',
-                'modules' => collect($modules)->map(fn($m) => [
+                'modules' => collect($modules)->map(fn ($m) => [
                     'name' => $m['name'],
-                    'permissions' => collect($m['permissions'])->map(fn($p) => [
+                    'permissions' => collect($m['permissions'])->map(fn ($p) => [
                         'key' => $p,
                         'label' => TeamPermission::tryFrom($p)?->label() ?? $p,
                     ]),
@@ -112,7 +120,7 @@ class UserController extends Controller
             ];
         });
         unset($user->teamMemberships);
-        
+
         $user->adoptions_count = Adoption::query()->where('user_id', $user->id)->count();
 
         return Inertia::render('Admin/Users/Show', [
