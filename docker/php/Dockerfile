@@ -21,4 +21,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+COPY docker/php/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 WORKDIR /var/www/html
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["php-fpm"]

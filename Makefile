@@ -32,7 +32,7 @@ setup: permissions create-db migrate sp link
 	@echo "✅ Setup completo"
 
 up:
-	docker-compose up -d
+	docker-compose up -d --build app
 
 down:
 	docker-compose down
