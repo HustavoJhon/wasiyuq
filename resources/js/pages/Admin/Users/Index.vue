@@ -124,6 +124,24 @@ function initials(name: string): string {
         .slice(0, 2);
 }
 
+function userRoleLabel(u: User): string {
+    if (u.is_super_admin) return 'Super Admin';
+    const roles = u.memberships.map(m => m.role);
+    if (roles.includes('owner')) return 'Propietario';
+    if (roles.includes('admin')) return 'Administrador';
+    if (roles.length > 0) return 'Miembro';
+    return 'Sin rol';
+}
+
+function userRoleBadgeClass(u: User): string {
+    if (u.is_super_admin) return 'bg-amber-600 text-white';
+    const roles = u.memberships.map(m => m.role);
+    if (roles.includes('owner')) return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400';
+    if (roles.includes('admin')) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400';
+    if (roles.length > 0) return 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
+    return 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500';
+}
+
 function formatDate(d: string): string {
     return new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' }).format(
         new Date(d),
@@ -250,13 +268,9 @@ function goToPage(page: number) {
                                 </Badge>
                             </TableCell>
                             <TableCell>
-                                <Badge v-if="row.is_super_admin" variant="default" class="bg-amber-600 hover:bg-amber-700">
-                                    <ShieldCheck class="size-3" />
-                                    Super Admin
-                                </Badge>
-                                <Badge v-else variant="secondary">
-                                    <ShieldX class="size-3" />
-                                    Usuario
+                                <Badge variant="outline" :class="userRoleBadgeClass(row)">
+                                    <ShieldCheck v-if="row.is_super_admin" class="size-3" />
+                                    {{ userRoleLabel(row) }}
                                 </Badge>
                             </TableCell>
                             <TableCell class="text-muted-foreground">
@@ -306,8 +320,9 @@ function goToPage(page: number) {
                         <Badge variant="outline" :class="row.email_verified_at ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400' : 'border-muted-foreground/20 text-muted-foreground'" class="text-[10px]">
                             {{ row.email_verified_at ? 'Verificado' : 'No verificado' }}
                         </Badge>
-                        <Badge v-if="row.is_super_admin" variant="default" class="bg-amber-600 text-[10px]">Super Admin</Badge>
-                        <Badge v-else variant="secondary" class="text-[10px]">Usuario</Badge>
+                        <Badge variant="outline" :class="userRoleBadgeClass(row)" class="text-[10px]">
+                            {{ userRoleLabel(row) }}
+                        </Badge>
                     </div>
                 </div>
                 <div class="mt-3 flex items-center gap-3 text-xs text-muted-foreground/70">
