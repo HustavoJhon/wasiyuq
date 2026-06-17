@@ -26,18 +26,21 @@ class UserController extends Controller
             }))
             ->when(request('team_id'), fn ($q, $v) => $q->whereHas('teamMemberships', fn ($q) => $q->where('team_id', $v)))
             ->when(request('role'), fn ($q, $v) => $q->whereHas('teamMemberships', fn ($q) => $q->where('role', $v)))
-            ->with('teamMemberships.team:id,name,slug')
+            ->with('teamMemberships.team:id,name,slug,is_personal')
             ->withCount(['teamMemberships'])
             ->latest()
             ->paginate(15);
 
         $usersArray = collect($users->items())->map(function ($user) {
-            $user->memberships = $user->teamMemberships->map(function ($membership) {
-                return [
-                    'team' => $membership->team,
-                    'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
-                ];
-            });
+            $user->memberships = $user->teamMemberships
+                ->filter(fn ($membership) => ! ($membership->team->is_personal ?? false))
+                ->map(function ($membership) {
+                    return [
+                        'team' => $membership->team,
+                        'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
+                    ];
+                })
+                ->values();
             unset($user->teamMemberships);
 
             return $user;

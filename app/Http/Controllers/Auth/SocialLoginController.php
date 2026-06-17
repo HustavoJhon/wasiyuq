@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\TeamRole;
 use App\Http\Controllers\Controller;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialLoginController extends Controller
@@ -36,14 +38,28 @@ class SocialLoginController extends Controller
                 'avatar' => $googleUser->getAvatar(),
             ]);
         } else {
-            $user = User::query()->create([
-                'name' => $googleUser->getName(),
-                'email' => $googleUser->getEmail(),
-                'social_id' => $googleUser->getId(),
-                'social_provider' => 'google',
-                'avatar' => $googleUser->getAvatar(),
-                'email_verified_at' => now(),
-            ]);
+            $user = DB::transaction(function () use ($googleUser) {
+                $user = User::query()->create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'social_id' => $googleUser->getId(),
+                    'social_provider' => 'google',
+                    'avatar' => $googleUser->getAvatar(),
+                    'email_verified_at' => now(),
+                ]);
+
+                $user->teams()->attach(
+                    Team::query()->create([
+                        'name' => $user->name.' (personal)',
+                        'is_personal' => true,
+                    ]),
+                    ['role' => TeamRole::Owner->value],
+                );
+
+                $user->update(['current_team_id' => $user->personalTeam()?->id]);
+
+                return $user;
+            });
         }
 
         Auth::login($user);
