@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class OrganizationController extends Controller
@@ -58,7 +59,7 @@ class OrganizationController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
-            'logo' => ['nullable', 'url'],
+            'logo' => ['nullable', 'image', 'max:2048'],
             'website' => ['nullable', 'url'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:255'],
@@ -66,6 +67,10 @@ class OrganizationController extends Controller
             'state' => ['nullable', 'string', 'max:100'],
             'social_links' => ['nullable', 'array'],
         ]);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('teams/logos', 'public');
+        }
 
         $validated['is_personal'] = false;
 
@@ -121,7 +126,7 @@ class OrganizationController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
-            'logo' => ['nullable', 'url'],
+            'logo' => ['nullable', 'image', 'max:2048'],
             'website' => ['nullable', 'url'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:255'],
@@ -129,6 +134,15 @@ class OrganizationController extends Controller
             'state' => ['nullable', 'string', 'max:100'],
             'social_links' => ['nullable', 'array'],
         ]);
+
+        if ($request->hasFile('logo')) {
+            if ($team->logo) {
+                Storage::disk('public')->delete($team->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('teams/logos', 'public');
+        } else {
+            unset($validated['logo']);
+        }
 
         $team->update($validated);
 

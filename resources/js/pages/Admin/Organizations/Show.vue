@@ -137,8 +137,9 @@ const statusColors: Record<string, string> = {
 
         <div class="mt-5 rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
             <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-                <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-[#2D6A4F]/10 text-2xl font-bold text-[#2D6A4F] dark:bg-[#2D6A4F]/20 dark:text-emerald-400">
-                    {{ initials(organization.name) }}
+                <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#2D6A4F]/10 dark:bg-[#2D6A4F]/20">
+                    <img v-if="organization.logo" :src="photoUrl(organization.logo)" :alt="organization.name" class="h-full w-full object-cover" />
+                    <span v-else class="text-2xl font-bold text-[#2D6A4F] dark:text-emerald-400">{{ initials(organization.name) }}</span>
                 </div>
                 <div class="min-w-0 flex-1">
                     <h1 class="text-2xl font-bold text-foreground">{{ organization.name }}</h1>

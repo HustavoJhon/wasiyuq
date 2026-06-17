@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +9,25 @@ import { Label } from '@/components/ui/label';
 const form = useForm({
     name: '',
     bio: '',
+    logo: null as File | null,
     website: '',
     phone: '',
     address: '',
     city: '',
     state: '',
 });
+
+const logoPreview = ref<string | null>(null);
+
+function onLogoChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+        form.logo = file;
+        const reader = new FileReader();
+        reader.onload = () => { logoPreview.value = reader.result as string; };
+        reader.readAsDataURL(file);
+    }
+}
 
 function submit() {
     form.post('/admin/organizaciones');
@@ -86,6 +100,31 @@ function submit() {
                         ></textarea>
                     </div>
                     <InputError :message="form.errors.bio" />
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-[#2D6A4F]/15 bg-gradient-to-b from-white to-[#2D6A4F]/4 p-6 dark:border-[#2D6A4F]/30 dark:from-[#2D6A4F]/15 dark:to-black/40">
+                <div class="mb-5 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-[#2D6A4F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <h2 class="text-base font-semibold text-foreground">Logo</h2>
+                </div>
+                <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
+                    <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#2D6A4F]/15 bg-muted/30">
+                        <img v-if="logoPreview" :src="logoPreview" alt="Preview" class="h-full w-full object-cover" />
+                        <svg v-else class="h-10 w-10 text-muted-foreground/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <Label for="logo">Imagen del logo</Label>
+                        <input id="logo" type="file" accept="image/jpeg,image/png,image/webp"
+                            @change="onLogoChange"
+                            class="mt-2 block w-full cursor-pointer rounded-lg border border-border bg-background text-sm text-muted-foreground file:mr-4 file:border-0 file:bg-[#2D6A4F] file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-white file:cursor-pointer hover:file:bg-[#246142] file:transition-colors" />
+                        <InputError :message="form.errors.logo" />
+                        <p class="mt-1.5 text-xs text-muted-foreground/60">PNG, JPG o WebP. Máximo 2 MB.</p>
+                    </div>
                 </div>
             </div>
 
