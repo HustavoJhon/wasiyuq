@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses\Concerns;
 
+use App\Actions\Teams\CreateTeam;
 use Illuminate\Support\Facades\URL;
 
 trait RedirectsToCurrentTeam
@@ -25,7 +26,11 @@ trait RedirectsToCurrentTeam
         $team = $user?->currentTeam ?? $user?->personalTeam();
 
         if (! $team) {
-            abort(403);
+            $team = app(CreateTeam::class)->handle(
+                $user,
+                "{$user->name} (personal)",
+                isPersonal: true,
+            );
         }
 
         return $team;
