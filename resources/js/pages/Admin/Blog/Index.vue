@@ -145,7 +145,7 @@ function onSearchInput() {
                             <span class="h-1.5 w-1.5 rounded-full" :class="post.is_published ? 'bg-emerald-500' : 'bg-gray-400'" />
                             {{ post.is_published ? 'Publicado' : 'Borrador' }}
                         </span>
-                        <div class="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <div class="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
                             <a :href="'/admin/blog/' + post.id" class="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-[#2D6A4F]/10 hover:text-[#2D6A4F]">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

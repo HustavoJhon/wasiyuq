@@ -243,7 +243,7 @@ const pageLinks = () => {
 
                 <div class="mt-4 flex items-center justify-between">
                     <span class="text-[10px] text-muted-foreground/60">{{ formatDate(org.created_at) }}</span>
-                    <div class="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                    <div class="flex items-center gap-2 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
                         <a :href="'/admin/organizaciones/' + org.slug" class="inline-flex items-center gap-1 rounded-lg border border-[#2D6A4F]/20 px-2.5 py-1 text-xs font-medium text-[#2D6A4F] transition hover:bg-[#2D6A4F]/5 dark:text-emerald-400">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
