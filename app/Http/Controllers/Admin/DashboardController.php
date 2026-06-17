@@ -38,6 +38,11 @@ class DashboardController extends Controller
             ];
         }
 
+        $speciesCounts = Pet::query()
+            ->selectRaw('species, count(*) as total')
+            ->groupBy('species')
+            ->pluck('total', 'species');
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
                 'total_pets' => Pet::query()->count(),
@@ -51,6 +56,7 @@ class DashboardController extends Controller
                 'pending_follow_ups' => FollowUp::query()->where('status', 'pending')->count(),
                 'total_users' => User::query()->count(),
             ],
+            'species_counts' => $speciesCounts->all(),
             'recent_adoptions' => Adoption::query()
                 ->with(['pet:id,name,slug', 'adopter:id,name'])
                 ->latest()

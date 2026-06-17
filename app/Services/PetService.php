@@ -19,6 +19,7 @@ class PetService
         ?string $size = null,
         ?string $gender = null,
         ?string $search = null,
+        string $sort = 'recent',
         int $perPage = 12
     ): LengthAwarePaginator {
         return $this->repository->searchPublished(
@@ -26,6 +27,7 @@ class PetService
             size: $size,
             gender: $gender,
             search: $search,
+            sort: $sort,
             perPage: $perPage,
         );
     }

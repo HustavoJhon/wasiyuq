@@ -73,7 +73,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function show(int $id)
+    public function show($id)
     {
         $pet = Pet::query()->with(['team:id,name,slug', 'adoptions.adopter:id,name'])->findOrFail($id);
 
@@ -121,7 +121,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         $pet = Pet::query()->with('team:id,name,slug')->findOrFail($id);
 
@@ -135,7 +135,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function update(int $id, UpdatePetRequest $request)
+    public function update($id, UpdatePetRequest $request)
     {
         $pet = Pet::query()->findOrFail($id);
 
@@ -229,7 +229,7 @@ class PetController extends Controller
         return $url;
     }
 
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $pet = Pet::query()->findOrFail($id);
         $pet->delete();

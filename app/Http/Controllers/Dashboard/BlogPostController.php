@@ -67,9 +67,10 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $post = BlogPost::query()
             ->where('team_id', $team->id)
@@ -82,9 +83,10 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $post = BlogPost::query()
             ->where('team_id', $team->id)
@@ -96,9 +98,10 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function update(Request $request, int $id, UpdateBlogPostRequest $updateRequest)
+    public function update(Request $request, UpdateBlogPostRequest $updateRequest)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $post = BlogPost::query()
             ->where('team_id', $team->id)
@@ -118,9 +121,10 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request)
     {
         $team = Team::where('slug', $request->route('current_team'))->firstOrFail();
+        $id = $request->route('id');
 
         $post = BlogPost::query()
             ->where('team_id', $team->id)

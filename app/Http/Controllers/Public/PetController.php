@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pet;
 use App\Services\PetService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,12 +16,26 @@ class PetController extends Controller
 
     public function index(Request $request)
     {
+        $sort = $request->query('sort', 'recent');
+
         $pets = $this->petService->searchPublished(
             species: $request->query('species'),
             size: $request->query('size'),
             gender: $request->query('gender'),
             search: $request->query('search'),
+            sort: $sort === 'oldest' ? 'oldest' : 'recent',
         );
+
+        $speciesCounts = Pet::query()
+            ->where('status', 'available')
+            ->selectRaw('species, count(*) as total')
+            ->groupBy('species')
+            ->pluck('total', 'species');
+
+        $statusCounts = Pet::query()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
         return Inertia::render('Public/Pets/Index', [
             'pets' => $pets->items(),
@@ -30,7 +45,9 @@ class PetController extends Controller
                 'total' => $pets->total(),
                 'per_page' => $pets->perPage(),
             ],
-            'filters' => $request->only(['species', 'size', 'gender', 'search']),
+            'filters' => $request->only(['species', 'size', 'gender', 'search', 'sort']),
+            'speciesCounts' => $speciesCounts->all(),
+            'statusCounts' => $statusCounts->all(),
         ]);
     }
 

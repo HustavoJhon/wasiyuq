@@ -2,6 +2,9 @@
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import type { Team } from '@/types';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
 
 interface FollowUp {
     id: number;
@@ -179,7 +182,7 @@ function formatDate(d: string): string {
                         <img
                             v-for="(photo, i) in followUp.photos"
                             :key="i"
-                            :src="'/storage/' + photo"
+                            :src="photoUrl(photo)"
                             class="h-32 w-full rounded-lg border border-border object-cover"
                         />
                     </div>
