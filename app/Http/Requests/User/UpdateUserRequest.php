@@ -15,7 +15,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->route('user')],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->route('user')->id],
             'password' => ['nullable', 'string', 'min:8'],
             'is_super_admin' => ['boolean'],
             'email_verified_at' => ['nullable', 'boolean'],
