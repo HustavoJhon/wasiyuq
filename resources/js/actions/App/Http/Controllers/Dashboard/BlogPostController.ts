@@ -371,7 +371,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 export const edit = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -386,7 +386,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 edit.url = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -412,7 +412,7 @@ edit.url = (args: { current_team: string | number, id: string | number } | [curr
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 edit.get = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -422,7 +422,7 @@ edit.get = (args: { current_team: string | number, id: string | number } | [curr
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 edit.head = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -432,7 +432,7 @@ edit.head = (args: { current_team: string | number, id: string | number } | [cur
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 const editForm = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -442,7 +442,7 @@ const editForm = (args: { current_team: string | number, id: string | number } |
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 editForm.get = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -452,7 +452,7 @@ editForm.get = (args: { current_team: string | number, id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::edit
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:85
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:86
 * @route '/{current_team}/blog/{id}/editar'
 */
 editForm.head = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -469,7 +469,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::update
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:99
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:101
 * @route '/{current_team}/blog/{id}'
 */
 export const update = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -484,7 +484,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::update
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:99
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:101
 * @route '/{current_team}/blog/{id}'
 */
 update.url = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -510,7 +510,7 @@ update.url = (args: { current_team: string | number, id: string | number } | [cu
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::update
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:99
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:101
 * @route '/{current_team}/blog/{id}'
 */
 update.put = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -520,7 +520,7 @@ update.put = (args: { current_team: string | number, id: string | number } | [cu
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::update
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:99
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:101
 * @route '/{current_team}/blog/{id}'
 */
 const updateForm = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -535,7 +535,7 @@ const updateForm = (args: { current_team: string | number, id: string | number }
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::update
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:99
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:101
 * @route '/{current_team}/blog/{id}'
 */
 updateForm.put = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -552,7 +552,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::destroy
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:121
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:124
 * @route '/{current_team}/blog/{id}'
 */
 export const destroy = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -567,7 +567,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::destroy
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:121
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:124
 * @route '/{current_team}/blog/{id}'
 */
 destroy.url = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -593,7 +593,7 @@ destroy.url = (args: { current_team: string | number, id: string | number } | [c
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::destroy
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:121
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:124
 * @route '/{current_team}/blog/{id}'
 */
 destroy.delete = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -603,7 +603,7 @@ destroy.delete = (args: { current_team: string | number, id: string | number } |
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::destroy
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:121
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:124
 * @route '/{current_team}/blog/{id}'
 */
 const destroyForm = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -618,7 +618,7 @@ const destroyForm = (args: { current_team: string | number, id: string | number 
 
 /**
 * @see \App\Http\Controllers\Dashboard\BlogPostController::destroy
-* @see app/Http/Controllers/Dashboard/BlogPostController.php:121
+* @see app/Http/Controllers/Dashboard/BlogPostController.php:124
 * @route '/{current_team}/blog/{id}'
 */
 destroyForm.delete = (args: { current_team: string | number, id: string | number } | [current_team: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
