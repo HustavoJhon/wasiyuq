@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { usePhotoUrl } from '@/composables/usePhotoUrl';
+
+const { photoUrl } = usePhotoUrl();
 
 interface FollowUp {
     id: number;
@@ -156,7 +159,7 @@ const housingLabels: Record<string, string> = {
                             class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-muted"
                         >
                             <img
-                                :src="'/storage/' + adoption.pet.photos[0]"
+                                :src="photoUrl(adoption.pet.photos[0])"
                                 :alt="adoption.pet.name"
                                 class="h-full w-full object-cover"
                             />
