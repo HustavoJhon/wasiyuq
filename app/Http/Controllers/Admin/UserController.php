@@ -101,27 +101,29 @@ class UserController extends Controller
         $user->load(['teamMemberships.team:id,name,slug,is_personal']);
 
         $allPermissions = [];
-        $user->memberships = $user->teamMemberships->map(function ($membership) use (&$allPermissions) {
-            $role = $membership->role instanceof TeamRole ? $membership->role : TeamRole::tryFrom($membership->role);
-            $modules = $role ? $role->modules() : [];
+        $user->memberships = $user->teamMemberships
+            ->filter(fn ($membership) => ! ($membership->team->is_personal ?? false))
+            ->map(function ($membership) use (&$allPermissions) {
+                $role = $membership->role instanceof TeamRole ? $membership->role : TeamRole::tryFrom($membership->role);
+                $modules = $role ? $role->modules() : [];
 
-            $allPermissions[$membership->team->name] = $modules;
+                $allPermissions[$membership->team->name] = $modules;
 
-            return [
-                'id' => $membership->id,
-                'team' => $membership->team,
-                'role' => $membership->role ?? 'member',
-                'role_label' => $role?->label() ?? $membership->role,
-                'role_description' => $role?->description() ?? '',
-                'modules' => collect($modules)->map(fn ($m) => [
-                    'name' => $m['name'],
-                    'permissions' => collect($m['permissions'])->map(fn ($p) => [
-                        'key' => $p,
-                        'label' => TeamPermission::tryFrom($p)?->label() ?? $p,
-                    ]),
-                ])->values(),
-            ];
-        });
+                return [
+                    'id' => $membership->id,
+                    'team' => $membership->team,
+                    'role' => $membership->role ?? 'member',
+                    'role_label' => $role?->label() ?? $membership->role,
+                    'role_description' => $role?->description() ?? '',
+                    'modules' => collect($modules)->map(fn ($m) => [
+                        'name' => $m['name'],
+                        'permissions' => collect($m['permissions'])->map(fn ($p) => [
+                            'key' => $p,
+                            'label' => TeamPermission::tryFrom($p)?->label() ?? $p,
+                        ]),
+                    ])->values(),
+                ];
+            });
         unset($user->teamMemberships);
 
         $user->adoptions_count = Adoption::query()->where('user_id', $user->id)->count();
@@ -136,13 +138,15 @@ class UserController extends Controller
     {
         $user->load(['teamMemberships.team:id,name,slug,is_personal']);
 
-        $user->memberships = $user->teamMemberships->map(function ($membership) {
-            return [
-                'id' => $membership->id,
-                'team' => $membership->team,
-                'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
-            ];
-        });
+        $user->memberships = $user->teamMemberships
+            ->filter(fn ($membership) => ! ($membership->team->is_personal ?? false))
+            ->map(function ($membership) {
+                return [
+                    'id' => $membership->id,
+                    'team' => $membership->team,
+                    'role' => $membership->role instanceof TeamRole ? $membership->role->value : ($membership->role ?? 'member'),
+                ];
+            });
         unset($user->teamMemberships);
 
         return Inertia::render('Admin/Users/Edit', [
@@ -162,6 +166,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'is_super_admin' => $request->boolean('is_super_admin'),
+            'email_verified_at' => $request->boolean('email_verified_at') ? ($user->email_verified_at ?? now()) : null,
         ];
 
         if ($request->password) {
@@ -210,6 +215,48 @@ class UserController extends Controller
                 'type' => 'success',
                 'message' => 'Usuario eliminado exitosamente',
             ],
+        ]);
+    }
+
+    public function addMembership(User $user)
+    {
+        $validated = request()->validate([
+            'team_id' => ['required', 'exists:teams,id'],
+            'role' => ['required', 'string', 'in:owner,admin,member'],
+        ]);
+
+        if ($user->teams()->where('team_id', $validated['team_id'])->exists()) {
+            return redirect()->back()->with('flash', [
+                'toast' => ['type' => 'error', 'message' => 'El usuario ya pertenece a esta organización.'],
+            ]);
+        }
+
+        $user->teams()->attach($validated['team_id'], ['role' => $validated['role']]);
+
+        return redirect()->back()->with('flash', [
+            'toast' => ['type' => 'success', 'message' => 'Usuario agregado a la organización exitosamente.'],
+        ]);
+    }
+
+    public function removeMembership(User $user, $membershipId)
+    {
+        $user->teamMemberships()->where('id', $membershipId)->delete();
+
+        return redirect()->back()->with('flash', [
+            'toast' => ['type' => 'success', 'message' => 'Membresía eliminada exitosamente.'],
+        ]);
+    }
+
+    public function updateMembershipRole(User $user, $membershipId)
+    {
+        $validated = request()->validate([
+            'role' => ['required', 'string', 'in:owner,admin,member'],
+        ]);
+
+        $user->teamMemberships()->where('id', $membershipId)->update(['role' => $validated['role']]);
+
+        return redirect()->back()->with('flash', [
+            'toast' => ['type' => 'success', 'message' => 'Rol actualizado exitosamente.'],
         ]);
     }
 }

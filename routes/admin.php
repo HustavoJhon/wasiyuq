@@ -31,6 +31,9 @@ Route::prefix('admin')
         Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('users.update');
         Route::put('/usuarios/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('/usuarios/{user}/membership', [UserController::class, 'addMembership'])->name('users.add-membership');
+        Route::delete('/usuarios/{user}/membership/{membership}', [UserController::class, 'removeMembership'])->name('users.remove-membership');
+        Route::put('/usuarios/{user}/membership/{membership}', [UserController::class, 'updateMembershipRole'])->name('users.update-membership');
 
         Route::get('/mascotas', [PetController::class, 'index'])->name('pets.index');
         Route::get('/mascotas/crear', [PetController::class, 'create'])->name('pets.create');

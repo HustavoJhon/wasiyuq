@@ -57,6 +57,7 @@ const form = useForm({
     email: props.user.email,
     password: '',
     is_super_admin: props.user.is_super_admin,
+    email_verified_at: !!props.user.email_verified_at,
 });
 
 const openModules = ref<Record<string, boolean>>({});
@@ -123,8 +124,33 @@ function permissionActionIcon(key: string): string {
         cancel: '❌', 'update-status': '🔄',
         'generate-docs': '📄', export: '📥',
     };
-
     return icons[action] ?? '•';
+}
+
+const addMembershipForm = useForm({
+    team_id: '' as number | string,
+    role: 'member' as string,
+});
+
+function addMembership() {
+    addMembershipForm.post(`/admin/usuarios/${props.user.id}/membership`, {
+        preserveScroll: true,
+        onSuccess: () => addMembershipForm.reset(),
+    });
+}
+
+function removeMembership(membershipId: number) {
+    if (confirm('¿Quitar al usuario de esta organización?')) {
+        router.delete(`/admin/usuarios/${props.user.id}/membership/${membershipId}`, {
+            preserveScroll: true,
+        });
+    }
+}
+
+function changeRole(membershipId: number, role: string) {
+    router.put(`/admin/usuarios/${props.user.id}/membership/${membershipId}`, { role }, {
+        preserveScroll: true,
+    });
 }
 </script>
 
@@ -227,6 +253,10 @@ function permissionActionIcon(key: string): string {
                         <Checkbox id="show-super-admin" :checked="form.is_super_admin" @update:checked="form.is_super_admin = !!$event" />
                         <Label for="show-super-admin" class="text-sm font-normal">Super Admin</Label>
                     </div>
+                    <div class="flex items-center gap-2">
+                        <Checkbox id="show-verified" :checked="form.email_verified_at" @update:checked="form.email_verified_at = !!$event" />
+                        <Label for="show-verified" class="text-sm font-normal">Correo verificado</Label>
+                    </div>
                     <p v-if="form.recentlySuccessful" class="text-xs text-emerald-600">Datos guardados correctamente.</p>
                     <Button type="submit" :disabled="form.processing" class="bg-[#2D6A4F] hover:bg-[#245a40]">
                         {{ form.processing ? 'Guardando...' : 'Guardar Cambios' }}
@@ -257,6 +287,18 @@ function permissionActionIcon(key: string): string {
                                     <span class="ml-2 rounded-full px-2 py-0.5 text-[10px] font-medium" :class="roleBadgeClass(m.role)">{{ m.role_label }}</span>
                                 </div>
                             </div>
+                            <div class="flex items-center gap-1.5">
+                                <select
+                                    :value="m.role"
+                                    @change="changeRole(m.id, ($event.target as HTMLSelectElement).value)"
+                                    class="rounded-lg border border-border bg-background px-2 py-1 text-[10px] text-muted-foreground outline-none"
+                                >
+                                    <option value="owner">Propietario</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="member">Miembro</option>
+                                </select>
+                                <button @click="removeMembership(m.id)" class="rounded-lg p-1 text-[10px] text-red-500 hover:bg-red-50 dark:hover:bg-red-950">✕</button>
+                            </div>
                         </div>
 
                         <p class="mt-2 text-xs text-muted-foreground/70">{{ m.role_description }}</p>
@@ -278,6 +320,23 @@ function permissionActionIcon(key: string): string {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Add to organization -->
+                <div class="mt-4 border-t border-[#2D6A4F]/10 pt-4 dark:border-[#2D6A4F]/20">
+                    <p class="mb-3 text-xs font-medium text-muted-foreground">Agregar a organización</p>
+                    <div class="flex items-center gap-2">
+                        <select v-model="addMembershipForm.team_id" class="flex-1 rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground outline-none">
+                            <option value="" disabled>Seleccionar organización...</option>
+                            <option v-for="t in teams" :key="t.id" :value="t.id">{{ t.name }}</option>
+                        </select>
+                        <select v-model="addMembershipForm.role" class="rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-muted-foreground outline-none">
+                            <option value="owner">Propietario</option>
+                            <option value="admin">Admin</option>
+                            <option value="member">Miembro</option>
+                        </select>
+                        <button @click="addMembership" :disabled="addMembershipForm.processing || !addMembershipForm.team_id" class="rounded-lg bg-[#2D6A4F] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#246142] disabled:opacity-50">Agregar</button>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,7 @@ class UpdateUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->route('user')],
             'password' => ['nullable', 'string', 'min:8'],
             'is_super_admin' => ['boolean'],
+            'email_verified_at' => ['nullable', 'boolean'],
         ];
     }
 }
