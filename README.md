@@ -53,8 +53,8 @@ make shell
 composer install
 exit
 
-# 5. Migrar base de datos
-make migrate
+# 5. Setup completo (crea BD, migra, carga SP y enlaza storage)
+make setup
 
 # 6. (Opcional) Compilar assets frontend
 make build
