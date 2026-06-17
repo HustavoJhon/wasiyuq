@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Actions\Teams\CreateTeam;
 use App\Enums\AdoptionStatus;
 use App\Enums\FollowUpStatus;
 use App\Enums\TeamRole;
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->createUsers();
         $this->createOrganizations();
         $this->assignMembers();
+        $this->createPersonalTeams();
         $this->createPets();
         $this->createAnnouncements();
         $this->createBlogPosts();
@@ -283,6 +285,25 @@ class DatabaseSeeder extends Seeder
                 'slug' => \Illuminate\Support\Str::slug($data['title']) . '-' . \Illuminate\Support\Str::random(4),
                 'tags' => ['adopción', 'cuidado', 'bienestar'],
             ]));
+        }
+    }
+
+    private function createPersonalTeams(): void
+    {
+        $usersWithoutOrg = collect($this->adopters)
+            ->push($this->regularUser)
+            ->unique('id');
+
+        foreach ($usersWithoutOrg as $user) {
+            $teamExists = $user->personalTeam() !== null;
+
+            if (! $teamExists) {
+                app(CreateTeam::class)->handle(
+                    $user,
+                    "{$user->name} (personal)",
+                    isPersonal: true,
+                );
+            }
         }
     }
 
