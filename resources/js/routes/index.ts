@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../wayfinder'
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
 * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
@@ -380,7 +380,7 @@ homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 home.form = homeForm
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 export const health = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -394,7 +394,7 @@ health.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 health.url = (options?: RouteQueryOptions) => {
@@ -402,7 +402,7 @@ health.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -411,7 +411,7 @@ health.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -420,7 +420,7 @@ health.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 const healthForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -429,7 +429,7 @@ const healthForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 })
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 healthForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -438,7 +438,7 @@ healthForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/public.php:24
+* @see [serialized-closure]:2
 * @route '/health'
 */
 healthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -454,69 +454,93 @@ healthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 health.form = healthForm
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: dashboard.url(options),
+export const dashboard = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(args, options),
     method: 'get',
 })
 
 dashboard.definition = {
     methods: ["get","head"],
-    url: '/dashboard',
+    url: '/{current_team}/dashboard',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-dashboard.url = (options?: RouteQueryOptions) => {
-    return dashboard.definition.url + queryParams(options)
+dashboard.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { current_team: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'slug' in args) {
+        args = { current_team: args.slug }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            current_team: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        current_team: typeof args.current_team === 'object'
+        ? args.current_team.slug
+        : args.current_team,
+    }
+
+    return dashboard.definition.url
+            .replace('{current_team}', parsedArgs.current_team.toString())
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: dashboard.url(options),
+dashboard.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dashboard.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: dashboard.url(options),
+dashboard.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: dashboard.url(args, options),
     method: 'head',
 })
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: dashboard.url(options),
+const dashboardForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: dashboard.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: dashboard.url(options),
+dashboardForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: dashboard.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:39
-* @route '/dashboard'
+* @see [serialized-closure]:2
+* @route '/{current_team}/dashboard'
 */
-dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: dashboard.url({
+dashboardForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: dashboard.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
             ...(options?.query ?? options?.mergeQuery ?? {}),

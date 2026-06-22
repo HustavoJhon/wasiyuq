@@ -19,10 +19,10 @@ class DashboardController extends Controller
     public function index()
     {
         $adoptionsTrend = Adoption::query()
-            ->select(DB::raw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as total'))
+            ->select(DB::raw("strftime('%Y', created_at) as year, strftime('%m', created_at) as month, COUNT(*) as total"))
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
-            ->groupByRaw('YEAR(created_at), MONTH(created_at)')
-            ->orderByRaw('YEAR(created_at) ASC, MONTH(created_at) ASC')
+            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
+            ->orderByRaw("strftime('%Y', created_at) ASC, strftime('%m', created_at) ASC")
             ->get()
             ->keyBy(fn ($item) => $item->year.'-'.str_pad($item->month, 2, '0', STR_PAD_LEFT));
 

@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 export const index = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 index.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
@@ -46,7 +46,7 @@ index.url = (args: { current_team: string | { slug: string } } | [current_team: 
 }
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 index.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ index.get = (args: { current_team: string | { slug: string } } | [current_team: 
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 index.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -64,7 +64,7 @@ index.head = (args: { current_team: string | { slug: string } } | [current_team:
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 const indexForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ const indexForm = (args: { current_team: string | { slug: string } } | [current_
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 indexForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ indexForm.get = (args: { current_team: string | { slug: string } } | [current_te
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
 indexForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
