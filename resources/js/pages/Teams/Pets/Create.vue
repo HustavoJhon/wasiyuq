@@ -18,6 +18,7 @@ import type { Team } from '@/types';
 const props = defineProps<{ team: Team }>();
 
 const form = useForm({
+    team_id: props.team.id,
     name: '',
     species: '',
     breed: '',

@@ -55,7 +55,7 @@ class PetController extends Controller
     {
         $data = $request->validated();
         $data['team_id'] = $current_team->id;
-        $data['slug'] = $request->slug ?? Str::slug($request->name);
+        $data['slug'] = $request->slug ?? Pet::generateUniqueSlug($request->name);
 
         unset($data['photo']);
         unset($data['photo_urls']);
@@ -100,7 +100,7 @@ class PetController extends Controller
             ->firstOrFail();
 
         $data = $request->validated();
-        $data['slug'] = $request->slug ?? Str::slug($request->name);
+        $data['slug'] = $request->slug ?? Pet::generateUniqueSlug($request->name, $id);
 
         unset($data['photo']);
         unset($data['photo_urls']);

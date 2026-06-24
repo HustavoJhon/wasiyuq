@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-export const accept = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const accept = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: accept.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ accept.definition = {
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-accept.url = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions) => {
+accept.url = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { invitation: args }
     }
@@ -52,7 +52,7 @@ accept.url = (args: { invitation: string | { code: string } } | [invitation: str
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-accept.get = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+accept.get = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: accept.url(args, options),
     method: 'get',
 })
@@ -62,7 +62,7 @@ accept.get = (args: { invitation: string | { code: string } } | [invitation: str
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-accept.head = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+accept.head = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: accept.url(args, options),
     method: 'head',
 })
@@ -72,7 +72,7 @@ accept.head = (args: { invitation: string | { code: string } } | [invitation: st
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-const acceptForm = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const acceptForm = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: accept.url(args, options),
     method: 'get',
 })
@@ -82,7 +82,7 @@ const acceptForm = (args: { invitation: string | { code: string } } | [invitatio
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-acceptForm.get = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+acceptForm.get = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: accept.url(args, options),
     method: 'get',
 })
@@ -92,7 +92,7 @@ acceptForm.get = (args: { invitation: string | { code: string } } | [invitation:
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:61
 * @route '/invitations/{invitation}/accept'
 */
-acceptForm.head = (args: { invitation: string | { code: string } } | [invitation: string | { code: string } ] | string | { code: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+acceptForm.head = (args: { invitation: string | number | { code: string | number } } | [invitation: string | number | { code: string | number } ] | string | number | { code: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: accept.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -109,7 +109,7 @@ accept.form = acceptForm
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:23
 * @route '/settings/teams/{team}/invitations'
 */
-export const store = (args: { team: string | { slug: string } } | [team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { team: string | number | { slug: string | number } } | [team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -124,7 +124,7 @@ store.definition = {
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:23
 * @route '/settings/teams/{team}/invitations'
 */
-store.url = (args: { team: string | { slug: string } } | [team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+store.url = (args: { team: string | number | { slug: string | number } } | [team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { team: args }
     }
@@ -157,7 +157,7 @@ store.url = (args: { team: string | { slug: string } } | [team: string | { slug:
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:23
 * @route '/settings/teams/{team}/invitations'
 */
-store.post = (args: { team: string | { slug: string } } | [team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { team: string | number | { slug: string | number } } | [team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -167,7 +167,7 @@ store.post = (args: { team: string | { slug: string } } | [team: string | { slug
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:23
 * @route '/settings/teams/{team}/invitations'
 */
-const storeForm = (args: { team: string | { slug: string } } | [team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const storeForm = (args: { team: string | number | { slug: string | number } } | [team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
@@ -177,7 +177,7 @@ const storeForm = (args: { team: string | { slug: string } } | [team: string | {
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:23
 * @route '/settings/teams/{team}/invitations'
 */
-storeForm.post = (args: { team: string | { slug: string } } | [team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+storeForm.post = (args: { team: string | number | { slug: string | number } } | [team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
@@ -189,7 +189,7 @@ store.form = storeForm
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:45
 * @route '/settings/teams/{team}/invitations/{invitation}'
 */
-export const destroy = (args: { team: string | { slug: string }, invitation: string | { code: string } } | [team: string | { slug: string }, invitation: string | { code: string } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } } | [team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -204,7 +204,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:45
 * @route '/settings/teams/{team}/invitations/{invitation}'
 */
-destroy.url = (args: { team: string | { slug: string }, invitation: string | { code: string } } | [team: string | { slug: string }, invitation: string | { code: string } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } } | [team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             team: args[0],
@@ -234,7 +234,7 @@ destroy.url = (args: { team: string | { slug: string }, invitation: string | { c
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:45
 * @route '/settings/teams/{team}/invitations/{invitation}'
 */
-destroy.delete = (args: { team: string | { slug: string }, invitation: string | { code: string } } | [team: string | { slug: string }, invitation: string | { code: string } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } } | [team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -244,7 +244,7 @@ destroy.delete = (args: { team: string | { slug: string }, invitation: string | 
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:45
 * @route '/settings/teams/{team}/invitations/{invitation}'
 */
-const destroyForm = (args: { team: string | { slug: string }, invitation: string | { code: string } } | [team: string | { slug: string }, invitation: string | { code: string } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } } | [team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -259,7 +259,7 @@ const destroyForm = (args: { team: string | { slug: string }, invitation: string
 * @see app/Http/Controllers/Teams/TeamInvitationController.php:45
 * @route '/settings/teams/{team}/invitations/{invitation}'
 */
-destroyForm.delete = (args: { team: string | { slug: string }, invitation: string | { code: string } } | [team: string | { slug: string }, invitation: string | { code: string } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } } | [team: string | number | { slug: string | number }, invitation: string | number | { code: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

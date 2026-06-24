@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Pet;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePetRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class UpdatePetRequest extends FormRequest
         return [
             'team_id' => ['required', 'exists:teams,id'],
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:pets,slug,' . $this->route('id')],
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('pets', 'slug')->ignore($this->route('id'))->whereNull('deleted_at')],
             'species' => ['required', 'string', 'in:dog,cat,rabbit,bird,other'],
             'breed' => ['nullable', 'string', 'max:255'],
             'age_years' => ['nullable', 'integer', 'min:0', 'max:50'],

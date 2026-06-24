@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-export const index = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ index.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-index.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+index.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -52,7 +52,7 @@ index.url = (args: { current_team: string | { slug: string } } | [current_team: 
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-index.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -62,7 +62,7 @@ index.get = (args: { current_team: string | { slug: string } } | [current_team: 
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-index.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -72,7 +72,7 @@ index.head = (args: { current_team: string | { slug: string } } | [current_team:
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-const indexForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const indexForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
@@ -82,7 +82,7 @@ const indexForm = (args: { current_team: string | { slug: string } } | [current_
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-indexForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
@@ -92,7 +92,7 @@ indexForm.get = (args: { current_team: string | { slug: string } } | [current_te
 * @see app/Http/Controllers/Teams/PetController.php:17
 * @route '/{current_team}/mascotas'
 */
-indexForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -109,7 +109,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-export const create = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const create = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(args, options),
     method: 'get',
 })
@@ -124,7 +124,7 @@ create.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-create.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+create.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -157,7 +157,7 @@ create.url = (args: { current_team: string | { slug: string } } | [current_team:
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-create.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+create.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(args, options),
     method: 'get',
 })
@@ -167,7 +167,7 @@ create.get = (args: { current_team: string | { slug: string } } | [current_team:
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-create.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+create.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(args, options),
     method: 'head',
 })
@@ -177,7 +177,7 @@ create.head = (args: { current_team: string | { slug: string } } | [current_team
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-const createForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const createForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url(args, options),
     method: 'get',
 })
@@ -187,7 +187,7 @@ const createForm = (args: { current_team: string | { slug: string } } | [current
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-createForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+createForm.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url(args, options),
     method: 'get',
 })
@@ -197,7 +197,7 @@ createForm.get = (args: { current_team: string | { slug: string } } | [current_t
 * @see app/Http/Controllers/Teams/PetController.php:47
 * @route '/{current_team}/mascotas/crear'
 */
-createForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+createForm.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -214,7 +214,7 @@ create.form = createForm
 * @see app/Http/Controllers/Teams/PetController.php:54
 * @route '/{current_team}/mascotas'
 */
-export const store = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -229,7 +229,7 @@ store.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:54
 * @route '/{current_team}/mascotas'
 */
-store.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+store.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -262,7 +262,7 @@ store.url = (args: { current_team: string | { slug: string } } | [current_team: 
 * @see app/Http/Controllers/Teams/PetController.php:54
 * @route '/{current_team}/mascotas'
 */
-store.post = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -272,7 +272,7 @@ store.post = (args: { current_team: string | { slug: string } } | [current_team:
 * @see app/Http/Controllers/Teams/PetController.php:54
 * @route '/{current_team}/mascotas'
 */
-const storeForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const storeForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
@@ -282,7 +282,7 @@ const storeForm = (args: { current_team: string | { slug: string } } | [current_
 * @see app/Http/Controllers/Teams/PetController.php:54
 * @route '/{current_team}/mascotas'
 */
-storeForm.post = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+storeForm.post = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
@@ -294,7 +294,7 @@ store.form = storeForm
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-export const show = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -309,7 +309,7 @@ show.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-show.url = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions) => {
+show.url = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -337,7 +337,7 @@ show.url = (args: { current_team: string | { slug: string }, id: string | number
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-show.get = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -347,7 +347,7 @@ show.get = (args: { current_team: string | { slug: string }, id: string | number
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-show.head = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -357,7 +357,7 @@ show.head = (args: { current_team: string | { slug: string }, id: string | numbe
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-const showForm = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -367,7 +367,7 @@ const showForm = (args: { current_team: string | { slug: string }, id: string | 
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-showForm.get = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -377,7 +377,7 @@ showForm.get = (args: { current_team: string | { slug: string }, id: string | nu
 * @see app/Http/Controllers/Teams/PetController.php:35
 * @route '/{current_team}/mascotas/{id}'
 */
-showForm.head = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -394,7 +394,7 @@ show.form = showForm
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-export const edit = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -409,7 +409,7 @@ edit.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-edit.url = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions) => {
+edit.url = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -437,7 +437,7 @@ edit.url = (args: { current_team: string | { slug: string }, id: string | number
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-edit.get = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -447,7 +447,7 @@ edit.get = (args: { current_team: string | { slug: string }, id: string | number
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-edit.head = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -457,7 +457,7 @@ edit.head = (args: { current_team: string | { slug: string }, id: string | numbe
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-const editForm = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const editForm = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -467,7 +467,7 @@ const editForm = (args: { current_team: string | { slug: string }, id: string | 
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-editForm.get = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.get = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -477,7 +477,7 @@ editForm.get = (args: { current_team: string | { slug: string }, id: string | nu
 * @see app/Http/Controllers/Teams/PetController.php:83
 * @route '/{current_team}/mascotas/{id}/editar'
 */
-editForm.head = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.head = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -494,7 +494,7 @@ edit.form = editForm
 * @see app/Http/Controllers/Teams/PetController.php:96
 * @route '/{current_team}/mascotas/{id}'
 */
-export const update = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -509,7 +509,7 @@ update.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:96
 * @route '/{current_team}/mascotas/{id}'
 */
-update.url = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions) => {
+update.url = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -537,7 +537,7 @@ update.url = (args: { current_team: string | { slug: string }, id: string | numb
 * @see app/Http/Controllers/Teams/PetController.php:96
 * @route '/{current_team}/mascotas/{id}'
 */
-update.put = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -547,7 +547,7 @@ update.put = (args: { current_team: string | { slug: string }, id: string | numb
 * @see app/Http/Controllers/Teams/PetController.php:96
 * @route '/{current_team}/mascotas/{id}'
 */
-const updateForm = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -562,7 +562,7 @@ const updateForm = (args: { current_team: string | { slug: string }, id: string 
 * @see app/Http/Controllers/Teams/PetController.php:96
 * @route '/{current_team}/mascotas/{id}'
 */
-updateForm.put = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.put = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -579,7 +579,7 @@ update.form = updateForm
 * @see app/Http/Controllers/Teams/PetController.php:192
 * @route '/{current_team}/mascotas/{id}'
 */
-export const destroy = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -594,7 +594,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Teams/PetController.php:192
 * @route '/{current_team}/mascotas/{id}'
 */
-destroy.url = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions) => {
+destroy.url = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -622,7 +622,7 @@ destroy.url = (args: { current_team: string | { slug: string }, id: string | num
 * @see app/Http/Controllers/Teams/PetController.php:192
 * @route '/{current_team}/mascotas/{id}'
 */
-destroy.delete = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -632,7 +632,7 @@ destroy.delete = (args: { current_team: string | { slug: string }, id: string | 
 * @see app/Http/Controllers/Teams/PetController.php:192
 * @route '/{current_team}/mascotas/{id}'
 */
-const destroyForm = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -647,7 +647,7 @@ const destroyForm = (args: { current_team: string | { slug: string }, id: string
 * @see app/Http/Controllers/Teams/PetController.php:192
 * @route '/{current_team}/mascotas/{id}'
 */
-destroyForm.delete = (args: { current_team: string | { slug: string }, id: string | number } | [current_team: string | { slug: string }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { current_team: string | number | { slug: string | number }, id: string | number } | [current_team: string | number | { slug: string | number }, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

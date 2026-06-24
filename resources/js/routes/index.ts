@@ -457,7 +457,7 @@ health.form = healthForm
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-export const dashboard = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const dashboard = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: dashboard.url(args, options),
     method: 'get',
 })
@@ -471,7 +471,7 @@ dashboard.definition = {
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-dashboard.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+dashboard.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -503,7 +503,7 @@ dashboard.url = (args: { current_team: string | { slug: string } } | [current_te
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-dashboard.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+dashboard.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: dashboard.url(args, options),
     method: 'get',
 })
@@ -512,7 +512,7 @@ dashboard.get = (args: { current_team: string | { slug: string } } | [current_te
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-dashboard.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+dashboard.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: dashboard.url(args, options),
     method: 'head',
 })
@@ -521,7 +521,7 @@ dashboard.head = (args: { current_team: string | { slug: string } } | [current_t
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-const dashboardForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const dashboardForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: dashboard.url(args, options),
     method: 'get',
 })
@@ -530,7 +530,7 @@ const dashboardForm = (args: { current_team: string | { slug: string } } | [curr
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-dashboardForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+dashboardForm.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: dashboard.url(args, options),
     method: 'get',
 })
@@ -539,7 +539,7 @@ dashboardForm.get = (args: { current_team: string | { slug: string } } | [curren
 * @see [serialized-closure]:2
 * @route '/{current_team}/dashboard'
 */
-dashboardForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+dashboardForm.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: dashboard.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',

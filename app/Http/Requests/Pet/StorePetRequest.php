@@ -16,7 +16,7 @@ class StorePetRequest extends FormRequest
         return [
             'team_id' => ['required', 'exists:teams,id'],
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:pets,slug'],
+            'slug' => ['nullable', 'string', 'max:255', \Illuminate\Validation\Rule::unique('pets', 'slug')->whereNull('deleted_at')],
             'species' => ['required', 'string', 'in:dog,cat,rabbit,bird,other'],
             'breed' => ['nullable', 'string', 'max:255'],
             'age_years' => ['nullable', 'integer', 'min:0', 'max:50'],

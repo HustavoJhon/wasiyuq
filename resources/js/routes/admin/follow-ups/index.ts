@@ -222,7 +222,7 @@ store.form = storeForm
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-export const show = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -237,7 +237,7 @@ show.definition = {
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-show.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -270,7 +270,7 @@ show.url = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-show.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -280,7 +280,7 @@ show.get = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-show.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -290,7 +290,7 @@ show.head = (args: { followUp: number | { id: number } } | [followUp: number | {
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-const showForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -300,7 +300,7 @@ const showForm = (args: { followUp: number | { id: number } } | [followUp: numbe
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-showForm.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -310,7 +310,7 @@ showForm.get = (args: { followUp: number | { id: number } } | [followUp: number 
 * @see app/Http/Controllers/Admin/FollowUpController.php:95
 * @route '/admin/seguimiento/{followUp}'
 */
-showForm.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -327,7 +327,7 @@ show.form = showForm
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-export const edit = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -342,7 +342,7 @@ edit.definition = {
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-edit.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+edit.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -375,7 +375,7 @@ edit.url = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-edit.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -385,7 +385,7 @@ edit.get = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-edit.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -395,7 +395,7 @@ edit.head = (args: { followUp: number | { id: number } } | [followUp: number | {
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-const editForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const editForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -405,7 +405,7 @@ const editForm = (args: { followUp: number | { id: number } } | [followUp: numbe
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-editForm.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -415,7 +415,7 @@ editForm.get = (args: { followUp: number | { id: number } } | [followUp: number 
 * @see app/Http/Controllers/Admin/FollowUpController.php:104
 * @route '/admin/seguimiento/{followUp}/editar'
 */
-editForm.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -432,7 +432,7 @@ edit.form = editForm
 * @see app/Http/Controllers/Admin/FollowUpController.php:118
 * @route '/admin/seguimiento/{followUp}'
 */
-export const update = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -447,7 +447,7 @@ update.definition = {
 * @see app/Http/Controllers/Admin/FollowUpController.php:118
 * @route '/admin/seguimiento/{followUp}'
 */
-update.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -480,7 +480,7 @@ update.url = (args: { followUp: number | { id: number } } | [followUp: number | 
 * @see app/Http/Controllers/Admin/FollowUpController.php:118
 * @route '/admin/seguimiento/{followUp}'
 */
-update.put = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -490,7 +490,7 @@ update.put = (args: { followUp: number | { id: number } } | [followUp: number | 
 * @see app/Http/Controllers/Admin/FollowUpController.php:118
 * @route '/admin/seguimiento/{followUp}'
 */
-const updateForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -505,7 +505,7 @@ const updateForm = (args: { followUp: number | { id: number } } | [followUp: num
 * @see app/Http/Controllers/Admin/FollowUpController.php:118
 * @route '/admin/seguimiento/{followUp}'
 */
-updateForm.put = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.put = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -522,7 +522,7 @@ update.form = updateForm
 * @see app/Http/Controllers/Admin/FollowUpController.php:133
 * @route '/admin/seguimiento/{followUp}'
 */
-export const destroy = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -537,7 +537,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Admin/FollowUpController.php:133
 * @route '/admin/seguimiento/{followUp}'
 */
-destroy.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -570,7 +570,7 @@ destroy.url = (args: { followUp: number | { id: number } } | [followUp: number |
 * @see app/Http/Controllers/Admin/FollowUpController.php:133
 * @route '/admin/seguimiento/{followUp}'
 */
-destroy.delete = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -580,7 +580,7 @@ destroy.delete = (args: { followUp: number | { id: number } } | [followUp: numbe
 * @see app/Http/Controllers/Admin/FollowUpController.php:133
 * @route '/admin/seguimiento/{followUp}'
 */
-const destroyForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -595,7 +595,7 @@ const destroyForm = (args: { followUp: number | { id: number } } | [followUp: nu
 * @see app/Http/Controllers/Admin/FollowUpController.php:133
 * @route '/admin/seguimiento/{followUp}'
 */
-destroyForm.delete = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

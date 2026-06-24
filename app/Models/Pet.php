@@ -53,14 +53,14 @@ class Pet extends Model
         $originalSlug = $slug;
         $counter = 1;
 
-        $query = static::where('slug', $slug);
+        $query = static::withTrashed()->where('slug', $slug);
         if ($exceptId) {
             $query->where('id', '!=', $exceptId);
         }
 
         while ($query->exists()) {
             $slug = "{$originalSlug}-{$counter}";
-            $query = static::where('slug', $slug);
+            $query = static::withTrashed()->where('slug', $slug);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);
             }

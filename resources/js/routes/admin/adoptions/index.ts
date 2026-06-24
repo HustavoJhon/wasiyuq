@@ -85,7 +85,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-export const show = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -100,7 +100,7 @@ show.definition = {
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-show.url = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { adoption: args }
     }
@@ -133,7 +133,7 @@ show.url = (args: { adoption: number | { id: number } } | [adoption: number | { 
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-show.get = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -143,7 +143,7 @@ show.get = (args: { adoption: number | { id: number } } | [adoption: number | { 
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-show.head = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -153,7 +153,7 @@ show.head = (args: { adoption: number | { id: number } } | [adoption: number | {
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-const showForm = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -163,7 +163,7 @@ const showForm = (args: { adoption: number | { id: number } } | [adoption: numbe
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-showForm.get = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -173,7 +173,7 @@ showForm.get = (args: { adoption: number | { id: number } } | [adoption: number 
 * @see app/Http/Controllers/Admin/AdoptionController.php:79
 * @route '/admin/adopciones/{adoption}'
 */
-showForm.head = (args: { adoption: number | { id: number } } | [adoption: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { adoption: string | number | { id: string | number } } | [adoption: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',

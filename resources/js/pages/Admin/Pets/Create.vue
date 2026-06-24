@@ -392,6 +392,9 @@ const ageInMonths = computed({
                             class="block w-full cursor-pointer rounded-xl border border-[#2D6A4F]/15 bg-white/60 py-2.5 pl-4 pr-4 text-sm text-muted-foreground transition file:me-3 file:rounded-lg file:border-0 file:bg-[#2D6A4F] file:px-4 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-[#246142] dark:border-[#2D6A4F]/30 dark:bg-black/20"
                         />
                     </div>
+                    <div v-if="previewUrl" class="mt-3 overflow-hidden rounded-xl border border-[#2D6A4F]/15">
+                        <img :src="previewUrl" class="h-48 w-full object-cover" alt="Vista previa" />
+                    </div>
                     <p class="text-xs text-muted-foreground">
                         JPG, PNG o WebP. Máximo 5 MB.
                     </p>

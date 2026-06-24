@@ -39,6 +39,7 @@ interface Team {
 const props = defineProps<{ pet: Pet; team: Team }>();
 
 const form = useForm({
+    team_id: props.team.id,
     name: props.pet.name,
     species: props.pet.species,
     breed: props.pet.breed ?? '',
