@@ -223,7 +223,7 @@ function clearFilters() {
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-2">
-                                <h3 class="text-base font-semibold text-foreground truncate">{{ fu.adoption.pet.name }}</h3>
+                                <h3 class="text-base font-semibold text-foreground truncate">{{ fu.adoption.pet?.name }}</h3>
                                 <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium" :class="statusClass(fu.status)">{{ statusLabel(fu.status) }}</span>
                             </div>
                             <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground/70">

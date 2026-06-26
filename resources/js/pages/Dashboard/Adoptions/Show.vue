@@ -133,7 +133,7 @@ const housingLabels: Record<string, string> = {
                     Solicitud de Adopción
                 </h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    {{ adoption.pet.name }} — Postulante:
+                    {{ adoption.pet?.name ?? 'Mascota eliminada' }} — Postulante:
                     {{ adoption.adopter.name }}
                 </p>
             </div>
@@ -153,14 +153,13 @@ const housingLabels: Record<string, string> = {
                     <div class="mt-4 flex items-start gap-4">
                         <div
                             v-if="
-                                adoption.pet.photos &&
-                                adoption.pet.photos.length > 0
+                                adoption.pet?.photos?.length > 0
                             "
                             class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-muted"
                         >
                             <img
-                                :src="photoUrl(adoption.pet.photos[0])"
-                                :alt="adoption.pet.name"
+                                :src="photoUrl(adoption.pet?.photos[0])"
+                                :alt="adoption.pet?.name ?? 'Mascota'"
                                 class="h-full w-full object-cover"
                             />
                         </div>
@@ -168,14 +167,14 @@ const housingLabels: Record<string, string> = {
                             <p
                                 class="text-lg font-semibold text-card-foreground"
                             >
-                                {{ adoption.pet.name }}
+                                {{ adoption.pet?.name ?? 'Mascota eliminada' }}
                             </p>
                             <p class="text-sm text-muted-foreground">
-                                {{ adoption.pet.species }} —
-                                {{ adoption.pet.breed }}
+                                {{ adoption.pet?.species }} —
+                                {{ adoption.pet?.breed }}
                             </p>
                             <a
-                                :href="'/mascotas/' + adoption.pet.slug"
+                                :href="'/mascotas/' + adoption.pet?.slug"
                                 class="mt-2 inline-flex text-sm text-[#2D6A4F] hover:underline"
                                 >Ver perfil público</a
                             >

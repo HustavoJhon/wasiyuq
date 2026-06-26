@@ -112,7 +112,7 @@ function formatDate(d: string): string {
                     Hito de Seguimiento
                 </h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    {{ followUp.adoption.pet.name }} —
+                    {{ followUp.adoption.pet?.name ?? 'Mascota eliminada' }} —
                     {{ followUp.adoption.adopter.name }}
                 </p>
             </div>
@@ -259,7 +259,7 @@ function formatDate(d: string): string {
                     </h2>
                     <div class="mt-3 space-y-2">
                         <p class="text-sm font-medium text-card-foreground">
-                            {{ followUp.adoption.pet.name }}
+                            {{ followUp.adoption.pet?.name ?? 'Mascota eliminada' }}
                         </p>
                         <p class="text-xs text-muted-foreground">
                             {{ followUp.adoption.adopter.name }}

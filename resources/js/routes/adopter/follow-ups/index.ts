@@ -85,7 +85,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-export const show = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -100,7 +100,7 @@ show.definition = {
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-show.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -133,7 +133,7 @@ show.url = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-show.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -143,7 +143,7 @@ show.get = (args: { followUp: number | { id: number } } | [followUp: number | { 
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-show.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -153,7 +153,7 @@ show.head = (args: { followUp: number | { id: number } } | [followUp: number | {
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-const showForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -163,7 +163,7 @@ const showForm = (args: { followUp: number | { id: number } } | [followUp: numbe
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-showForm.get = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -173,7 +173,7 @@ showForm.get = (args: { followUp: number | { id: number } } | [followUp: number 
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:27
 * @route '/mi-adopcion/seguimientos/{followUp}'
 */
-showForm.head = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -190,7 +190,7 @@ show.form = showForm
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:42
 * @route '/mi-adopcion/seguimientos/{followUp}/reportar'
 */
-export const report = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const report = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: report.url(args, options),
     method: 'post',
 })
@@ -205,7 +205,7 @@ report.definition = {
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:42
 * @route '/mi-adopcion/seguimientos/{followUp}/reportar'
 */
-report.url = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+report.url = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { followUp: args }
     }
@@ -238,7 +238,7 @@ report.url = (args: { followUp: number | { id: number } } | [followUp: number | 
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:42
 * @route '/mi-adopcion/seguimientos/{followUp}/reportar'
 */
-report.post = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+report.post = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: report.url(args, options),
     method: 'post',
 })
@@ -248,7 +248,7 @@ report.post = (args: { followUp: number | { id: number } } | [followUp: number |
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:42
 * @route '/mi-adopcion/seguimientos/{followUp}/reportar'
 */
-const reportForm = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const reportForm = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: report.url(args, options),
     method: 'post',
 })
@@ -258,7 +258,7 @@ const reportForm = (args: { followUp: number | { id: number } } | [followUp: num
 * @see app/Http/Controllers/Adopter/FollowUpReportController.php:42
 * @route '/mi-adopcion/seguimientos/{followUp}/reportar'
 */
-reportForm.post = (args: { followUp: number | { id: number } } | [followUp: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+reportForm.post = (args: { followUp: string | number | { id: string | number } } | [followUp: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: report.url(args, options),
     method: 'post',
 })

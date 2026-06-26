@@ -163,11 +163,11 @@ function destroyUser() {
                         <div v-for="adoption in adoptions" :key="adoption.id"
                             class="flex items-center justify-between rounded-xl border border-[#2D6A4F]/10 bg-[#2D6A4F]/4 p-4 transition hover:bg-[#2D6A4F]/8 dark:border-[#2D6A4F]/20 dark:bg-[#2D6A4F]/10 dark:hover:bg-[#2D6A4F]/15">
                             <div class="flex items-center gap-3">
-                                <span class="text-lg">{{ speciesEmoji(adoption.pet.species) }}</span>
+                                <span class="text-lg">{{ speciesEmoji(adoption.pet?.species) }}</span>
                                 <div>
                                     <a :href="'/admin/adopciones/' + adoption.id"
                                         class="text-sm font-medium text-foreground hover:text-[#2D6A4F]">
-                                        {{ adoption.pet.name }}
+                                        {{ adoption.pet?.name ?? 'Mascota eliminada' }}
                                     </a>
                                     <p class="text-xs text-muted-foreground">{{ adoption.team.name }}</p>
                                 </div>

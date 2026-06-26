@@ -55,6 +55,8 @@ class PetController extends Controller
         $petsItems = is_array($pets) ? [] : $pets->items();
         $total = is_array($pets) ? 0 : $pets->total();
 
+        $species = $request->query('species');
+
         $seoDescription = $species
             ? 'Mascotas en adopción: '.($speciesCounts[$species] ?? 0).' '.match ($species) {
                 'dog' => 'perros',

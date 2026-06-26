@@ -252,11 +252,11 @@ const hasActiveFilters = computed(() => !!(search.value || statusFilter.value ||
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex min-w-0 flex-1 items-start gap-4">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#2D6A4F]/15 bg-white text-lg dark:border-[#2D6A4F]/30 dark:bg-black/40">
-                            {{ speciesEmoji[adoption.pet.species] ?? '🐾' }}
+                            {{ speciesEmoji[adoption.pet?.species] ?? '🐾' }}
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-2">
-                                <h3 class="text-base font-semibold text-foreground truncate">{{ adoption.pet.name }}</h3>
+                                <h3 class="text-base font-semibold text-foreground truncate">{{ adoption.pet?.name }}</h3>
                                 <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium" :class="statusClass(adoption.status)">{{ statusLabel(adoption.status) }}</span>
                             </div>
                             <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground/70">

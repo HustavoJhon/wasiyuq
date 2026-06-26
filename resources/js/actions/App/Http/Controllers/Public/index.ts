@@ -5,7 +5,6 @@ import EventController from './EventController'
 import BlogController from './BlogController'
 import AboutController from './AboutController'
 import ContactController from './ContactController'
-import ChatbotController from './ChatbotController'
 
 const Public = {
     SitemapController: Object.assign(SitemapController, SitemapController),
@@ -15,7 +14,6 @@ const Public = {
     BlogController: Object.assign(BlogController, BlogController),
     AboutController: Object.assign(AboutController, AboutController),
     ContactController: Object.assign(ContactController, ContactController),
-    ChatbotController: Object.assign(ChatbotController, ChatbotController),
 }
 
 export default Public

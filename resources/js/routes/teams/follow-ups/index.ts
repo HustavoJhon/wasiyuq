@@ -103,7 +103,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-export const show = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -118,7 +118,7 @@ show.definition = {
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-show.url = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions) => {
+show.url = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -148,7 +148,7 @@ show.url = (args: { current_team: string | { slug: string }, followUp: number | 
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-show.get = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -158,7 +158,7 @@ show.get = (args: { current_team: string | { slug: string }, followUp: number | 
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-show.head = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -168,7 +168,7 @@ show.head = (args: { current_team: string | { slug: string }, followUp: number |
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-const showForm = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -178,7 +178,7 @@ const showForm = (args: { current_team: string | { slug: string }, followUp: num
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-showForm.get = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -188,7 +188,7 @@ showForm.get = (args: { current_team: string | { slug: string }, followUp: numbe
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:36
 * @route '/{current_team}/seguimientos/{followUp}'
 */
-showForm.head = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -205,7 +205,7 @@ show.form = showForm
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:50
 * @route '/{current_team}/seguimientos/{followUp}/completar'
 */
-export const complete = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const complete = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: complete.url(args, options),
     method: 'post',
 })
@@ -220,7 +220,7 @@ complete.definition = {
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:50
 * @route '/{current_team}/seguimientos/{followUp}/completar'
 */
-complete.url = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions) => {
+complete.url = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -250,7 +250,7 @@ complete.url = (args: { current_team: string | { slug: string }, followUp: numbe
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:50
 * @route '/{current_team}/seguimientos/{followUp}/completar'
 */
-complete.post = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+complete.post = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: complete.url(args, options),
     method: 'post',
 })
@@ -260,7 +260,7 @@ complete.post = (args: { current_team: string | { slug: string }, followUp: numb
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:50
 * @route '/{current_team}/seguimientos/{followUp}/completar'
 */
-const completeForm = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const completeForm = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: complete.url(args, options),
     method: 'post',
 })
@@ -270,7 +270,7 @@ const completeForm = (args: { current_team: string | { slug: string }, followUp:
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:50
 * @route '/{current_team}/seguimientos/{followUp}/completar'
 */
-completeForm.post = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+completeForm.post = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: complete.url(args, options),
     method: 'post',
 })
@@ -282,7 +282,7 @@ complete.form = completeForm
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:59
 * @route '/{current_team}/seguimientos/{followUp}/no-realizado'
 */
-export const missed = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const missed = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: missed.url(args, options),
     method: 'post',
 })
@@ -297,7 +297,7 @@ missed.definition = {
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:59
 * @route '/{current_team}/seguimientos/{followUp}/no-realizado'
 */
-missed.url = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions) => {
+missed.url = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -327,7 +327,7 @@ missed.url = (args: { current_team: string | { slug: string }, followUp: number 
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:59
 * @route '/{current_team}/seguimientos/{followUp}/no-realizado'
 */
-missed.post = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+missed.post = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: missed.url(args, options),
     method: 'post',
 })
@@ -337,7 +337,7 @@ missed.post = (args: { current_team: string | { slug: string }, followUp: number
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:59
 * @route '/{current_team}/seguimientos/{followUp}/no-realizado'
 */
-const missedForm = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const missedForm = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: missed.url(args, options),
     method: 'post',
 })
@@ -347,7 +347,7 @@ const missedForm = (args: { current_team: string | { slug: string }, followUp: n
 * @see app/Http/Controllers/Dashboard/FollowUpController.php:59
 * @route '/{current_team}/seguimientos/{followUp}/no-realizado'
 */
-missedForm.post = (args: { current_team: string | { slug: string }, followUp: number | { id: number } } | [current_team: string | { slug: string }, followUp: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+missedForm.post = (args: { current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, followUp: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: missed.url(args, options),
     method: 'post',
 })

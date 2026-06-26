@@ -95,11 +95,11 @@ function initials(name: string): string {
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="flex items-start gap-4">
                     <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#2D6A4F]/15 bg-white text-2xl dark:border-[#2D6A4F]/30 dark:bg-black/40">
-                        {{ speciesEmoji[adoption.pet.species] ?? '🐾' }}
+                        {{ speciesEmoji[adoption.pet?.species] ?? '🐾' }}
                     </div>
                     <div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <h1 class="text-2xl font-bold text-foreground">{{ adoption.pet.name }}</h1>
+                            <h1 class="text-2xl font-bold text-foreground">{{ adoption.pet?.name }}</h1>
                             <span class="rounded-full px-3 py-0.5 text-xs font-medium" :class="statusClass(adoption.status)">{{ statusLabel(adoption.status) }}</span>
                         </div>
                         <p class="mt-0.5 text-sm text-muted-foreground">Adoptante: {{ adoption.adopter.name }} · {{ adoption.team.name }}</p>
@@ -231,7 +231,7 @@ function initials(name: string): string {
                         </div>
                         <div class="flex items-center justify-between pt-3">
                             <dt class="text-xs text-muted-foreground/70">Raza</dt>
-                            <dd class="text-sm font-medium text-foreground">{{ adoption.pet.breed ?? '—' }}</dd>
+                            <dd class="text-sm font-medium text-foreground">{{ adoption.pet?.breed ?? '—' }}</dd>
                         </div>
                         <div v-if="adoption.reviewer" class="flex items-center justify-between pt-3">
                             <dt class="text-xs text-muted-foreground/70">Revisado por</dt>

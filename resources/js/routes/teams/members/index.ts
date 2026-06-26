@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-export const index = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -14,10 +14,10 @@ index.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-index.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+index.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -46,46 +46,46 @@ index.url = (args: { current_team: string | { slug: string } } | [current_team: 
 }
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-index.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-index.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-const indexForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const indexForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-indexForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
 
 /**
-* @see routes/web.php:141
+* @see [serialized-closure]:2
 * @route '/{current_team}/miembros'
 */
-indexForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -102,7 +102,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Teams/TeamMemberController.php:19
 * @route '/settings/teams/{team}/members/{user}'
 */
-export const update = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -117,7 +117,7 @@ update.definition = {
 * @see app/Http/Controllers/Teams/TeamMemberController.php:19
 * @route '/settings/teams/{team}/members/{user}'
 */
-update.url = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions) => {
+update.url = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             team: args[0],
@@ -147,7 +147,7 @@ update.url = (args: { team: string | { slug: string }, user: number | { id: numb
 * @see app/Http/Controllers/Teams/TeamMemberController.php:19
 * @route '/settings/teams/{team}/members/{user}'
 */
-update.patch = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -157,7 +157,7 @@ update.patch = (args: { team: string | { slug: string }, user: number | { id: nu
 * @see app/Http/Controllers/Teams/TeamMemberController.php:19
 * @route '/settings/teams/{team}/members/{user}'
 */
-const updateForm = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -172,7 +172,7 @@ const updateForm = (args: { team: string | { slug: string }, user: number | { id
 * @see app/Http/Controllers/Teams/TeamMemberController.php:19
 * @route '/settings/teams/{team}/members/{user}'
 */
-updateForm.patch = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.patch = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -189,7 +189,7 @@ update.form = updateForm
 * @see app/Http/Controllers/Teams/TeamMemberController.php:38
 * @route '/settings/teams/{team}/members/{user}'
 */
-export const destroy = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -204,7 +204,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Teams/TeamMemberController.php:38
 * @route '/settings/teams/{team}/members/{user}'
 */
-destroy.url = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             team: args[0],
@@ -234,7 +234,7 @@ destroy.url = (args: { team: string | { slug: string }, user: number | { id: num
 * @see app/Http/Controllers/Teams/TeamMemberController.php:38
 * @route '/settings/teams/{team}/members/{user}'
 */
-destroy.delete = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -244,7 +244,7 @@ destroy.delete = (args: { team: string | { slug: string }, user: number | { id: 
 * @see app/Http/Controllers/Teams/TeamMemberController.php:38
 * @route '/settings/teams/{team}/members/{user}'
 */
-const destroyForm = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -259,7 +259,7 @@ const destroyForm = (args: { team: string | { slug: string }, user: number | { i
 * @see app/Http/Controllers/Teams/TeamMemberController.php:38
 * @route '/settings/teams/{team}/members/{user}'
 */
-destroyForm.delete = (args: { team: string | { slug: string }, user: number | { id: number } } | [team: string | { slug: string }, user: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { team: string | number | { slug: string | number }, user: string | number | { id: string | number } } | [team: string | number | { slug: string | number }, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

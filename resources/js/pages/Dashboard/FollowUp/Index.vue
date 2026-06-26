@@ -26,7 +26,7 @@ const filtered = computed(() => {
     return props.followUps.filter(fu => {
         if (search.value) {
             const q = search.value.toLowerCase();
-            if (!fu.adoption.pet.name.toLowerCase().includes(q) && !fu.adoption.adopter.name.toLowerCase().includes(q)) return false;
+            if (!fu.adoption.pet?.name?.toLowerCase().includes(q) && !fu.adoption.adopter.name.toLowerCase().includes(q)) return false;
         }
         if (statusFilter.value && fu.status !== statusFilter.value) return false;
         return true;
@@ -94,7 +94,7 @@ function speciesLabel(s: string) { const l: Record<string, string> = { dog: 'Per
                         <td class="px-5 py-3.5">
                             <div class="flex items-center gap-3">
                                 <div class="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted">
-                                    <img v-if="fu.adoption.pet.photos?.length" :src="photoUrl(fu.adoption.pet.photos[0])" :alt="fu.adoption.pet.name" class="h-full w-full object-cover" />
+<img v-if="fu.adoption.pet?.photos?.length" :src="photoUrl(fu.adoption.pet?.photos[0])" :alt="fu.adoption.pet?.name" class="h-full w-full object-cover" />
                                     <div v-else class="flex h-full items-center justify-center text-muted-foreground/30"><ClipboardList class="h-5 w-5" /></div>
                                 </div>
                                 <div><p class="font-medium text-foreground">{{ fu.adoption.pet.name }}</p><p class="text-xs text-muted-foreground/70">{{ speciesLabel(fu.adoption.pet.species) }}</p></div>
@@ -122,7 +122,7 @@ function speciesLabel(s: string) { const l: Record<string, string> = { dog: 'Per
                     </div>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-start justify-between gap-2">
-                            <h3 class="font-semibold text-foreground text-sm truncate">{{ fu.adoption.pet.name }}</h3>
+                            <h3 class="font-semibold text-foreground text-sm truncate">{{ fu.adoption.pet?.name ?? 'Mascota eliminada' }}</h3>
                             <span class="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium" :class="statusClass(fu.status)">{{ statusLabel(fu.status) }}</span>
                         </div>
                         <p class="mt-0.5 text-xs text-muted-foreground">{{ fu.adoption.adopter.name }}</p>

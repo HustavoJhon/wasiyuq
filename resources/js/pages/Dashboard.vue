@@ -199,7 +199,7 @@ function formatDate(d: string): string {
                         class="flex items-center justify-between rounded-lg border border-border/50 bg-muted/30 p-4"
                     >
                         <div>
-                            <p class="text-sm font-medium text-card-foreground">{{ adoption.pet.name }}</p>
+                            <p class="text-sm font-medium text-card-foreground">{{ adoption.pet?.name }}</p>
                             <p class="text-xs text-muted-foreground">{{ adoption.adopter.name }}</p>
                         </div>
                         <div class="text-right">

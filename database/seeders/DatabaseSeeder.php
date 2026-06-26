@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             default => 'hamster',
         };
 
-        return ['https://loremflickr.com/640/480/' . $category . '?lock=' . $lock];
+        return ['https://picsum.photos/seed/' . $species . $lock . '/640/480'];
     }
 
     private function createUsers(): void

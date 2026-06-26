@@ -110,7 +110,7 @@ export default defineConfig({
                         },
                     },
                     {
-                        urlPattern: /^https:\/\/loremflickr\.com\/.*/i,
+                        urlPattern: /^https:\/\/picsum\.photos\/.*/i,
                         handler: 'StaleWhileRevalidate',
                         options: {
                             cacheName: 'external-images',

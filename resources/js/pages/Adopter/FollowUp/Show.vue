@@ -22,7 +22,7 @@ function formatDate(d: string) { return new Intl.DateTimeFormat('es-PE', { dateS
         <a href="/mi-adopcion/seguimientos" class="group inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#2D6A4F]"><ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />Volver a seguimientos</a>
 
         <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div><h1 class="text-2xl font-bold text-foreground">Reportar Seguimiento</h1><p class="mt-1 text-sm text-muted-foreground">{{ followUp.adoption.pet.name }} — {{ followUp.adoption.team.name }}</p></div>
+            <div><h1 class="text-2xl font-bold text-foreground">Reportar Seguimiento</h1><p class="mt-1 text-sm text-muted-foreground">{{ followUp.adoption.pet?.name }} — {{ followUp.adoption.team.name }}</p></div>
             <span class="self-start inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium" :class="statusClass(followUp.status)"><Clock v-if="followUp.status === 'pending'" class="h-4 w-4" /><CheckCircle v-else-if="followUp.status === 'completed'" class="h-4 w-4" /><XCircle v-else class="h-4 w-4" />{{ statusLabel(followUp.status) }}</span>
         </div>
 
