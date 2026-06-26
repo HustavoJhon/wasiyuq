@@ -45,7 +45,7 @@ const props = defineProps<{
 
 const { photoUrl } = usePhotoUrl();
 
-const existingPhoto = props.pet.photos?.length ? photoUrl(props.pet.photos[0]) : null;
+const existingPhoto = props.pet?.photos?.length ? photoUrl(props.pet.photos[0]) : null;
 
 const photoSource = ref<'file' | 'url'>('file');
 const previewUrl = ref<string | null>(null);

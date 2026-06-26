@@ -57,15 +57,15 @@ function toggleZoom() {
 }
 
 function prevPhoto() {
-    if (lightboxIndex.value !== null && props.pet.photos) {
-        lightboxIndex.value = (lightboxIndex.value - 1 + props.pet.photos.length) % props.pet.photos.length;
+    if (lightboxIndex.value !== null && props.pet?.photos) {
+        lightboxIndex.value = (lightboxIndex.value - 1 + props.pet?.photos.length) % props.pet?.photos.length;
         zoomed.value = false;
     }
 }
 
 function nextPhoto() {
-    if (lightboxIndex.value !== null && props.pet.photos) {
-        lightboxIndex.value = (lightboxIndex.value + 1) % props.pet.photos.length;
+    if (lightboxIndex.value !== null && props.pet?.photos) {
+        lightboxIndex.value = (lightboxIndex.value + 1) % props.pet?.photos.length;
         zoomed.value = false;
     }
 }
@@ -177,15 +177,15 @@ function speciesEmoji(species: string): string {
                 <!-- Photo Gallery -->
                 <div class="lg:col-span-3 space-y-4 animate-[fadeIn_0.6s_ease-out]">
                     <div
-                        v-if="pet.photos && pet.photos.length > 0"
+                        v-if="pet?.photos && pet?.photos.length > 0"
                         class="grid gap-4"
-                        :class="pet.photos.length === 1 ? 'grid-cols-1' : pet.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'"
+                        :class="pet?.photos.length === 1 ? 'grid-cols-1' : pet?.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'"
                     >
                         <div
-                            v-for="(photo, i) in pet.photos"
+                            v-for="(photo, i) in pet?.photos"
                             :key="i"
                             class="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-100/60 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/10 hover:-translate-y-0.5 dark:border-emerald-900/30 dark:bg-gray-900 dark:hover:shadow-emerald-900/30"
-                            :class="i === 0 && pet.photos.length > 1 ? 'col-span-2 sm:col-span-2 row-span-2' : 'aspect-[4/3]'"
+                            :class="i === 0 && pet?.photos.length > 1 ? 'col-span-2 sm:col-span-2 row-span-2' : 'aspect-[4/3]'"
                             @click="openLightbox(i)"
                         >
                             <img
@@ -367,7 +367,7 @@ function speciesEmoji(species: string): string {
         <!-- Lightbox Modal -->
         <Teleport to="body">
             <div
-                v-if="lightboxIndex !== null && pet.photos"
+                v-if="lightboxIndex !== null && pet?.photos"
                 class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm"
                 @click="closeLightbox"
             >
@@ -381,7 +381,7 @@ function speciesEmoji(species: string): string {
                 </button>
 
                 <button
-                    v-if="pet.photos.length > 1"
+                    v-if="pet?.photos.length > 1"
                     class="absolute left-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
                     @click.stop="prevPhoto"
                 >
@@ -391,7 +391,7 @@ function speciesEmoji(species: string): string {
                 </button>
 
                 <img
-                    :src="photoUrl(pet.photos[lightboxIndex])"
+                    :src="photoUrl(pet?.photos[lightboxIndex])"
                     :alt="pet.name + ' ' + (lightboxIndex + 1)"
                     class="rounded-2xl object-contain shadow-2xl transition-all duration-300 cursor-zoom-in"
                     :class="zoomed ? 'max-h-none max-w-none h-auto w-auto cursor-zoom-out' : 'max-h-[90vh] max-w-[90vw]'"
@@ -399,7 +399,7 @@ function speciesEmoji(species: string): string {
                 />
 
                 <button
-                    v-if="pet.photos.length > 1"
+                    v-if="pet?.photos.length > 1"
                     class="absolute right-4 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-110"
                     @click.stop="nextPhoto"
                 >
@@ -410,7 +410,7 @@ function speciesEmoji(species: string): string {
 
                 <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
                     <span
-                        v-for="(_, i) in pet.photos"
+                        v-for="(_, i) in pet?.photos"
                         :key="i"
                         class="h-2 rounded-full transition-all duration-300 cursor-pointer"
                         :class="i === lightboxIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
