@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Adopter;
 use App\Http\Controllers\Controller;
 use App\Models\Adoption;
 use App\Models\FollowUp;
+use App\Services\PetRecommendationService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private readonly PetRecommendationService $recommendationService,
+    ) {}
+
     public function index()
     {
         $userId = Auth::id();
@@ -28,6 +33,8 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $recommendedPets = $this->recommendationService->getRecommendedPets(Auth::user(), 6);
+
         $stats = [
             'total_applications' => $applications->count(),
             'pending_applications' => $applications->where('status', 'pending')->count(),
@@ -39,6 +46,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Adopter/Dashboard', [
             'stats' => $stats,
+            'recommendedPets' => $recommendedPets,
         ]);
     }
 }

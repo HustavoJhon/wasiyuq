@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import {
     Dog, Cat, Rabbit, Bird, Search, PawPrint, MapPin,
     ChevronLeft, ChevronRight, SlidersHorizontal, ArrowUpDown, X,
-    Filter,
+    Filter, Sparkles,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
+import CompatibilityBadge from '@/components/pets/CompatibilityBadge.vue';
 
 const { photoUrl } = usePhotoUrl();
+const page = usePage();
+const isLoggedIn = computed(() => !!page.props.auth?.user);
 
 interface Pet {
     id: number;
@@ -23,6 +26,7 @@ interface Pet {
     color: string | null;
     status: string;
     photos: string[] | null;
+    compatibility?: number | null;
     team: { id: number; name: string; slug: string; city: string | null; state: string | null };
 }
 
@@ -195,6 +199,7 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
                                 class="rounded-xl border border-border bg-transparent px-3 py-2 text-sm text-muted-foreground outline-none transition focus:border-[#2D6A4F] focus:ring-1 focus:ring-[#2D6A4F]">
                                 <option value="recent">Más recientes</option>
                                 <option value="oldest">Más antiguos</option>
+                                <option v-if="isLoggedIn" value="compatibility">Por compatibilidad</option>
                             </select>
 
                             <button v-if="hasActiveFilters"
@@ -222,6 +227,7 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
                                 class="flex-1 rounded-xl border border-border bg-transparent px-3 py-2.5 text-sm text-muted-foreground outline-none transition focus:border-[#2D6A4F]">
                                 <option value="recent">Más recientes</option>
                                 <option value="oldest">Más antiguos</option>
+                                <option v-if="isLoggedIn" value="compatibility">Por compatibilidad</option>
                             </select>
 
                             <button v-if="hasActiveFilters"
@@ -283,10 +289,11 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <!-- Status badge -->
-                        <div class="absolute left-3 top-3">
+                        <div class="absolute left-3 top-3 flex items-center gap-1.5">
                             <span class="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#2D6A4F] shadow-sm backdrop-blur-sm">
                                 {{ speciesLabel(pet.species) }}
                             </span>
+                            <CompatibilityBadge v-if="pet.compatibility !== undefined && pet.compatibility !== null" :score="pet.compatibility" size="sm" />
                         </div>
                     </div>
 

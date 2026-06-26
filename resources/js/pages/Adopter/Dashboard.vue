@@ -1,7 +1,25 @@
 <script setup lang="ts">
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
+import RecommendedPets from '@/components/pets/RecommendedPets.vue';
 
 const { photoUrl } = usePhotoUrl();
+
+interface RecommendedPet {
+    id: number;
+    name: string;
+    slug: string;
+    species: string;
+    species_label: string;
+    breed: string | null;
+    age_years: number;
+    age_months: number;
+    size: string;
+    size_label: string;
+    gender: string;
+    photos: string[] | null;
+    compatibility: number | null;
+    team: { id: number; name: string; slug: string; city: string | null } | null;
+}
 
 interface Application {
     id: number;
@@ -22,7 +40,7 @@ interface Stats {
     recent_applications: Application[];
 }
 
-defineProps<{ stats: Stats }>();
+defineProps<{ stats: Stats; recommendedPets: RecommendedPet[] }>();
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada', completed: 'Completada', cancelled: 'Cancelada' };
@@ -47,6 +65,9 @@ function formatDate(d: string): string {
             <h1 class="text-2xl font-bold text-foreground">Mis Actividades</h1>
             <p class="mt-1 text-sm text-muted-foreground">Resumen de tus postulaciones y seguimientos.</p>
         </div>
+
+        <!-- Recommended Pets -->
+        <RecommendedPets v-if="recommendedPets && recommendedPets.length > 0" :pets="recommendedPets" class="mb-8" />
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-xl border border-border bg-card p-5">

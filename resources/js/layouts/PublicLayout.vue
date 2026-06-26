@@ -4,6 +4,7 @@ import { ArrowRight, MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Sonner from '@/components/ui/sonner/Sonner.vue';
+import ChatbotWidget from '@/components/chatbot/ChatbotWidget.vue';
 import { useAppearance } from '@/composables/useAppearance';
 
 const mobileOpen = ref(false);
@@ -467,5 +468,6 @@ const websiteSchema = {
         </footer>
 
         <Sonner />
+        <ChatbotWidget />
     </div>
 </template>
