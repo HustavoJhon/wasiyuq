@@ -9,6 +9,13 @@ class AboutController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Public/About');
+        return Inertia::render('Public/About', [
+            'seo' => [
+                'title' => 'Sobre nosotros',
+                'description' => 'Conoce Wasiyuq: la plataforma cusqueña que conecta mascotas en abandono con familias responsables. Nuestra misión, visión e historia.',
+                'url' => url('/sobre-nosotros'),
+                'type' => 'website',
+            ],
+        ]);
     }
 }

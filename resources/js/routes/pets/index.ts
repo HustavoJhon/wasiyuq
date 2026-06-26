@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 export const show = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 show.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ show.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 show.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,7 +134,7 @@ show.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 show.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -144,7 +144,7 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 const showForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ const showForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 showForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ showForm.get = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Public\PetController::show
-* @see app/Http/Controllers/Public/PetController.php:71
+* @see app/Http/Controllers/Public/PetController.php:94
 * @route '/mascotas/{slug}'
 */
 showForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

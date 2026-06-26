@@ -12,7 +12,15 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $petsAvailable = Pet::query()->where('status', 'available')->count();
+
         return Inertia::render('Public/Home', [
+            'seo' => [
+                'title' => 'Inicio',
+                'description' => 'Plataforma de adopción responsable en Cusco. Conectamos mascotas en situación de abandono con familias comprometidas. Actualmente hay '.$petsAvailable.' mascotas esperando un hogar.',
+                'url' => url('/'),
+                'type' => 'website',
+            ],
             'stats' => [
                 'adopted' => Adoption::query()->where('status', 'completed')->count(),
                 'organizations' => Team::query()->where('is_personal', false)->count(),

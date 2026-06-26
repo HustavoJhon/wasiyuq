@@ -17,7 +17,17 @@
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png">
         <meta name="apple-touch-startup-image" content="/icons/icon-512.png">
 
-        <meta name="description" content="Plataforma de adopción responsable de mascotas en Cusco, Perú">
+        <meta name="description" content="Plataforma de adopci&oacute;n responsable de mascotas en Cusco, Per&uacute;">
+        <meta name="keywords" content="adopcion, mascotas, perros, gatos, Cusco, Peru, refugio, albergue, Wasiyuq">
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+        <meta name="googlebot" content="index, follow">
+        <link rel="canonical" href="{{ url()->current() }}">
+
+        <meta property="og:site_name" content="Wasiyuq">
+        <meta property="og:locale" content="es_PE">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@wasiyuq">
+        <meta name="twitter:creator" content="@wasiyuq">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
@@ -54,7 +64,21 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            @php
+                $routeUri = request()->getRequestUri();
+                $seoTitle = match(true) {
+                    str_starts_with($routeUri, '/mascotas/') && strlen($routeUri) > 10 => 'Mascota en adopción',
+                    str_starts_with($routeUri, '/mascotas') => 'Mascotas en adopción',
+                    str_starts_with($routeUri, '/eventos/') && strlen($routeUri) > 9 => 'Evento de adopción',
+                    str_starts_with($routeUri, '/eventos') => 'Eventos de adopción',
+                    str_starts_with($routeUri, '/blog/') && strlen($routeUri) > 6 => 'Artículo del blog',
+                    str_starts_with($routeUri, '/blog') => 'Blog de adopción responsable',
+                    str_starts_with($routeUri, '/sobre-nosotros') => 'Sobre nosotros',
+                    str_starts_with($routeUri, '/contacto') => 'Contacto',
+                    default => 'Wasiyuq — Adopción responsable en Cusco',
+                };
+            @endphp
+            <title>{{ $seoTitle }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

@@ -3,5 +3,15 @@ Disallow: /admin
 Disallow: /auth
 Disallow: /invitations
 Disallow: /mi-adopcion
+Disallow: /api
+Disallow: /build
+Disallow: /dist
+Allow: /
 
 Sitemap: https://wasiyuq.pe/sitemap.xml
+
+User-agent: Googlebot
+Crawl-delay: 2
+
+User-agent: Bingbot
+Crawl-delay: 2

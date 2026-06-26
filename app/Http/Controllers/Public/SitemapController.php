@@ -23,17 +23,17 @@ class SitemapController extends Controller
         $pets = Pet::query()
             ->where('status', 'available')
             ->whereNull('deleted_at')
-            ->get(['slug', 'updated_at']);
+            ->get(['slug', 'updated_at', 'photos', 'name']);
 
         $events = Announcement::query()
             ->where('is_published', true)
             ->whereNull('deleted_at')
-            ->get(['slug', 'updated_at']);
+            ->get(['slug', 'updated_at', 'title']);
 
         $posts = BlogPost::query()
             ->where('is_published', true)
             ->whereNull('deleted_at')
-            ->get(['slug', 'updated_at']);
+            ->get(['slug', 'updated_at', 'title', 'cover_image']);
 
         $xml = view('sitemap', [
             'static' => $static,

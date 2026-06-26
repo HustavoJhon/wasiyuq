@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 export const show = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 show.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ show.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 show.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,7 +134,7 @@ show.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 show.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -144,7 +144,7 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 const showForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ const showForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 showForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ showForm.get = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Public\EventController::show
-* @see app/Http/Controllers/Public/EventController.php:44
+* @see app/Http/Controllers/Public/EventController.php:52
 * @route '/eventos/{slug}'
 */
 showForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

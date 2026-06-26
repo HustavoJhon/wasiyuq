@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Public\ContactController::send
-* @see app/Http/Controllers/Public/ContactController.php:31
+* @see app/Http/Controllers/Public/ContactController.php:37
 * @route '/contacto'
 */
 export const send = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ send.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\ContactController::send
-* @see app/Http/Controllers/Public/ContactController.php:31
+* @see app/Http/Controllers/Public/ContactController.php:37
 * @route '/contacto'
 */
 send.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ send.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Public\ContactController::send
-* @see app/Http/Controllers/Public/ContactController.php:31
+* @see app/Http/Controllers/Public/ContactController.php:37
 * @route '/contacto'
 */
 send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Public\ContactController::send
-* @see app/Http/Controllers/Public/ContactController.php:31
+* @see app/Http/Controllers/Public/ContactController.php:37
 * @route '/contacto'
 */
 const sendForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const sendForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 
 /**
 * @see \App\Http\Controllers\Public\ContactController::send
-* @see app/Http/Controllers/Public/ContactController.php:31
+* @see app/Http/Controllers/Public/ContactController.php:37
 * @route '/contacto'
 */
 sendForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

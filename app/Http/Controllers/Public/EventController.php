@@ -29,7 +29,15 @@ class EventController extends Controller
             type: $request->query('type'),
         );
 
+        $total = $events->total();
+
         return Inertia::render('Public/Events/Index', [
+            'seo' => [
+                'title' => 'Eventos de adopción',
+                'description' => $total.' eventos y campañas de adopción de mascotas en Cusco. Ferias, jornadas de esterilización, talleres y más. Participa y ayuda.',
+                'url' => url('/eventos'),
+                'type' => 'website',
+            ],
             'events' => $events->items(),
             'meta' => [
                 'current_page' => $events->currentPage(),
@@ -66,9 +74,19 @@ class EventController extends Controller
             $relatedBlogs = $relatedBlogs->concat($teamBlogs)->unique('id')->take(3);
         }
 
+        $eventDate = $event->event_date?->translatedFormat('d \d\e F \d\e Y');
+
         return Inertia::render('Public/Events/Show', [
             'event' => $event,
             'relatedBlogs' => $relatedBlogs->values(),
+            'seo' => [
+                'title' => $event->title,
+                'description' => \Illuminate\Support\Str::limit(strip_tags((string) $event->description), 160),
+                'image' => $event->cover_image,
+                'url' => url('/eventos/'.$event->slug),
+                'type' => 'article',
+                'publishedAt' => $event->created_at?->toIso8601String(),
+            ],
             'jsonLd' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'Event',

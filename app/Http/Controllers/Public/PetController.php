@@ -53,8 +53,31 @@ class PetController extends Controller
             ->pluck('total', 'status');
 
         $petsItems = is_array($pets) ? [] : $pets->items();
+        $total = is_array($pets) ? 0 : $pets->total();
+
+        $seoDescription = $species
+            ? 'Mascotas en adopción: '.($speciesCounts[$species] ?? 0).' '.match ($species) {
+                'dog' => 'perros',
+                'cat' => 'gatos',
+                'rabbit' => 'conejos',
+                'bird' => 'aves',
+                default => 'mascotas',
+            }.' disponibles en Cusco. Adopta responsablemente con Wasiyuq.'
+            : $total.' mascotas en adopción en Cusco. Perros, gatos, conejos y aves buscan un hogar responsable.';
 
         return Inertia::render('Public/Pets/Index', [
+            'seo' => [
+                'title' => $species ? 'Mascotas — '.match ($species) {
+                    'dog' => 'Perros',
+                    'cat' => 'Gatos',
+                    'rabbit' => 'Conejos',
+                    'bird' => 'Aves',
+                    default => 'Mascotas',
+                } : 'Mascotas en adopción',
+                'description' => $seoDescription,
+                'url' => url('/mascotas'),
+                'type' => 'website',
+            ],
             'pets' => $petsItems,
             'meta' => [
                 'current_page' => is_array($pets) ? 1 : $pets->currentPage(),
@@ -75,9 +98,20 @@ class PetController extends Controller
         abort_unless($pet, 404);
 
         $speciesLabel = $pet->species->label();
+        $age = $pet->age_years > 0
+            ? $pet->age_years.' '.($pet->age_years > 1 ? 'años' : 'año')
+            : $pet->age_months.' '.($pet->age_months > 1 ? 'meses' : 'meses');
+        $petDescription = "Adopta a {$pet->name}, {$speciesLabel} {$pet->breed} de {$age} en Cusco. {$pet->description}";
 
         return Inertia::render('Public/Pets/Show', [
             'pet' => $pet,
+            'seo' => [
+                'title' => $pet->name.' — '.$speciesLabel.' en adopción',
+                'description' => \Illuminate\Support\Str::limit($petDescription, 160),
+                'image' => $pet->photos ? ($pet->photos[0] ?? null) : null,
+                'url' => url('/mascotas/'.$pet->slug),
+                'type' => 'product',
+            ],
             'jsonLd' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'Product',

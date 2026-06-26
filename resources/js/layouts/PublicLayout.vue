@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ArrowRight, MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Sonner from '@/components/ui/sonner/Sonner.vue';
 import ChatbotWidget from '@/components/chatbot/ChatbotWidget.vue';
 import { useAppearance } from '@/composables/useAppearance';
+import { useSeo } from '@/composables/useSeo';
 
 const mobileOpen = ref(false);
 const { resolvedAppearance, updateAppearance } = useAppearance();
@@ -15,6 +16,8 @@ function toggleAppearance() {
 }
 
 const page = usePage();
+const pageSeo = computed(() => (page.props.seo as Record<string, string> | null) ?? undefined);
+const { pageTitle, description, ogImage, ogUrl, ogType, seo } = useSeo(pageSeo.value);
 
 function isActive(path: string): boolean {
     return page.url.startsWith(path);
@@ -60,6 +63,24 @@ const websiteSchema = {
 
 <template>
     <div class="flex min-h-screen flex-col bg-background">
+        <Head :title="pageTitle">
+            <meta name="description" :content="description" />
+            <meta property="og:title" :content="pageTitle" />
+            <meta property="og:description" :content="description" />
+            <meta property="og:image" :content="ogImage" />
+            <meta property="og:url" :content="ogUrl" />
+            <meta property="og:type" :content="ogType" />
+            <meta property="og:locale" content="es_PE" />
+            <meta property="og:site_name" content="Wasiyuq" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" :content="pageTitle" />
+            <meta name="twitter:description" :content="description" />
+            <meta name="twitter:image" :content="ogImage" />
+            <link rel="canonical" :href="ogUrl" />
+            <meta v-if="seo.publishedAt" property="article:published_time" :content="seo.publishedAt" />
+            <meta v-if="seo.modifiedAt" property="article:modified_time" :content="seo.modifiedAt" />
+            <meta v-if="seo.author" property="article:author" :content="seo.author" />
+        </Head>
         <script
             type="application/ld+json"
             v-html="JSON.stringify(organizationSchema)"

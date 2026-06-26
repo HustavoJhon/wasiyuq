@@ -25,6 +25,12 @@ class ContactController extends Controller
 
         return Inertia::render('Public/Contact', [
             'selectedPet' => $pet,
+            'seo' => [
+                'title' => 'Contacto',
+                'description' => 'Contáctanos para adoptar, registrar tu organización o reportar un problema. Estamos en Cusco, Perú.',
+                'url' => url('/contacto'),
+                'type' => 'website',
+            ],
         ]);
     }
 

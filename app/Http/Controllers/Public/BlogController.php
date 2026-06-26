@@ -19,7 +19,15 @@ class BlogController extends Controller
             category: $request->query('category'),
         );
 
+        $total = $posts->total();
+
         return Inertia::render('Public/Blog/Index', [
+            'seo' => [
+                'title' => 'Blog',
+                'description' => $total.' artículos sobre adopción responsable, salud animal, normativas y consejos para el cuidado de mascotas en Cusco.',
+                'url' => url('/blog'),
+                'type' => 'website',
+            ],
             'posts' => $posts->items(),
             'meta' => [
                 'current_page' => $posts->currentPage(),
@@ -41,6 +49,16 @@ class BlogController extends Controller
 
         return Inertia::render('Public/Blog/Show', [
             'post' => $post,
+            'seo' => [
+                'title' => $post->title,
+                'description' => \Illuminate\Support\Str::limit(strip_tags((string) ($post->excerpt ?? $post->content ?? '')), 160),
+                'image' => $post->cover_image,
+                'url' => url('/blog/'.$post->slug),
+                'type' => 'article',
+                'author' => $authorName,
+                'publishedAt' => $post->published_at?->toIso8601String(),
+                'modifiedAt' => $post->updated_at->toIso8601String(),
+            ],
             'jsonLd' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'Article',
