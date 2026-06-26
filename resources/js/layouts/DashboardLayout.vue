@@ -2,6 +2,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 import { useMediaQuery } from '@/composables/useMediaQuery';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
 const collapsed = ref(false);
 const mobileOpen = ref(false);
@@ -198,8 +199,8 @@ return false;
                 :class="collapsed && !isMobile ? 'justify-center' : 'gap-3 px-6'"
             >
                 <span
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2D6A4F] to-[#40916C] text-sm font-bold text-white shadow-sm ring-1 ring-[#2D6A4F]/20"
-                >W</span>
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2D6A4F] to-[#40916C] text-white shadow-sm ring-1 ring-[#2D6A4F]/20"
+                ><AppLogoIcon class="h-5 w-5" /></span>
                 <Transition name="fade">
                     <span v-if="!collapsed || isMobile" class="text-lg font-bold text-card-foreground whitespace-nowrap tracking-tight">{{ isSuperAdmin ? 'Wasiyuq Admin' : isAdopterRoute ? 'Mi Panel' : 'Mi Organización' }}</span>
                 </Transition>

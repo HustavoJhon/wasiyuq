@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { home } from '@/routes';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
 const page = usePage();
 const name = page.props.name;
@@ -24,8 +25,8 @@ defineProps<{
             <div class="relative z-10 max-w-md text-center">
                 <Link :href="home()" class="inline-flex">
                     <span
-                        class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-2xl font-bold text-white shadow-lg backdrop-blur-sm"
-                        >W</span
+                        class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-white shadow-lg backdrop-blur-sm"
+                        ><AppLogoIcon class="h-8 w-8" /></span
                     >
                 </Link>
                 <h2 class="mt-6 text-3xl font-bold text-white">{{ name }}</h2>
