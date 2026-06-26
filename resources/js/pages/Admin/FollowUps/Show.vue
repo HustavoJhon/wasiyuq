@@ -88,7 +88,7 @@ function formatDate(d: string): string {
                             <h1 class="text-2xl font-bold text-foreground">Seguimiento #{{ followUp.id }}</h1>
                             <span class="rounded-full px-3 py-0.5 text-xs font-medium" :class="statusClass(followUp.status)">{{ statusLabel(followUp.status) }}</span>
                         </div>
-                        <p class="mt-0.5 text-sm text-muted-foreground">{{ followUp.adoption.pet.name }} · {{ followUp.adoption.adopter.name }}</p>
+                        <p class="mt-0.5 text-sm text-muted-foreground">{{ followUp.adoption.pet?.name ?? 'Mascota eliminada' }} · {{ followUp.adoption.adopter.name }}</p>
                     </div>
                 </div>
                 <a :href="'/admin/seguimiento/' + followUp.id + '/editar'" class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#2D6A4F] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#2D6A4F]/20 transition hover:bg-[#245a40]">
@@ -196,7 +196,7 @@ function formatDate(d: string): string {
                     <dl class="mt-4 divide-y divide-[#2D6A4F]/10 space-y-3 dark:divide-[#2D6A4F]/20">
                         <div class="flex items-center justify-between pt-3 first:pt-0">
                             <dt class="text-xs text-muted-foreground/70">Mascota</dt>
-                            <dd class="text-sm font-medium text-foreground">{{ followUp.adoption.pet.name }}</dd>
+                            <dd class="text-sm font-medium text-foreground">{{ followUp.adoption.pet?.name ?? 'Mascota eliminada' }}</dd>
                         </div>
                         <div class="flex items-center justify-between pt-3">
                             <dt class="text-xs text-muted-foreground/70">Adoptante</dt>

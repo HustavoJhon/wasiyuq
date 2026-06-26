@@ -231,7 +231,7 @@ const metricCards = [
                                 <Heart class="h-4 w-4 text-[#2D6A4F]" />
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-foreground">{{ a.pet.name }}</p>
+                                <p class="text-sm font-medium text-foreground">{{ a.pet?.name ?? 'Mascota eliminada' }}</p>
                                 <p class="text-xs text-muted-foreground/70">{{ a.adopter.name }}</p>
                             </div>
                         </div>

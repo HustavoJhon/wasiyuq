@@ -41,10 +41,10 @@ function formatDate(d: string) { return new Intl.DateTimeFormat('es-PE', { dateS
         <div v-else class="mt-8 space-y-4">
             <div v-for="app in applications" :key="app.id" class="group rounded-xl border border-border/50 bg-card p-5 transition hover:shadow-sm">
                 <div class="flex items-start gap-4">
-                    <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted"><img v-if="app.pet.photos?.length" :src="photoUrl(app.pet.photos[0])" :alt="app.pet.name" class="h-full w-full object-cover" /><div v-else class="flex h-full items-center justify-center text-muted-foreground/20"><PawPrint class="h-8 w-8" /></div></div>
+                    <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted"><img v-if="app.pet?.photos?.length" :src="photoUrl(app.pet?.photos[0])" :alt="app.pet?.name ?? 'Mascota'" class="h-full w-full object-cover" /><div v-else class="flex h-full items-center justify-center text-muted-foreground/20"><PawPrint class="h-8 w-8" /></div></div>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-start justify-between gap-2">
-                            <div><h3 class="text-lg font-semibold text-foreground">{{ app.pet.name }}</h3><p class="text-sm text-muted-foreground">{{ speciesLabel(app.pet.species) }} · {{ formatDate(app.created_at) }}</p></div>
+                            <div><h3 class="text-lg font-semibold text-foreground">{{ app.pet?.name ?? 'Mascota eliminada' }}</h3><p class="text-sm text-muted-foreground">{{ app.pet?.species ? speciesLabel(app.pet.species) : '—' }} · {{ formatDate(app.created_at) }}</p></div>
                             <span class="shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium" :class="statusClass(app.status)"><component :is="statusIcon(app.status)" class="h-3 w-3" />{{ statusLabel(app.status) }}</span>
                         </div>
                         <p class="mt-2 line-clamp-2 text-sm text-muted-foreground/80">{{ app.motivation }}</p>

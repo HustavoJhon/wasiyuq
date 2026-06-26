@@ -97,7 +97,7 @@ function speciesLabel(s: string) { const l: Record<string, string> = { dog: 'Per
 <img v-if="fu.adoption.pet?.photos?.length" :src="photoUrl(fu.adoption.pet?.photos[0])" :alt="fu.adoption.pet?.name" class="h-full w-full object-cover" />
                                     <div v-else class="flex h-full items-center justify-center text-muted-foreground/30"><ClipboardList class="h-5 w-5" /></div>
                                 </div>
-                                <div><p class="font-medium text-foreground">{{ fu.adoption.pet.name }}</p><p class="text-xs text-muted-foreground/70">{{ speciesLabel(fu.adoption.pet.species) }}</p></div>
+                                <div><p class="font-medium text-foreground">{{ fu.adoption.pet?.name ?? 'Mascota eliminada' }}</p><p class="text-xs text-muted-foreground/70">{{ fu.adoption.pet?.species ? speciesLabel(fu.adoption.pet.species) : '—' }}</p></div>
                             </div>
                         </td>
                         <td class="px-5 py-3.5"><p class="text-foreground">{{ fu.adoption.adopter.name }}</p><p class="text-xs text-muted-foreground/70">{{ fu.adoption.adopter.email }}</p></td>
@@ -117,7 +117,7 @@ function speciesLabel(s: string) { const l: Record<string, string> = { dog: 'Per
             <div v-for="fu in filtered" :key="fu.id" class="rounded-xl border border-border/50 bg-card overflow-hidden">
                 <div class="flex items-center gap-3 p-4">
                     <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-muted">
-                        <img v-if="fu.adoption.pet.photos?.length" :src="photoUrl(fu.adoption.pet.photos[0])" :alt="fu.adoption.pet.name" class="h-full w-full object-cover" />
+                        <img v-if="fu.adoption.pet?.photos?.length" :src="photoUrl(fu.adoption.pet?.photos[0])" :alt="fu.adoption.pet?.name ?? 'Mascota'" class="h-full w-full object-cover" />
                         <ClipboardList v-else class="m-3.5 h-7 w-7 text-muted-foreground/25" />
                     </div>
                     <div class="min-w-0 flex-1">

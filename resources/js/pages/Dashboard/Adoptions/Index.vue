@@ -7,7 +7,7 @@ import { ref, computed } from 'vue';
 
 const { photoUrl } = usePhotoUrl();
 
-interface Adoption { id: number; status: string; created_at: string; pet: { id: number; name: string; slug: string; species: string; photos: string[] | null }; adopter: { id: number; name: string; email: string }; }
+interface Adoption { id: number; status: string; created_at: string; pet: { id: number; name: string; slug: string; species: string; photos: string[] | null } | null; adopter: { id: number; name: string; email: string }; }
 interface Meta { current_page: number; last_page: number; total: number; per_page: number; }
 
 const props = defineProps<{ adoptions: Adoption[]; meta: Meta; currentTeam?: Team | null; filter?: string | null }>();
@@ -19,7 +19,7 @@ const filtered = computed(() => {
     return props.adoptions.filter(a => {
         if (search.value) {
             const q = search.value.toLowerCase();
-            if (!a.pet.name.toLowerCase().includes(q) && !a.adopter.name.toLowerCase().includes(q)) return false;
+            if (!a.pet?.name?.toLowerCase().includes(q) && !a.adopter.name.toLowerCase().includes(q)) return false;
         }
         if (statusFilter.value && a.status !== statusFilter.value) return false;
         return true;
@@ -73,7 +73,7 @@ function formatDate(d: string) { return new Intl.DateTimeFormat('es-PE', { dateS
                 <thead class="border-b border-border/50 bg-muted text-xs font-medium text-muted-foreground uppercase"><tr><th class="px-5 py-3">Mascota</th><th class="px-5 py-3">Adoptante</th><th class="px-5 py-3">Estado</th><th class="px-5 py-3">Fecha</th><th class="px-5 py-3"></th></tr></thead>
                 <tbody class="divide-y divide-border/50">
                     <tr v-for="adoption in filtered" :key="adoption.id" class="hover:bg-muted/50 transition-colors">
-                        <td class="px-5 py-3.5"><div class="flex items-center gap-3"><div class="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted"><img v-if="adoption.pet.photos?.length" :src="photoUrl(adoption.pet?.photos?.[0])" :alt="adoption.pet?.name ?? 'Mascota'" class="h-full w-full object-cover" /><div v-else class="flex h-full items-center justify-center text-muted-foreground/30"><PawPrint class="h-5 w-5" /></div></div><div><p class="font-medium text-foreground">{{ adoption.pet?.name ?? 'Mascota eliminada' }}</p><p class="text-xs text-muted-foreground/70">{{ adoption.pet?.species }}</p></div></div></td>
+                        <td class="px-5 py-3.5"><div class="flex items-center gap-3"><div class="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted"><img v-if="adoption.pet?.photos?.length" :src="photoUrl(adoption.pet?.photos?.[0])" :alt="adoption.pet?.name ?? 'Mascota'" class="h-full w-full object-cover" /><div v-else class="flex h-full items-center justify-center text-muted-foreground/30"><PawPrint class="h-5 w-5" /></div></div><div><p class="font-medium text-foreground">{{ adoption.pet?.name ?? 'Mascota eliminada' }}</p><p class="text-xs text-muted-foreground/70">{{ adoption.pet?.species ?? '—' }}</p></div></div></td>
                         <td class="px-5 py-3.5"><p class="text-foreground">{{ adoption.adopter.name }}</p><p class="text-xs text-muted-foreground/70">{{ adoption.adopter.email }}</p></td>
                         <td class="px-5 py-3.5"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium" :class="statusClass(adoption.status)">{{ statusLabel(adoption.status) }}</span></td>
                         <td class="px-5 py-3.5 text-xs text-muted-foreground/70 whitespace-nowrap">{{ formatDate(adoption.created_at) }}</td>

@@ -100,10 +100,10 @@ function formatDate(d: string): string {
                 <div v-else class="divide-y divide-border">
                     <div v-for="app in stats.recent_applications" :key="app.id" class="flex items-center gap-4 px-5 py-4">
                         <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
-                            <img v-if="app.pet.photos?.length" :src="photoUrl(app.pet.photos[0])" :alt="app.pet.name" class="h-full w-full object-cover" />
+                            <img v-if="app.pet?.photos?.length" :src="photoUrl(app.pet?.photos[0])" :alt="app.pet?.name ?? 'Mascota'" class="h-full w-full object-cover" />
                         </div>
                         <div class="min-w-0 flex-1">
-                            <p class="font-medium text-foreground">{{ app.pet.name }}</p>
+                            <p class="font-medium text-foreground">{{ app.pet?.name ?? 'Mascota eliminada' }}</p>
                             <p class="text-xs text-muted-foreground">{{ formatDate(app.created_at) }}</p>
                         </div>
                         <span class="rounded-full px-2.5 py-0.5 text-xs font-medium" :class="statusClass(app.status)">{{ statusLabel(app.status) }}</span>

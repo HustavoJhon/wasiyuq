@@ -158,7 +158,7 @@ const housingLabels: Record<string, string> = {
                             class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-muted"
                         >
                             <img
-                                :src="photoUrl(adoption.pet?.photos[0])"
+                                :src="photoUrl(adoption.pet?.photos?.[0] ?? '')"
                                 :alt="adoption.pet?.name ?? 'Mascota'"
                                 class="h-full w-full object-cover"
                             />

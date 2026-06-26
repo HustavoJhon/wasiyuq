@@ -119,7 +119,7 @@ function destroy() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem v-for="a in adoptions" :key="a.id" :value="String(a.id)">
-                                {{ a.pet.name }} — {{ a.adopter.name }}
+                                {{ a.pet?.name ?? 'Mascota eliminada' }} — {{ a.adopter.name }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
