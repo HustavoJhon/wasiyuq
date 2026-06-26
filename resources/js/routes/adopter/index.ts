@@ -4,7 +4,7 @@ import applications from './applications'
 import followUps from './follow-ups'
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -19,7 +19,7 @@ dashboard.definition = {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 dashboard.url = (options?: RouteQueryOptions) => {
@@ -28,7 +28,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -38,7 +38,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -48,7 +48,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -68,7 +68,7 @@ dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

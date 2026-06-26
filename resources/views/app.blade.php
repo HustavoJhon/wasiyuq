@@ -2,8 +2,22 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <meta name="theme-color" content="#2D6A4F">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Wasiyuq">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="Wasiyuq">
+
+        <link rel="manifest" href="/build/manifest.webmanifest">
+        <link rel="apple-touch-icon" href="/icons/icon-192.png">
+        <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png">
+        <meta name="apple-touch-startup-image" content="/icons/icon-512.png">
+
+        <meta name="description" content="Plataforma de adopción responsable de mascotas en Cusco, Perú">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>

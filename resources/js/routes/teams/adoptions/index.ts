@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-export const index = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const index = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ index.definition = {
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-index.url = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
+index.url = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { current_team: args }
     }
@@ -52,7 +52,7 @@ index.url = (args: { current_team: string | number | { slug: string | number } }
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-index.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+index.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(args, options),
     method: 'get',
 })
@@ -62,7 +62,7 @@ index.get = (args: { current_team: string | number | { slug: string | number } }
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-index.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+index.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(args, options),
     method: 'head',
 })
@@ -72,7 +72,7 @@ index.head = (args: { current_team: string | number | { slug: string | number } 
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-const indexForm = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const indexForm = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
@@ -82,7 +82,7 @@ const indexForm = (args: { current_team: string | number | { slug: string | numb
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-indexForm.get = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.get = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, options),
     method: 'get',
 })
@@ -92,7 +92,7 @@ indexForm.get = (args: { current_team: string | number | { slug: string | number
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:19
 * @route '/{current_team}/adopciones'
 */
-indexForm.head = (args: { current_team: string | number | { slug: string | number } } | [current_team: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+indexForm.head = (args: { current_team: string | { slug: string } } | [current_team: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -109,7 +109,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-export const show = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -124,7 +124,7 @@ show.definition = {
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-show.url = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+show.url = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -154,7 +154,7 @@ show.url = (args: { current_team: string | number | { slug: string | number }, a
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-show.get = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -164,7 +164,7 @@ show.get = (args: { current_team: string | number | { slug: string | number }, a
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-show.head = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -174,7 +174,7 @@ show.head = (args: { current_team: string | number | { slug: string | number }, 
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-const showForm = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -184,7 +184,7 @@ const showForm = (args: { current_team: string | number | { slug: string | numbe
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-showForm.get = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -194,7 +194,7 @@ showForm.get = (args: { current_team: string | number | { slug: string | number 
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:43
 * @route '/{current_team}/adopciones/{adoption}'
 */
-showForm.head = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -211,7 +211,7 @@ show.form = showForm
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:55
 * @route '/{current_team}/adopciones/{adoption}/aprobar'
 */
-export const approve = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const approve = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -226,7 +226,7 @@ approve.definition = {
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:55
 * @route '/{current_team}/adopciones/{adoption}/aprobar'
 */
-approve.url = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+approve.url = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -256,7 +256,7 @@ approve.url = (args: { current_team: string | number | { slug: string | number }
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:55
 * @route '/{current_team}/adopciones/{adoption}/aprobar'
 */
-approve.post = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+approve.post = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -266,7 +266,7 @@ approve.post = (args: { current_team: string | number | { slug: string | number 
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:55
 * @route '/{current_team}/adopciones/{adoption}/aprobar'
 */
-const approveForm = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const approveForm = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: approve.url(args, options),
     method: 'post',
 })
@@ -276,7 +276,7 @@ const approveForm = (args: { current_team: string | number | { slug: string | nu
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:55
 * @route '/{current_team}/adopciones/{adoption}/aprobar'
 */
-approveForm.post = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+approveForm.post = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: approve.url(args, options),
     method: 'post',
 })
@@ -288,7 +288,7 @@ approve.form = approveForm
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:69
 * @route '/{current_team}/adopciones/{adoption}/rechazar'
 */
-export const reject = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const reject = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reject.url(args, options),
     method: 'post',
 })
@@ -303,7 +303,7 @@ reject.definition = {
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:69
 * @route '/{current_team}/adopciones/{adoption}/rechazar'
 */
-reject.url = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+reject.url = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             current_team: args[0],
@@ -333,7 +333,7 @@ reject.url = (args: { current_team: string | number | { slug: string | number },
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:69
 * @route '/{current_team}/adopciones/{adoption}/rechazar'
 */
-reject.post = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+reject.post = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: reject.url(args, options),
     method: 'post',
 })
@@ -343,7 +343,7 @@ reject.post = (args: { current_team: string | number | { slug: string | number }
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:69
 * @route '/{current_team}/adopciones/{adoption}/rechazar'
 */
-const rejectForm = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const rejectForm = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: reject.url(args, options),
     method: 'post',
 })
@@ -353,7 +353,7 @@ const rejectForm = (args: { current_team: string | number | { slug: string | num
 * @see app/Http/Controllers/Dashboard/AdoptionController.php:69
 * @route '/{current_team}/adopciones/{adoption}/rechazar'
 */
-rejectForm.post = (args: { current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } } | [current_team: string | number | { slug: string | number }, adoption: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+rejectForm.post = (args: { current_team: string | { slug: string }, adoption: number | { id: number } } | [current_team: string | { slug: string }, adoption: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: reject.url(args, options),
     method: 'post',
 })

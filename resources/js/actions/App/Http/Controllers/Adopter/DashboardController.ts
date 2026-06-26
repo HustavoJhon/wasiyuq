@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 const indexbbf9b25e49836c941d4db9da2f439941 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ indexbbf9b25e49836c941d4db9da2f439941.definition = {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 indexbbf9b25e49836c941d4db9da2f439941.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ indexbbf9b25e49836c941d4db9da2f439941.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 indexbbf9b25e49836c941d4db9da2f439941.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ indexbbf9b25e49836c941d4db9da2f439941.get = (options?: RouteQueryOptions): Route
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 indexbbf9b25e49836c941d4db9da2f439941.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ indexbbf9b25e49836c941d4db9da2f439941.head = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 const indexbbf9b25e49836c941d4db9da2f439941Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexbbf9b25e49836c941d4db9da2f439941Form = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 indexbbf9b25e49836c941d4db9da2f439941Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexbbf9b25e49836c941d4db9da2f439941Form.get = (options?: RouteQueryOptions): R
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion'
 */
 indexbbf9b25e49836c941d4db9da2f439941Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -81,7 +81,7 @@ indexbbf9b25e49836c941d4db9da2f439941Form.head = (options?: RouteQueryOptions): 
 indexbbf9b25e49836c941d4db9da2f439941.form = indexbbf9b25e49836c941d4db9da2f439941Form
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 const index8f3568cc7ebdf86ba48e2558f4ef1773 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -96,7 +96,7 @@ index8f3568cc7ebdf86ba48e2558f4ef1773.definition = {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 index8f3568cc7ebdf86ba48e2558f4ef1773.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ index8f3568cc7ebdf86ba48e2558f4ef1773.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 index8f3568cc7ebdf86ba48e2558f4ef1773.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -115,7 +115,7 @@ index8f3568cc7ebdf86ba48e2558f4ef1773.get = (options?: RouteQueryOptions): Route
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 index8f3568cc7ebdf86ba48e2558f4ef1773.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -125,7 +125,7 @@ index8f3568cc7ebdf86ba48e2558f4ef1773.head = (options?: RouteQueryOptions): Rout
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 const index8f3568cc7ebdf86ba48e2558f4ef1773Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -135,7 +135,7 @@ const index8f3568cc7ebdf86ba48e2558f4ef1773Form = (options?: RouteQueryOptions):
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 index8f3568cc7ebdf86ba48e2558f4ef1773Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -145,7 +145,7 @@ index8f3568cc7ebdf86ba48e2558f4ef1773Form.get = (options?: RouteQueryOptions): R
 
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::index
-* @see app/Http/Controllers/Adopter/DashboardController.php:13
+* @see app/Http/Controllers/Adopter/DashboardController.php:18
 * @route '/mi-adopcion/inicio'
 */
 index8f3568cc7ebdf86ba48e2558f4ef1773Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

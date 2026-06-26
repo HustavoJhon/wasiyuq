@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import type { DefineComponent } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
+import { useCapacitor } from '@/composables/useCapacitor';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
@@ -9,6 +10,9 @@ import { initializeFlashToast } from '@/lib/flashToast';
 
 initializeTheme();
 initializeFlashToast();
+
+const { init: initCapacitor } = useCapacitor();
+initCapacitor();
 
 const appName = import.meta.env.VITE_APP_NAME || 'Wasiyuq';
 
