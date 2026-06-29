@@ -18,6 +18,7 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'dni' => $this->dniRules($userId),
             'whatsapp' => $this->whatsappRules(),
         ];
     }
@@ -58,5 +59,23 @@ trait ProfileValidationRules
     protected function whatsappRules(): array
     {
         return ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9]{7,15}$/'];
+    }
+
+    /**
+     * Get the validation rules used to validate DNI numbers.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function dniRules(?int $userId = null): array
+    {
+        $rules = ['nullable', 'string', 'size:8', 'regex:/^[0-9]{8}$/'];
+
+        if ($userId === null) {
+            $rules[] = Rule::unique(User::class, 'dni');
+        } else {
+            $rules[] = Rule::unique(User::class, 'dni')->ignore($userId);
+        }
+
+        return $rules;
     }
 }

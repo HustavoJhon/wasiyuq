@@ -4,6 +4,7 @@ import Auth from './Auth'
 import Adopter from './Adopter'
 import Teams from './Teams'
 import Dashboard from './Dashboard'
+import Api from './Api'
 import Settings from './Settings'
 
 const Controllers = {
@@ -13,6 +14,7 @@ const Controllers = {
     Adopter: Object.assign(Adopter, Adopter),
     Teams: Object.assign(Teams, Teams),
     Dashboard: Object.assign(Dashboard, Dashboard),
+    Api: Object.assign(Api, Api),
     Settings: Object.assign(Settings, Settings),
 }
 

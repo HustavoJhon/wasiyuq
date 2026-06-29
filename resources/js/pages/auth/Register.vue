@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { Search, Loader2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -13,6 +15,47 @@ import { store } from '@/routes/register';
 defineProps<{
     passwordRules: string;
 }>();
+
+const dniValue = ref('');
+const lookingUp = ref(false);
+const dniMessage = ref('');
+
+async function lookupDni() {
+    const dni = dniValue.value.replace(/\D/g, '');
+    if (dni.length !== 8) {
+        dniMessage.value = 'El DNI debe tener 8 dígitos.';
+        return;
+    }
+    lookingUp.value = true;
+    dniMessage.value = '';
+    try {
+        const token = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
+        const res = await fetch('/api/dni/lookup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': token,
+            },
+            body: JSON.stringify({ dni }),
+        });
+        const data = await res.json();
+        if (data.source === 'reniec') {
+            const fullName = [data.nombres, data.apellidoPaterno, data.apellidoMaterno].filter(Boolean).join(' ');
+            const nameInput = document.querySelector<HTMLInputElement>('input[name="name"]');
+            if (nameInput) nameInput.value = fullName;
+            dniMessage.value = 'Nombre autocompletado desde RENIEC.';
+        } else if (data.source === 'token_missing') {
+            dniMessage.value = 'API no configurada. Ingresa tu nombre manualmente.';
+        } else {
+            dniMessage.value = 'No se pudo consultar. Ingresa tu nombre manualmente.';
+        }
+    } catch {
+        dniMessage.value = 'Error de conexión. Ingresa tu nombre manualmente.';
+    } finally {
+        lookingUp.value = false;
+    }
+}
 </script>
 
 <template>
@@ -61,16 +104,41 @@ defineProps<{
         class="flex flex-col gap-5"
     >
         <div class="grid gap-1.5">
+            <Label for="dni">DNI <span class="text-muted-foreground/50 font-normal">(opcional)</span></Label>
+            <div class="flex gap-2">
+                <Input
+                    id="dni"
+                    type="text"
+                    inputmode="numeric"
+                    v-model="dniValue"
+                    name="dni"
+                    autocomplete="off"
+                    maxlength="8"
+                    placeholder="12345678"
+                    class="h-11 flex-1"
+                    @input="dniMessage = ''"
+                />
+                <button type="button" @click="lookupDni" :disabled="lookingUp || dniValue.replace(/\D/g, '').length !== 8"
+                    class="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-[#2D6A4F] disabled:opacity-50">
+                    <Loader2 v-if="lookingUp" class="h-4 w-4 animate-spin" />
+                    <Search v-else class="h-4 w-4" />
+                    Buscar
+                </button>
+            </div>
+            <p v-if="dniMessage" class="text-[11px]" :class="dniMessage.includes('autocompletado') ? 'text-green-600' : 'text-amber-600'">{{ dniMessage }}</p>
+            <InputError :message="errors.dni" />
+        </div>
+
+        <div class="grid gap-1.5">
             <Label for="name">Nombre completo</Label>
             <Input
                 id="name"
                 type="text"
                 required
-                autofocus
                 :tabindex="1"
                 autocomplete="name"
                 name="name"
-                placeholder="Ej. Juan Pérez"
+                placeholder="Ingresa tu nombre o busca por DNI"
                 class="h-11"
             />
             <InputError :message="errors.name" />

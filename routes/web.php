@@ -161,6 +161,9 @@ Route::post('/mascotas/{slug}/postular', [ApplicationController::class, 'store']
 Route::post('/api/chatbot/ask', [\App\Http\Controllers\Public\ChatbotController::class, 'ask'])
     ->name('chatbot.ask');
 
+Route::post('/api/dni/lookup', [\App\Http\Controllers\Api\DniController::class, 'lookup'])
+    ->name('dni.lookup');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
 });

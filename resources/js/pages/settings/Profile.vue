@@ -109,6 +109,22 @@ return '?';
                     </div>
 
                     <div class="grid gap-2">
+                        <Label for="dni">DNI</Label>
+                        <Input
+                            id="dni"
+                            type="text"
+                            class="mt-1 block w-full"
+                            name="dni"
+                            :value="user.dni"
+                            readonly
+                            disabled
+                            placeholder="No registrado"
+                        />
+                        <p class="text-[11px] text-muted-foreground">El DNI no se puede modificar.</p>
+                        <InputError class="mt-2" :message="errors.dni" />
+                    </div>
+
+                    <div class="grid gap-2">
                         <Label for="whatsapp">WhatsApp</Label>
                         <Input
                             id="whatsapp"

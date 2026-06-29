@@ -41,4 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'dni' => [
+        'token' => env('DNI_API_TOKEN'),
+        'url' => env('DNI_API_URL', 'https://dniruc.apisperu.com/api/v1/dni'),
+    ],
+
 ];
