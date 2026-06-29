@@ -108,6 +108,21 @@ return '?';
                         <InputError class="mt-2" :message="errors.email" />
                     </div>
 
+                    <div class="grid gap-2">
+                        <Label for="whatsapp">WhatsApp</Label>
+                        <Input
+                            id="whatsapp"
+                            type="tel"
+                            class="mt-1 block w-full"
+                            name="whatsapp"
+                            :default-value="user.whatsapp"
+                            autocomplete="tel"
+                            placeholder="+51 900 000 000"
+                        />
+                        <p class="text-[11px] text-muted-foreground">Para que las organizaciones te contacten mas facil.</p>
+                        <InputError class="mt-2" :message="errors.whatsapp" />
+                    </div>
+
                     <div v-if="page.props.mustVerifyEmail && !user.email_verified_at">
                         <div
                             class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800/30 dark:bg-amber-900/20 dark:text-amber-200"

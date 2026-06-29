@@ -92,11 +92,26 @@ defineProps<{
         </div>
 
         <div class="grid gap-1.5">
+            <Label for="whatsapp">WhatsApp <span class="text-muted-foreground/50 font-normal">(opcional)</span></Label>
+            <Input
+                id="whatsapp"
+                type="tel"
+                :tabindex="3"
+                autocomplete="tel"
+                name="whatsapp"
+                placeholder="+51 900 000 000"
+                class="h-11"
+            />
+            <p class="text-[11px] text-muted-foreground/60">Para que te contacten mas facil las organizaciones.</p>
+            <InputError :message="errors.whatsapp" />
+        </div>
+
+        <div class="grid gap-1.5">
             <Label for="password">Contraseña</Label>
             <PasswordInput
                 id="password"
                 required
-                :tabindex="3"
+                :tabindex="4"
                 autocomplete="new-password"
                 name="password"
                 placeholder="Creá tu contraseña"
@@ -110,7 +125,7 @@ defineProps<{
             <PasswordInput
                 id="password_confirmation"
                 required
-                :tabindex="4"
+                :tabindex="6"
                 autocomplete="new-password"
                 name="password_confirmation"
                 placeholder="Repetí tu contraseña"
