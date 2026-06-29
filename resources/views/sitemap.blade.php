@@ -16,14 +16,19 @@
         <priority>0.7</priority>
         <changefreq>daily</changefreq>
         <lastmod>{{ $pet->updated_at->toW3cString() }}</lastmod>
-        @if ($pet->photos)
-        @foreach (array_slice(is_array($pet->photos) ? $pet->photos : json_decode($pet->photos, true) ?: [], 0, 3) as $photo)
+        @php
+            $petPhotos = [];
+            if ($pet->photos) {
+                $decoded = is_array($pet->photos) ? $pet->photos : (json_decode($pet->photos, true) ?: []);
+                $petPhotos = array_slice($decoded, 0, 3);
+            }
+        @endphp
+        @foreach ($petPhotos as $photo)
         <image:image>
             <image:loc>{{ $photo }}</image:loc>
             <image:title>{{ $pet->name }}</image:title>
         </image:image>
         @endforeach
-        @endif
     </url>
     @endforeach
 

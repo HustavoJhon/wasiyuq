@@ -10,7 +10,7 @@ class ChatbotService
     {
         $this->rules = [
             [
-                'keywords' => ['adoptar', 'adopci', 'adopta', 'proceso', 'paso'],
+                'keywords' => ['adopt', 'postul', 'solicit', 'proceso', 'paso'],
                 'response' => "¡Adoptar es fácil! Estos son los pasos:\n\n1. Explora las mascotas en /mascotas.\n2. Encuentra tu compañero ideal y haz clic en \"Postular\".\n3. Completa el formulario con tus datos.\n4. La organización revisará tu solicitud.\n5. Si es aprobada, coordinarán la entrega y seguimiento.\n\n¿Tienes dudas sobre algún paso en particular?",
                 'buttons' => ['¿Qué requisitos necesito?', '¿Cuánto cuesta adoptar?', '¿Qué es el seguimiento?'],
             ],
@@ -45,17 +45,22 @@ class ChatbotService
                 'buttons' => ['¿Cuánto cuesta registrar mi organización?', 'Ya tengo cuenta, ¿cómo ingreso?', 'Volver al inicio'],
             ],
             [
-                'keywords' => ['perro', 'perrito', 'perros', 'can', 'canino'],
+                'keywords' => ['buscar', 'busca', 'encontrar', 'mostrame', 'ver mascota', 'mascotas disponibles'],
+                'response' => "Puedes buscar mascotas en /mascotas filtrando por especie, tamaño y más.\n\nSi ya tienes cuenta, el sistema te recomendará las que mejor se adapten a tu perfil.",
+                'buttons' => ['Ver todas las mascotas', '¿Cómo adoptar?', 'Volver al inicio'],
+            ],
+            [
+                'keywords' => ['perro', 'perrit', 'can', 'canino', 'perd'],
                 'response' => "Tenemos varios perritos esperando un hogar. Puedes filtrar por tamaño, edad y más en /mascotas.\n\nNuestro sistema te recomendará los que mejor se adapten a tu estilo de vida si ya tienes una cuenta.",
                 'buttons' => ['Ver perros disponibles', '¿Cómo adoptar?', 'Volver al inicio'],
             ],
             [
-                'keywords' => ['gato', 'gatito', 'gatos', 'felino', 'minino'],
+                'keywords' => ['gato', 'gatit', 'felino', 'minino', 'michi'],
                 'response' => "Los gatos son excelentes compañeros, especialmente para departamentos. Revisa los gatitos disponibles en /mascotas filtrando por la categoría Gatos.",
                 'buttons' => ['Ver gatos disponibles', 'Vivo en departamento ¿puedo?', 'Volver al inicio'],
             ],
             [
-                'keywords' => ['hola', 'buenas', 'buenos', 'saludo', 'ayuda', 'help'],
+                'keywords' => ['hola', 'buenas', 'buenos', 'saludo', 'ayuda', 'help', 'como'],
                 'response' => "¡Hola! Soy el asistente virtual de Wasiyuq. Puedo ayudarte con:\n\n• Cómo adoptar una mascota\n• Requisitos para adoptar\n• Seguimiento post-adopción\n• Registrar tu organización\n• Contactarnos\n\n¿En qué te puedo ayudar?",
                 'buttons' => ['Quiero adoptar', 'Tengo un albergue', 'Necesito ayuda'],
             ],
