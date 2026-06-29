@@ -31,8 +31,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->ensureDirectoriesExist();
         $this->configureDefaults();
         $this->registerEventListeners();
+    }
+
+    protected function ensureDirectoriesExist(): void
+    {
+        $paths = [
+            storage_path('framework/views'),
+            storage_path('framework/cache/data'),
+            storage_path('logs'),
+        ];
+
+        foreach ($paths as $path) {
+            if (! is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
+        }
     }
 
     protected function registerEventListeners(): void
