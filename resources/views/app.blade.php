@@ -21,6 +21,7 @@
         <meta name="keywords" content="adopcion, mascotas, perros, gatos, Cusco, Peru, refugio, albergue, Wasiyuq">
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
         <meta name="googlebot" content="index, follow">
+        <meta name="google-site-verification" content="pK64Anx0ISB7k3TroybY-nLCqS9HgR7HZRa6e8HMX88" />
         <link rel="canonical" href="{{ url()->current() }}">
 
         <meta property="og:site_name" content="Wasiyuq">
@@ -61,6 +62,16 @@
 
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet">
+
+        @if(config('services.google.analytics_id'))
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google.analytics_id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ config('services.google.analytics_id') }}');
+        </script>
+        @endif
 
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
         <x-inertia::head>
