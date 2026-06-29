@@ -44,12 +44,22 @@ class DniLookupService
             if ($response->successful()) {
                 $data = $response->json();
 
+                if (($data['success'] ?? false) === true) {
+                    return [
+                        'nombres' => $data['nombres'] ?? '',
+                        'apellidoPaterno' => $data['apellidoPaterno'] ?? '',
+                        'apellidoMaterno' => $data['apellidoMaterno'] ?? '',
+                        'dni' => $dni,
+                        'source' => 'reniec',
+                    ];
+                }
+
                 return [
-                    'nombres' => $data['nombres'] ?? '',
-                    'apellidoPaterno' => $data['apellidoPaterno'] ?? '',
-                    'apellidoMaterno' => $data['apellidoMaterno'] ?? '',
+                    'nombres' => '',
+                    'apellidoPaterno' => '',
+                    'apellidoMaterno' => '',
                     'dni' => $dni,
-                    'source' => 'reniec',
+                    'source' => 'not_found',
                 ];
             }
         } catch (\Exception $e) {

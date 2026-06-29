@@ -45,6 +45,8 @@ async function lookupDni() {
             const nameInput = document.querySelector<HTMLInputElement>('input[name="name"]');
             if (nameInput) nameInput.value = fullName;
             dniMessage.value = 'Nombre autocompletado desde RENIEC.';
+        } else if (data.source === 'not_found') {
+            dniMessage.value = 'DNI no encontrado. Verifica el numero.';
         } else if (data.source === 'token_missing') {
             dniMessage.value = 'API no configurada. Ingresa tu nombre manualmente.';
         } else {
