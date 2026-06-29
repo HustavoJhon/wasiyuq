@@ -163,10 +163,17 @@ const websiteSchema = {
                 >
                     <a
                         href="/mascotas"
-                        class="text-base font-medium transition"
-                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/mascotas-perdidas') ? 'text-[#DC2626] font-extrabold' : isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         @click="mobileOpen = false"
                         >Mascotas</a
+                    >
+                    <a
+                        href="/mascotas-perdidas"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/mascotas-perdidas') ? 'text-[#DC2626] font-extrabold' : 'text-muted-foreground hover:text-[#DC2626]'"
+                        @click="mobileOpen = false"
+                        >Perdidas</a
                     >
                     <a
                         href="/eventos"
@@ -281,8 +288,14 @@ const websiteSchema = {
                     <a
                         href="/mascotas"
                         class="rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
+                        :class="isActive('/mascotas-perdidas') ? '' : isActive('/mascotas') ? 'text-[#2D6A4F] font-extrabold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
                         >Mascotas</a
+                    >
+                    <a
+                        href="/mascotas-perdidas"
+                        class="rounded-lg py-3 text-sm font-medium transition"
+                        :class="isActive('/mascotas-perdidas') ? 'text-[#DC2626] font-extrabold' : 'text-muted-foreground hover:text-[#DC2626]'"
+                        >Perdidas</a
                     >
                     <a
                         href="/eventos"
@@ -435,6 +448,7 @@ const websiteSchema = {
                         <h4 class="text-sm font-semibold text-foreground">Navegación</h4>
                         <ul class="mt-4 space-y-2.5">
                             <li><a href="/mascotas" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Mascotas</a></li>
+                            <li><a href="/mascotas-perdidas" class="text-sm text-muted-foreground transition hover:text-[#DC2626]">Mascotas Perdidas</a></li>
                             <li><a href="/eventos" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Eventos</a></li>
                             <li><a href="/blog" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Blog</a></li>
                             <li><a href="/sobre-nosotros" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Sobre Nosotros</a></li>

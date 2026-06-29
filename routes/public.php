@@ -5,6 +5,7 @@ use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Public\EventController;
 use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\LostPetController;
 use App\Http\Controllers\Public\PetController;
 use App\Http\Controllers\Public\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,9 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/mascotas', [PetController::class, 'index'])->name('pets.index');
 Route::get('/mascotas/{slug}', [PetController::class, 'show'])->name('pets.show');
+Route::get('/mascotas-perdidas', [LostPetController::class, 'index'])->name('lost-pets.index');
+Route::get('/mascotas-perdidas/{id}', [LostPetController::class, 'show'])->where('id', '[0-9]+')->name('lost-pets.show');
+Route::post('/mascotas-perdidas/reportar', [LostPetController::class, 'store'])->name('lost-pets.store');
 Route::get('/eventos', [EventController::class, 'index'])->name('events.index');
 Route::get('/eventos/{slug}', [EventController::class, 'show'])->name('events.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

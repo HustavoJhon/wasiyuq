@@ -697,6 +697,256 @@ destroyForm.delete = (args: { user: number | { id: number } } | [user: number | 
 
 destroy.form = destroyForm
 
+/**
+* @see \App\Http\Controllers\Admin\UserController::addMembership
+* @see app/Http/Controllers/Admin/UserController.php:221
+* @route '/admin/usuarios/{user}/membership'
+*/
+export const addMembership = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: addMembership.url(args, options),
+    method: 'post',
+})
+
+addMembership.definition = {
+    methods: ["post"],
+    url: '/admin/usuarios/{user}/membership',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::addMembership
+* @see app/Http/Controllers/Admin/UserController.php:221
+* @route '/admin/usuarios/{user}/membership'
+*/
+addMembership.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { user: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { user: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            user: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        user: typeof args.user === 'object'
+        ? args.user.id
+        : args.user,
+    }
+
+    return addMembership.definition.url
+            .replace('{user}', parsedArgs.user.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::addMembership
+* @see app/Http/Controllers/Admin/UserController.php:221
+* @route '/admin/usuarios/{user}/membership'
+*/
+addMembership.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: addMembership.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::addMembership
+* @see app/Http/Controllers/Admin/UserController.php:221
+* @route '/admin/usuarios/{user}/membership'
+*/
+const addMembershipForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: addMembership.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::addMembership
+* @see app/Http/Controllers/Admin/UserController.php:221
+* @route '/admin/usuarios/{user}/membership'
+*/
+addMembershipForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: addMembership.url(args, options),
+    method: 'post',
+})
+
+addMembership.form = addMembershipForm
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::removeMembership
+* @see app/Http/Controllers/Admin/UserController.php:241
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+export const removeMembership = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: removeMembership.url(args, options),
+    method: 'delete',
+})
+
+removeMembership.definition = {
+    methods: ["delete"],
+    url: '/admin/usuarios/{user}/membership/{membership}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::removeMembership
+* @see app/Http/Controllers/Admin/UserController.php:241
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+removeMembership.url = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions) => {
+    if (Array.isArray(args)) {
+        args = {
+            user: args[0],
+            membership: args[1],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        user: typeof args.user === 'object'
+        ? args.user.id
+        : args.user,
+        membership: args.membership,
+    }
+
+    return removeMembership.definition.url
+            .replace('{user}', parsedArgs.user.toString())
+            .replace('{membership}', parsedArgs.membership.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::removeMembership
+* @see app/Http/Controllers/Admin/UserController.php:241
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+removeMembership.delete = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: removeMembership.url(args, options),
+    method: 'delete',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::removeMembership
+* @see app/Http/Controllers/Admin/UserController.php:241
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+const removeMembershipForm = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: removeMembership.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::removeMembership
+* @see app/Http/Controllers/Admin/UserController.php:241
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+removeMembershipForm.delete = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: removeMembership.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+removeMembership.form = removeMembershipForm
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::updateMembership
+* @see app/Http/Controllers/Admin/UserController.php:250
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+export const updateMembership = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: updateMembership.url(args, options),
+    method: 'put',
+})
+
+updateMembership.definition = {
+    methods: ["put"],
+    url: '/admin/usuarios/{user}/membership/{membership}',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::updateMembership
+* @see app/Http/Controllers/Admin/UserController.php:250
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+updateMembership.url = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions) => {
+    if (Array.isArray(args)) {
+        args = {
+            user: args[0],
+            membership: args[1],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        user: typeof args.user === 'object'
+        ? args.user.id
+        : args.user,
+        membership: args.membership,
+    }
+
+    return updateMembership.definition.url
+            .replace('{user}', parsedArgs.user.toString())
+            .replace('{membership}', parsedArgs.membership.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::updateMembership
+* @see app/Http/Controllers/Admin/UserController.php:250
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+updateMembership.put = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: updateMembership.url(args, options),
+    method: 'put',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::updateMembership
+* @see app/Http/Controllers/Admin/UserController.php:250
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+const updateMembershipForm = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateMembership.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UserController::updateMembership
+* @see app/Http/Controllers/Admin/UserController.php:250
+* @route '/admin/usuarios/{user}/membership/{membership}'
+*/
+updateMembershipForm.put = (args: { user: number | { id: number }, membership: string | number } | [user: number | { id: number }, membership: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateMembership.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+updateMembership.form = updateMembershipForm
+
 const users = {
     index: Object.assign(index, index),
     create: Object.assign(create, create),
@@ -706,6 +956,9 @@ const users = {
     update: Object.assign(update, update),
     updateRole: Object.assign(updateRole, updateRole),
     destroy: Object.assign(destroy, destroy),
+    addMembership: Object.assign(addMembership, addMembership),
+    removeMembership: Object.assign(removeMembership, removeMembership),
+    updateMembership: Object.assign(updateMembership, updateMembership),
 }
 
 export default users
