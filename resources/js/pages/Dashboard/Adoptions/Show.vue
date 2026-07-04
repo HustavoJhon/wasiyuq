@@ -67,6 +67,26 @@ function reject(): void {
     );
 }
 
+const showSchedule = ref(false);
+const scheduleDate = ref('');
+const scheduleNote = ref('');
+
+function scheduleFollowUp(): void {
+    if (!props.currentTeam) return;
+    router.post(`/${props.currentTeam.slug}/seguimientos`, {
+        adoption_id: props.adoption.id,
+        scheduled_date: scheduleDate.value,
+        notes: scheduleNote.value,
+    }, {
+        preserveState: true,
+        onSuccess: () => {
+            showSchedule.value = false;
+            scheduleDate.value = '';
+            scheduleNote.value = '';
+        },
+    });
+}
+
 function statusClass(s: string): string {
     const map: Record<string, string> = {
         pending: 'bg-amber-100 text-amber-700',
@@ -245,13 +265,35 @@ const housingLabels: Record<string, string> = {
                 </div>
 
                 <div
-                    v-if="adoption.follow_ups.length > 0"
                     class="rounded-xl border border-border bg-card p-6"
                 >
-                    <h2 class="text-lg font-semibold text-foreground">
-                        Seguimiento
-                    </h2>
-                    <div class="mt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-foreground">Seguimiento</h2>
+                        <button @click="showSchedule = !showSchedule"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-[#2D6A4F] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#246142]">
+                            + Programar
+                        </button>
+                    </div>
+
+                    <!-- Schedule form -->
+                    <div v-if="showSchedule" class="mt-4 rounded-xl border border-emerald-200/60 bg-emerald-50/30 p-4">
+                        <div class="grid gap-3 sm:grid-cols-3">
+                            <div>
+                                <label class="block text-xs font-medium mb-1">Fecha *</label>
+                                <input v-model="scheduleDate" type="date" required class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" />
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-medium mb-1">Notas</label>
+                                <input v-model="scheduleNote" type="text" class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-[#2D6A4F]" placeholder="Opcional" />
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-end gap-2">
+                            <button @click="showSchedule = false" class="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted">Cancelar</button>
+                            <button @click="scheduleFollowUp" :disabled="!scheduleDate" class="rounded-lg bg-[#2D6A4F] px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">Guardar</button>
+                        </div>
+                    </div>
+
+                    <div v-if="adoption.follow_ups.length > 0" class="mt-4 space-y-3">
                         <div
                             v-for="fu in adoption.follow_ups"
                             :key="fu.id"
