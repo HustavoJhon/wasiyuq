@@ -271,16 +271,16 @@ const qrUrl = '/icons/yape-qr.jpeg';
                 <div class="mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-16">
                     <div class="flex flex-col items-center gap-3">
                         <div class="overflow-hidden rounded-2xl border-2 border-purple-200/60 bg-white p-3 shadow-lg shadow-purple-100/50 dark:border-purple-900/30 dark:bg-gray-900">
-                            <img :src="qrUrl" alt="Yape QR" class="h-40 w-40" />
+                            <img :src="qrUrl" alt="Yape QR" class="h-40 w-40 rounded-xl border border-purple-100 dark:border-purple-900/50" />
                         </div>
                         <p class="text-xs font-medium text-muted-foreground">Escaneá con Yape o Plin</p>
                     </div>
                     <div class="space-y-4 text-center sm:text-left">
-                        <div class="rounded-xl border border-border/50 bg-card p-4">
-                            <p class="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">Yape / Plin</p>
-                            <p class="mt-1 text-lg font-bold text-foreground">987 654 321</p>
-                            <p class="text-xs text-muted-foreground">Gustavo Jhon</p>
-                        </div>
+                        <button @click="navigator.clipboard.writeText('932720035')" class="rounded-xl border border-border/50 bg-card p-4 text-left transition hover:bg-muted w-full">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">Yape / Plin <span class="text-[10px] text-muted-foreground ml-1">(click para copiar)</span></p>
+                            <p class="mt-1 text-lg font-bold text-foreground">932 720 035</p>
+                            <p class="text-xs text-muted-foreground">Jhon Gustavo</p>
+                        </button>
                         <p class="max-w-xs text-xs text-muted-foreground">
                             Cada aporte nos ayuda a cubrir los costos de infraestructura y a seguir desarrollando funcionalidades para ayudar a más mascotas.
                         </p>
