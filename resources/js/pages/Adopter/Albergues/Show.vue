@@ -36,22 +36,18 @@ const socialIcons: Record<string, any> = { facebook: Facebook, instagram: Camera
             <a v-if="canEdit" :href="'/' + albergue.slug + '/perfil'" class="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700"><Edit class="h-4 w-4" /> Editar perfil</a>
         </div>
 
-        <!-- Header -->
-        <div class="mb-8 rounded-2xl border border-border/50 bg-card overflow-hidden">
-            <div class="h-32 bg-gradient-to-r from-teal-600 to-teal-400"></div>
-            <div class="-mt-12 px-6 pb-6">
-                <div class="flex items-end gap-4">
-                    <div class="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-4 border-card bg-white shadow-md">
-                        <img v-if="albergue.logo" :src="photoUrl(albergue.logo)" :alt="albergue.name" class="h-full w-full object-cover" />
-                        <div v-else class="flex h-full items-center justify-center bg-teal-100 text-teal-600"><PawPrint class="h-10 w-10" /></div>
-                    </div>
-                    <div class="pb-1 flex-1">
-                        <h1 class="text-2xl font-bold text-foreground">{{ albergue.name }}</h1>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-amber-500">{{ renderStars(albergue.average_rating ?? 0).join('') }}</span>
-                            <span class="text-sm text-muted-foreground">{{ albergue.average_rating }} ({{ albergue.ratings_count }} calificaciones)</span>
-                        </div>
-                    </div>
+        <!-- Header compact -->
+        <div class="mb-6 flex items-center gap-4 rounded-xl border border-border/50 bg-card p-4">
+            <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-muted">
+                <img v-if="albergue.logo" :src="photoUrl(albergue.logo)" :alt="albergue.name" class="h-full w-full object-cover" />
+                <div v-else class="flex h-full items-center justify-center text-teal-500"><PawPrint class="h-7 w-7" /></div>
+            </div>
+            <div class="min-w-0 flex-1">
+                <h1 class="text-lg font-bold text-foreground truncate">{{ albergue.name }}</h1>
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="text-amber-500">{{ renderStars(albergue.average_rating ?? 0).join('') }}</span>
+                    <span class="text-muted-foreground">{{ albergue.average_rating }} <span class="text-xs opacity-60">({{ albergue.ratings_count }})</span></span>
+                    <span v-if="albergue.city" class="text-muted-foreground/50 text-xs flex items-center gap-1"><MapPin class="h-3 w-3" />{{ albergue.city }}</span>
                 </div>
             </div>
         </div>
