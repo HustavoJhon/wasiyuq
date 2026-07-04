@@ -14,7 +14,7 @@ class StoreAnnouncementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'team_id' => ['required', 'exists:teams,id'],
+            'team_id' => ['nullable', 'exists:teams,id'],
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:announcements,slug'],
             'description' => ['required', 'string'],
