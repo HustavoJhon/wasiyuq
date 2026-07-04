@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LostPet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class LostPetController extends Controller
@@ -71,7 +72,7 @@ class LostPetController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $rules = [
             'name' => 'nullable|string|max:255',
             'species' => 'required|string|in:dog,cat,rabbit,bird,other',
             'breed' => 'nullable|string|max:255',
@@ -84,10 +85,34 @@ class LostPetController extends Controller
             'contact_phone' => 'nullable|string|max:50',
             'contact_email' => 'nullable|email|max:255',
             'status' => 'required|in:lost,found',
-        ]);
+            'photo' => 'nullable|image|max:5120',
+            'photo_url' => 'nullable|url|max:2048',
+        ];
+
+        $data = $request->validate($rules);
+
+        if ($data['status'] === 'lost' && ! Auth::check()) {
+            return back()->with('flash', [
+                'toast' => [
+                    'type' => 'error',
+                    'message' => 'Debes iniciar sesión para reportar una mascota perdida.',
+                ],
+            ]);
+        }
 
         $data['user_id'] = Auth::id();
         $data['is_resolved'] = false;
+
+        $photos = [];
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('lost-pets', 'public');
+            $photos[] = Storage::url($path);
+        } elseif ($request->filled('photo_url')) {
+            $photos[] = $request->input('photo_url');
+        }
+
+        $data['photos'] = ! empty($photos) ? $photos : null;
 
         LostPet::create($data);
 

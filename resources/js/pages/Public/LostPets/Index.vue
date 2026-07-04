@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import {
     Dog, Cat, Rabbit, Bird, Search, PawPrint, MapPin, Phone, Mail,
     ChevronLeft, ChevronRight, Filter, X, Plus, Calendar, MapPinned,
-    CheckCircle2,
+    CheckCircle2, Image, Upload, Link, LogIn,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
 import { useForm } from '@inertiajs/vue3';
 
 const { photoUrl } = usePhotoUrl();
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
 
 interface LostPet {
     id: number;
@@ -115,14 +117,38 @@ const form = useForm({
     contact_phone: '',
     contact_email: '',
     status: 'lost',
+    photo: null as File | null,
+    photo_url: '',
 });
 
+const photoPreview = ref<string | null>(null);
+
+function onPhotoChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+        form.photo = file;
+        photoPreview.value = URL.createObjectURL(file);
+        form.photo_url = '';
+    }
+}
+
+function onPhotoUrlInput() {
+    photoPreview.value = form.photo_url || null;
+    form.photo = null;
+}
+
 function submitReport() {
+    if (form.status === 'lost' && !isAuthenticated.value) {
+        window.location.href = '/login';
+        return;
+    }
     form.post('/mascotas-perdidas/reportar', {
         preserveState: true,
+        forceFormData: true,
         onSuccess: () => {
             showForm.value = false;
             form.reset();
+            photoPreview.value = null;
         },
     });
 }
@@ -342,6 +368,9 @@ function submitReport() {
                                 <input type="radio" v-model="form.status" value="lost" class="sr-only" />
                                 <p class="font-semibold text-foreground">Perdí una mascota</p>
                                 <p class="text-xs text-muted-foreground mt-0.5">Se escapó o desapareció</p>
+                                <p v-if="form.status === 'lost' && !isAuthenticated" class="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                                    <LogIn class="h-3 w-3" /> Requiere iniciar sesión
+                                </p>
                             </label>
                             <label class="cursor-pointer rounded-xl border-2 p-4 transition"
                                 :class="form.status === 'found' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30' : 'border-border hover:border-emerald-300'"
@@ -350,6 +379,28 @@ function submitReport() {
                                 <p class="font-semibold text-foreground">Encontré una mascota</p>
                                 <p class="text-xs text-muted-foreground mt-0.5">Está en la calle o perdida</p>
                             </label>
+                        </div>
+
+                        <!-- Photo -->
+                        <div>
+                            <label class="block text-sm font-medium text-foreground mb-1.5">Foto <span class="text-muted-foreground/50 font-normal">(opcional)</span></label>
+                            <div v-if="photoPreview" class="relative mb-3 overflow-hidden rounded-xl border border-border/50">
+                                <img :src="photoPreview" alt="Vista previa" class="h-40 w-full object-cover" />
+                                <button @click="photoPreview = null; form.photo = null; form.photo_url = ''" type="button" class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70">
+                                    <X class="h-3.5 w-3.5" />
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground transition hover:border-[#DC2626] hover:text-[#DC2626]">
+                                    <Upload class="h-4 w-4" />
+                                    Subir imagen
+                                    <input type="file" accept="image/*" class="hidden" @change="onPhotoChange" />
+                                </label>
+                                <div class="relative">
+                                    <Link class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
+                                    <input v-model="form.photo_url" @input="onPhotoUrlInput" type="url" class="w-full rounded-xl border border-border bg-background py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]" placeholder="O pegá una URL..." />
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Species + Name -->
@@ -433,9 +484,12 @@ function submitReport() {
                                 class="rounded-xl border border-border px-5 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted">
                                 Cancelar
                             </button>
-                            <button type="submit" :disabled="form.processing"
+                            <button type="submit" :disabled="form.processing || (form.status === 'lost' && !isAuthenticated)"
                                 class="rounded-xl bg-gradient-to-r from-[#DC2626] to-[#EF4444] px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-red-500/20 transition hover:from-[#B91C1C] hover:to-[#DC2626] disabled:opacity-50">
-                                {{ form.status === 'found' ? 'Publicar encontrada' : 'Reportar perdida' }}
+                                <span v-if="form.status === 'lost' && !isAuthenticated" class="inline-flex items-center gap-1.5">
+                                    <LogIn class="h-4 w-4" /> Iniciar sesión para reportar
+                                </span>
+                                <span v-else>{{ form.status === 'found' ? 'Publicar encontrada' : 'Reportar perdida' }}</span>
                             </button>
                         </div>
                     </form>

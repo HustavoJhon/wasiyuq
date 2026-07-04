@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::index
-* @see app/Http/Controllers/Public/LostPetController.php:13
+* @see app/Http/Controllers/Public/LostPetController.php:14
 * @route '/mascotas-perdidas'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,7 +134,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -144,7 +144,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ const showForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ showForm.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::show
-* @see app/Http/Controllers/Public/LostPetController.php:54
+* @see app/Http/Controllers/Public/LostPetController.php:55
 * @route '/mascotas-perdidas/{id}'
 */
 showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -181,7 +181,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::store
-* @see app/Http/Controllers/Public/LostPetController.php:72
+* @see app/Http/Controllers/Public/LostPetController.php:73
 * @route '/mascotas-perdidas/reportar'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +196,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::store
-* @see app/Http/Controllers/Public/LostPetController.php:72
+* @see app/Http/Controllers/Public/LostPetController.php:73
 * @route '/mascotas-perdidas/reportar'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -205,7 +205,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::store
-* @see app/Http/Controllers/Public/LostPetController.php:72
+* @see app/Http/Controllers/Public/LostPetController.php:73
 * @route '/mascotas-perdidas/reportar'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -215,7 +215,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::store
-* @see app/Http/Controllers/Public/LostPetController.php:72
+* @see app/Http/Controllers/Public/LostPetController.php:73
 * @route '/mascotas-perdidas/reportar'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -225,7 +225,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Public\LostPetController::store
-* @see app/Http/Controllers/Public/LostPetController.php:72
+* @see app/Http/Controllers/Public/LostPetController.php:73
 * @route '/mascotas-perdidas/reportar'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
