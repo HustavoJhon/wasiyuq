@@ -30,9 +30,23 @@ class TeamProfileController extends Controller
             'map_embed' => 'nullable|string|max:2000',
             'social_links' => 'nullable|array',
             'gallery' => 'nullable|array|max:6',
-            'gallery.*' => 'url|max:2048',
+            'gallery.*' => 'nullable|string|max:2048',
+            'gallery_files' => 'nullable|array|max:6',
+            'gallery_files.*' => 'nullable|image|max:5120|mimes:jpg,jpeg,png,webp',
             'support_info' => 'nullable|array',
         ]);
+
+        // Handle gallery: merge uploaded files with URLs
+        $gallery = $request->input('gallery', []);
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $index => $file) {
+                if ($file) {
+                    $path = $file->store('teams/gallery', 'public');
+                    $gallery[$index] = Storage::url($path);
+                }
+            }
+        }
+        $data['gallery'] = array_values(array_filter($gallery, fn ($v) => ! empty($v)));
 
         if ($request->hasFile('logo')) {
             if ($current_team->logo) {

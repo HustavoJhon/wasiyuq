@@ -26,22 +26,38 @@ const form = useForm({
     map_embed: props.team.map_embed ?? '',
     social_links: props.team.social_links ?? {} as Record<string, string>,
     gallery: props.team.gallery ?? [] as string[],
+    gallery_files: [] as (File | null)[],
     support_info: props.team.support_info ?? {} as Record<string, string>,
 });
 
-const logoPreview = ref(form.logo ? null : props.team.logo);
-function onLogoChange(e: Event) {
+const galleryFiles = ref<(File | null)[]>(new Array(props.team.gallery?.length ?? 0).fill(null));
+const galleryPreviews = ref<string[]>(props.team.gallery ?? []);
+
+function onGalleryFile(e: Event, i: number) {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) { form.logo = file; const r = new FileReader(); r.onload = () => logoPreview.value = r.result as string; r.readAsDataURL(file); }
+    if (file) {
+        galleryFiles.value[i] = file;
+        form.gallery_files = galleryFiles.value;
+        const r = new FileReader();
+        r.onload = () => { galleryPreviews.value[i] = r.result as string; };
+        r.readAsDataURL(file);
+    }
 }
 
-const socialPlatforms = ['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'whatsapp', 'linkedin'];
-const supportFields = ['yape', 'plin', 'bcp', 'bbva', 'interbank', 'scotiabank', 'nacion'];
+function addGalleryUrl() {
+    if (form.gallery.length < 6) {
+        form.gallery.push('');
+        galleryPreviews.value.push('');
+        galleryFiles.value.push(null);
+    }
+}
 
-function addGalleryUrl() { if (form.gallery.length < 6) form.gallery.push(''); }
-function removeGalleryUrl(i: number) { form.gallery.splice(i, 1); }
-
-function submit() { form.post(window.location.pathname.replace('/perfil', ''), { forceFormData: true, _method: 'put' }); }
+function removeGalleryUrl(i: number) {
+    form.gallery.splice(i, 1);
+    galleryPreviews.value.splice(i, 1);
+    galleryFiles.value.splice(i, 1);
+    form.gallery_files = galleryFiles.value;
+}
 </script>
 
 <template>
@@ -100,12 +116,16 @@ function submit() { form.post(window.location.pathname.replace('/perfil', ''), {
                     <div class="flex items-center justify-between mb-2"><label class="text-sm font-medium">Galería de imágenes</label><button type="button" @click="addGalleryUrl" :disabled="form.gallery.length >= 6" class="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted disabled:opacity-50"><Plus class="h-3.5 w-3.5" /> Agregar</button></div>
                     <div class="space-y-2">
                         <div v-for="(url, i) in form.gallery" :key="i" class="flex gap-2">
-                            <img v-if="url" :src="url" class="h-16 w-16 shrink-0 rounded-lg object-cover border border-border" />
-                            <input v-model="form.gallery[i]" type="url" placeholder="URL de la imagen..." class="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-teal-500" />
+                            <img v-if="galleryPreviews[i]" :src="galleryPreviews[i].startsWith('data:') || galleryPreviews[i].startsWith('http') || galleryPreviews[i].startsWith('/') ? galleryPreviews[i] : photoUrl(form.gallery[i])" class="h-16 w-16 shrink-0 rounded-lg object-cover border border-border" />
+                            <input v-model="form.gallery[i]" type="text" placeholder="URL o subí una imagen..." class="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-teal-500" />
+                            <label class="flex cursor-pointer items-center justify-center rounded-lg border border-border p-2 text-muted-foreground transition hover:bg-muted">
+                                <Upload class="h-4 w-4" />
+                                <input type="file" accept="image/*" class="hidden" @change="(e) => onGalleryFile(e, i)" />
+                            </label>
                             <button type="button" @click="removeGalleryUrl(i)" class="rounded-lg p-1.5 text-red-500 hover:bg-red-50"><X class="h-4 w-4" /></button>
                         </div>
                     </div>
-                    <p v-if="form.gallery.length === 0" class="text-xs text-muted-foreground">No hay imágenes en la galería.</p>
+                    <p v-if="form.gallery.length === 0" class="text-xs text-muted-foreground">No hay imágenes en la galería. Subí o pega URLs.</p>
                 </div>
 
                 <!-- Cuentas de apoyo -->
