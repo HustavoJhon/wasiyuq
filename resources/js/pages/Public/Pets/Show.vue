@@ -222,12 +222,12 @@ function speciesEmoji(species: string): string {
                         <div class="flex items-start justify-between gap-4">
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-2xl">{{ speciesEmoji(pet.species) }}</span>
+                                    <span class="inline-flex items-center justify-center rounded-lg bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">{{ speciesLabel(pet.species) }}</span>
                                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ pet.name }}</h1>
                                 </div>
-                                <p class="mt-1 text-muted-foreground">
-                                    {{ pet.breed }} &middot; {{ speciesLabel(pet.species) }}
-                                </p>
+                                    <p class="mt-1 text-muted-foreground">
+                                        {{ pet.breed }}
+                                    </p>
                             </div>
                             <span
                                 class="shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white shadow-sm"
