@@ -20,7 +20,8 @@ const pageSeo = computed(() => (page.props.seo as Record<string, string> | null)
 const { pageTitle, description, ogImage, ogUrl, ogType, seo } = useSeo(pageSeo.value);
 
 function isActive(path: string): boolean {
-    return page.url.startsWith(path);
+    const current = page.url;
+    return current === path || (current.startsWith(path) && (current[path.length] === '/' || current[path.length] === undefined));
 }
 
 const pageJsonLd = computed(() => {

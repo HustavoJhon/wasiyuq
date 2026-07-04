@@ -75,7 +75,8 @@ return null;
 });
 
 function isActive(path: string): boolean {
-    return window.location.pathname.startsWith(path);
+    const current = window.location.pathname;
+    return current === path || (current.startsWith(path) && (current[path.length] === '/' || current[path.length] === undefined));
 }
 
 function isDashboardActive(paths: string[]): boolean {
