@@ -7,7 +7,7 @@ import BlogController from './BlogController'
 import AboutController from './AboutController'
 import ContactController from './ContactController'
 import VeterinarianController from './VeterinarianController'
-import ShelterController from './ShelterController'
+import AlbergueController from './AlbergueController'
 import ChatbotController from './ChatbotController'
 
 const Public = {
@@ -20,7 +20,7 @@ const Public = {
     AboutController: Object.assign(AboutController, AboutController),
     ContactController: Object.assign(ContactController, ContactController),
     VeterinarianController: Object.assign(VeterinarianController, VeterinarianController),
-    ShelterController: Object.assign(ShelterController, ShelterController),
+    AlbergueController: Object.assign(AlbergueController, AlbergueController),
     ChatbotController: Object.assign(ChatbotController, ChatbotController),
 }
 

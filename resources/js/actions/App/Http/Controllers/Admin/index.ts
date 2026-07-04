@@ -9,7 +9,7 @@ import BlogPostController from './BlogPostController'
 import AdoptionController from './AdoptionController'
 import FollowUpController from './FollowUpController'
 import VeterinarianController from './VeterinarianController'
-import ShelterController from './ShelterController'
+import AlbergueController from './AlbergueController'
 
 const Admin = {
     DashboardController: Object.assign(DashboardController, DashboardController),
@@ -23,7 +23,7 @@ const Admin = {
     AdoptionController: Object.assign(AdoptionController, AdoptionController),
     FollowUpController: Object.assign(FollowUpController, FollowUpController),
     VeterinarianController: Object.assign(VeterinarianController, VeterinarianController),
-    ShelterController: Object.assign(ShelterController, ShelterController),
+    AlbergueController: Object.assign(AlbergueController, AlbergueController),
 }
 
 export default Admin

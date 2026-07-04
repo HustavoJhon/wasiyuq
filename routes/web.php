@@ -42,10 +42,9 @@ Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')
     Route::post('/veterinarias/agregar', [\App\Http\Controllers\Public\VeterinarianController::class, 'store'])->name('veterinarians.store');
     Route::post('/veterinarias/{id}/calificar', [\App\Http\Controllers\Public\VeterinarianController::class, 'rate'])->name('veterinarians.rate');
 
-    Route::get('/albergues', [\App\Http\Controllers\Public\ShelterController::class, 'index'])->name('shelters.index');
-    Route::get('/albergues/{id}', [\App\Http\Controllers\Public\ShelterController::class, 'show'])->where('id', '[0-9]+')->name('shelters.show');
-    Route::post('/albergues/agregar', [\App\Http\Controllers\Public\ShelterController::class, 'store'])->name('shelters.store');
-    Route::post('/albergues/{id}/calificar', [\App\Http\Controllers\Public\ShelterController::class, 'rate'])->name('shelters.rate');
+    Route::get('/albergues', [\App\Http\Controllers\Public\AlbergueController::class, 'index'])->name('albergues.index');
+    Route::get('/albergues/{slug}', [\App\Http\Controllers\Public\AlbergueController::class, 'show'])->name('albergues.show');
+    Route::post('/albergues/{slug}/calificar', [\App\Http\Controllers\Public\AlbergueController::class, 'rate'])->name('albergues.rate');
 
     Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
     Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
@@ -171,10 +170,6 @@ Route::prefix('{current_team}')
         Route::get('veterinarias', [\App\Http\Controllers\Teams\VeterinarianController::class, 'index'])->name('veterinarians.index');
         Route::post('veterinarias', [\App\Http\Controllers\Teams\VeterinarianController::class, 'store'])->name('veterinarians.store');
         Route::delete('veterinarias/{veterinarian}', [\App\Http\Controllers\Teams\VeterinarianController::class, 'destroy'])->name('veterinarians.destroy');
-
-        Route::get('albergues', [\App\Http\Controllers\Teams\ShelterController::class, 'index'])->name('shelters.index');
-        Route::post('albergues', [\App\Http\Controllers\Teams\ShelterController::class, 'store'])->name('shelters.store');
-        Route::delete('albergues/{shelter}', [\App\Http\Controllers\Teams\ShelterController::class, 'destroy'])->name('shelters.destroy');
     });
 
 // Postulación pública (requiere auth)

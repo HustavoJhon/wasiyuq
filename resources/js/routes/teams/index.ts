@@ -6,7 +6,6 @@ import blog from './blog'
 import events from './events'
 import members from './members'
 import veterinarians from './veterinarians'
-import shelters from './shelters'
 import invitations from './invitations'
 /**
 * @see \App\Http\Controllers\Teams\TeamController::index
@@ -518,7 +517,6 @@ const teams = {
     events: Object.assign(events, events),
     members: Object.assign(members, members),
     veterinarians: Object.assign(veterinarians, veterinarians),
-    shelters: Object.assign(shelters, shelters),
     index: Object.assign(index, index),
     store: Object.assign(store, store),
     edit: Object.assign(edit, edit),

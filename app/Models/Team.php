@@ -80,6 +80,21 @@ class Team extends Model
         return $this->hasMany(Adoption::class);
     }
 
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(TeamRating::class);
+    }
+
+    public function averageRating(): float
+    {
+        return round($this->ratings()->avg('rating') ?? 0, 1);
+    }
+
+    public function ratingsCount(): int
+    {
+        return $this->ratings()->count();
+    }
+
     protected function casts(): array
     {
         return [

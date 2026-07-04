@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdoptionController;
+use App\Http\Controllers\Admin\AlbergueController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
@@ -9,7 +10,6 @@ use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PetController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleManagementController;
-use App\Http\Controllers\Admin\ShelterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VeterinarianController;
 use Illuminate\Support\Facades\Route;
@@ -84,7 +84,5 @@ Route::prefix('admin')
         Route::post('/veterinarias/{veterinarian}/verificar', [VeterinarianController::class, 'toggleVerification'])->name('veterinarians.toggle-verification');
         Route::delete('/veterinarias/{veterinarian}', [VeterinarianController::class, 'destroy'])->name('veterinarians.destroy');
 
-        Route::get('/albergues', [ShelterController::class, 'index'])->name('shelters.index');
-        Route::post('/albergues/{shelter}/verificar', [ShelterController::class, 'toggleVerification'])->name('shelters.toggle-verification');
-        Route::delete('/albergues/{shelter}', [ShelterController::class, 'destroy'])->name('shelters.destroy');
+        Route::get('/albergues', [AlbergueController::class, 'index'])->name('albergues.index');
     });
