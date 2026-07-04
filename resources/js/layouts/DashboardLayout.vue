@@ -157,7 +157,7 @@ function isNavActive(item: NavItem): boolean {
 
     if (isAdopterRoute.value) {
         if (item.href === '/mi-adopcion') {
-            const adopterPaths = ['/mi-adopcion/postulaciones', '/mi-adopcion/seguimientos'];
+            const adopterPaths = ['/mi-adopcion/postulaciones', '/mi-adopcion/seguimientos', '/mi-adopcion/mascotas', '/mi-adopcion/veterinarias'];
 
             return window.location.pathname === '/mi-adopcion' || (isActive('/mi-adopcion/') && !adopterPaths.some(p => isActive(p)));
         }
