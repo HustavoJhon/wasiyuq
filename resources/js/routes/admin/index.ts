@@ -9,6 +9,7 @@ import blog from './blog'
 import adoptions from './adoptions'
 import followUps from './follow-ups'
 import veterinarians from './veterinarians'
+import shelters from './shelters'
 /**
 * @see \App\Http\Controllers\Admin\DashboardController::dashboard
 * @see app/Http/Controllers/Admin/DashboardController.php:19
@@ -102,6 +103,7 @@ const admin = {
     adoptions: Object.assign(adoptions, adoptions),
     followUps: Object.assign(followUps, followUps),
     veterinarians: Object.assign(veterinarians, veterinarians),
+    shelters: Object.assign(shelters, shelters),
 }
 
 export default admin
