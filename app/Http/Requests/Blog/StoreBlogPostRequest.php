@@ -14,7 +14,7 @@ class StoreBlogPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'team_id' => ['required', 'exists:teams,id'],
+            'team_id' => ['nullable', 'exists:teams,id'],
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:blog_posts,slug'],
             'excerpt' => ['nullable', 'string'],
