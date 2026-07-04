@@ -118,10 +118,10 @@ function formatDate(d: string): string {
                 <p class="text-sm text-muted-foreground">Mis mascotas publicadas</p>
                 <p class="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400">{{ stats.my_pets_count }}</p>
             </a>
-            <div class="rounded-xl border border-red-200/60 bg-red-50/30 p-4 dark:border-red-900/30 dark:bg-red-950/20">
+            <a href="/mi-adopcion/mascotas-perdidas" class="rounded-xl border border-red-200/60 bg-red-50/30 p-4 transition hover:bg-red-50 dark:border-red-900/30 dark:bg-red-950/20 dark:hover:bg-red-950/40">
                 <p class="text-sm text-muted-foreground">Mascotas perdidas reportadas</p>
                 <p class="mt-1 text-2xl font-bold text-red-700 dark:text-red-400">{{ stats.my_lost_pets_count }}</p>
-            </div>
+            </a>
         </div>
 
         <div class="mt-8 grid gap-6 lg:grid-cols-2">

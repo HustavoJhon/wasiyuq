@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')
     Route::get('/mascotas/publicar', [\App\Http\Controllers\Adopter\PetController::class, 'create'])->name('pets.create');
     Route::post('/mascotas', [\App\Http\Controllers\Adopter\PetController::class, 'store'])->name('pets.store');
 
+    Route::get('/mascotas-perdidas', [\App\Http\Controllers\Adopter\LostPetController::class, 'index'])->name('lost-pets.index');
+
     Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
     Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
     Route::post('/seguimientos/{followUp}/reportar', [FollowUpReportController::class, 'report'])->name('follow-ups.report');
