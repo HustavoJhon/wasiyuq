@@ -51,6 +51,9 @@ const values = [
         iconBg: 'bg-amber-100 dark:bg-amber-900/30',
     },
 ];
+
+// Yape QR URL — cambia esto por tu QR real
+const qrUrl = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="160" height="160" fill="#fff"/><rect x="20" y="20" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="70" y="20" width="20" height="20" fill="#7c3aed"/><rect x="110" y="20" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="20" y="70" width="20" height="20" fill="#7c3aed"/><rect x="60" y="60" width="40" height="40" rx="5" fill="#7c3aed"/><rect x="110" y="110" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="70" y="110" width="20" height="20" fill="#7c3aed"/><rect x="20" y="110" width="30" height="30" rx="3" fill="#7c3aed"/><circle cx="55" cy="115" r="2" fill="#fff"/><circle cx="125" cy="115" r="2" fill="#fff"/><circle cx="125" cy="55" r="2" fill="#fff"/><circle cx="55" cy="55" r="2" fill="#fff"/></svg>');
 </script>
 
 <template>
@@ -247,6 +250,44 @@ const values = [
                             </div>
                         </div>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20">
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-md text-center">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#A78BFA] shadow-lg shadow-purple-500/20">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="mt-5 text-2xl font-bold text-foreground">Apoyá el proyecto</h2>
+                    <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        Wasiyuq es gratuito y de código abierto. Si querés ayudarnos a mantener el servidor y seguir mejorando, tu apoyo hace la diferencia.
+                    </p>
+                </div>
+
+                <div class="mt-10 flex flex-col items-center gap-8 sm:flex-row sm:justify-center sm:gap-16">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="overflow-hidden rounded-2xl border-2 border-purple-200/60 bg-white p-3 shadow-lg shadow-purple-100/50 dark:border-purple-900/30 dark:bg-gray-900">
+                            <img :src="qrUrl" alt="Yape QR" class="h-40 w-40" />
+                        </div>
+                        <p class="text-xs font-medium text-muted-foreground">Escaneá con Yape o Plin</p>
+                    </div>
+                    <div class="space-y-4 text-center sm:text-left">
+                        <div class="rounded-xl border border-border/50 bg-card p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">Yape / Plin</p>
+                            <p class="mt-1 text-lg font-bold text-foreground">987 654 321</p>
+                            <p class="text-xs text-muted-foreground">Gustavo Jhon</p>
+                        </div>
+                        <p class="max-w-xs text-xs text-muted-foreground">
+                            Cada aporte nos ayuda a cubrir los costos de infraestructura y a seguir desarrollando funcionalidades para ayudar a más mascotas.
+                        </p>
+                        <div class="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                            <span class="flex h-1.5 w-1.5 rounded-full bg-emerald-500" /> Proyecto sin fines de lucro
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
