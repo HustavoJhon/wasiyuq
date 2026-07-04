@@ -37,6 +37,9 @@ Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')
     Route::delete('/mascotas/{pet}', [\App\Http\Controllers\Adopter\PetController::class, 'destroy'])->name('pets.destroy');
 
     Route::get('/mascotas-perdidas', [\App\Http\Controllers\Adopter\LostPetController::class, 'index'])->name('lost-pets.index');
+    Route::get('/mascotas-perdidas/{lostPet}/editar', [\App\Http\Controllers\Adopter\LostPetController::class, 'edit'])->name('lost-pets.edit');
+    Route::put('/mascotas-perdidas/{lostPet}', [\App\Http\Controllers\Adopter\LostPetController::class, 'update'])->name('lost-pets.update');
+    Route::delete('/mascotas-perdidas/{lostPet}', [\App\Http\Controllers\Adopter\LostPetController::class, 'destroy'])->name('lost-pets.destroy');
 
     Route::get('/veterinarias', [\App\Http\Controllers\Public\VeterinarianController::class, 'index'])->name('veterinarians.index');
     Route::get('/veterinarias/{id}', [\App\Http\Controllers\Public\VeterinarianController::class, 'show'])->where('id', '[0-9]+')->name('veterinarians.show');
