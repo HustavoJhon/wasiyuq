@@ -8,7 +8,6 @@ use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\LostPetController;
 use App\Http\Controllers\Public\PetController;
 use App\Http\Controllers\Public\SitemapController;
-use App\Http\Controllers\Public\VeterinarianController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -19,10 +18,6 @@ Route::get('/mascotas/{slug}', [PetController::class, 'show'])->name('pets.show'
 Route::get('/mascotas-perdidas', [LostPetController::class, 'index'])->name('lost-pets.index');
 Route::get('/mascotas-perdidas/{id}', [LostPetController::class, 'show'])->where('id', '[0-9]+')->name('lost-pets.show');
 Route::post('/mascotas-perdidas/reportar', [LostPetController::class, 'store'])->name('lost-pets.store');
-Route::get('/veterinarias', [VeterinarianController::class, 'index'])->name('veterinarians.index');
-Route::get('/veterinarias/{id}', [VeterinarianController::class, 'show'])->where('id', '[0-9]+')->name('veterinarians.show');
-Route::post('/veterinarias/agregar', [VeterinarianController::class, 'store'])->middleware(['auth'])->name('veterinarians.store');
-Route::post('/veterinarias/{id}/calificar', [VeterinarianController::class, 'rate'])->middleware(['auth'])->name('veterinarians.rate');
 Route::get('/eventos', [EventController::class, 'index'])->name('events.index');
 Route::get('/eventos/{slug}', [EventController::class, 'show'])->name('events.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

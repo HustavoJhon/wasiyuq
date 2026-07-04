@@ -46,7 +46,7 @@ function applyFilters(newFilters: Record<string, string>) {
         if (value) params.set(key, value);
     }
     const qs = params.toString();
-    router.get('/veterinarias' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
+    router.get('/mi-adopcion/veterinarias' + (qs ? '?' + qs : ''), {}, { preserveState: true, replace: true });
 }
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -93,7 +93,7 @@ function toggleService(service: string) {
 }
 
 function addVet() {
-    form.post('/veterinarias/agregar', {
+    form.post('/mi-adopcion/veterinarias/agregar', {
         preserveState: true,
         onSuccess: () => {
             showForm.value = false;
@@ -175,7 +175,7 @@ function addVet() {
             <!-- Cards -->
             <div v-else class="grid gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3">
                 <a v-for="vet in veterinarians" :key="vet.id"
-                    :href="'/veterinarias/' + vet.id"
+                    :href="'/mi-adopcion/veterinarias/' + vet.id"
                     class="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5">
                     <div class="absolute right-3 top-3">
                         <ShieldCheck v-if="vet.is_verified" class="h-5 w-5 text-blue-500" title="Verificada" />

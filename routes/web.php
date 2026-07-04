@@ -37,6 +37,11 @@ Route::middleware(['auth', 'verified'])->prefix('mi-adopcion')->name('adopter.')
 
     Route::get('/mascotas-perdidas', [\App\Http\Controllers\Adopter\LostPetController::class, 'index'])->name('lost-pets.index');
 
+    Route::get('/veterinarias', [\App\Http\Controllers\Public\VeterinarianController::class, 'index'])->name('veterinarians.index');
+    Route::get('/veterinarias/{id}', [\App\Http\Controllers\Public\VeterinarianController::class, 'show'])->where('id', '[0-9]+')->name('veterinarians.show');
+    Route::post('/veterinarias/agregar', [\App\Http\Controllers\Public\VeterinarianController::class, 'store'])->name('veterinarians.store');
+    Route::post('/veterinarias/{id}/calificar', [\App\Http\Controllers\Public\VeterinarianController::class, 'rate'])->name('veterinarians.rate');
+
     Route::get('/seguimientos', [FollowUpReportController::class, 'index'])->name('follow-ups.index');
     Route::get('/seguimientos/{followUp}', [FollowUpReportController::class, 'show'])->name('follow-ups.show');
     Route::post('/seguimientos/{followUp}/reportar', [FollowUpReportController::class, 'report'])->name('follow-ups.report');

@@ -3,6 +3,7 @@ import dashboard074181 from './dashboard'
 import applications from './applications'
 import pets from './pets'
 import lostPets from './lost-pets'
+import veterinarians from './veterinarians'
 import followUps from './follow-ups'
 /**
 * @see \App\Http\Controllers\Adopter\DashboardController::dashboard
@@ -90,6 +91,7 @@ const adopter = {
     applications: Object.assign(applications, applications),
     pets: Object.assign(pets, pets),
     lostPets: Object.assign(lostPets, lostPets),
+    veterinarians: Object.assign(veterinarians, veterinarians),
     followUps: Object.assign(followUps, followUps),
 }
 

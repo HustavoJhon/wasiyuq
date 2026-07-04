@@ -34,7 +34,7 @@ class VeterinarianController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
-        return Inertia::render('Public/Veterinarians/Index', [
+        return Inertia::render('Adopter/Veterinarians/Index', [
             'seo' => [
                 'title' => 'Veterinarias',
                 'description' => 'Directorio de veterinarias en Cusco. Encontra la mas cercana, conoce sus servicios y calificalas.',
@@ -69,7 +69,7 @@ class VeterinarianController extends Controller
                 ->first();
         }
 
-        return Inertia::render('Public/Veterinarians/Show', [
+        return Inertia::render('Adopter/Veterinarians/Show', [
             'veterinarian' => $vet,
             'userRating' => $userRating,
             'seo' => [

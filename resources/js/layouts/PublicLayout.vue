@@ -176,13 +176,6 @@ const websiteSchema = {
                         >Perdidas</a
                     >
                     <a
-                        href="/veterinarias"
-                        class="text-base font-medium transition"
-                        :class="isActive('/veterinarias') ? 'text-[#2563EB] font-bold' : 'text-muted-foreground hover:text-[#2563EB]'"
-                        @click="mobileOpen = false"
-                        >Veterinarias</a
-                    >
-                    <a
                         href="/eventos"
                         class="text-base font-medium transition"
                         :class="isActive('/eventos') ? 'text-[#2D6A4F] font-bold' : 'text-muted-foreground hover:text-[#2D6A4F]'"
@@ -303,12 +296,6 @@ const websiteSchema = {
                         class="rounded-lg py-3 text-sm font-medium transition"
                         :class="isActive('/mascotas-perdidas') ? 'text-[#DC2626] font-extrabold' : 'text-muted-foreground hover:text-[#DC2626]'"
                         >Perdidas</a
-                    >
-                    <a
-                        href="/veterinarias"
-                        class="rounded-lg py-3 text-sm font-medium transition"
-                        :class="isActive('/veterinarias') ? 'text-[#2563EB] font-extrabold' : 'text-muted-foreground hover:text-[#2563EB]'"
-                        >Veterinarias</a
                     >
                     <a
                         href="/eventos"
@@ -462,7 +449,6 @@ const websiteSchema = {
                         <ul class="mt-4 space-y-2.5">
                             <li><a href="/mascotas" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Mascotas</a></li>
                             <li><a href="/mascotas-perdidas" class="text-sm text-muted-foreground transition hover:text-[#DC2626]">Mascotas Perdidas</a></li>
-                            <li><a href="/veterinarias" class="text-sm text-muted-foreground transition hover:text-[#2563EB]">Veterinarias</a></li>
                             <li><a href="/eventos" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Eventos</a></li>
                             <li><a href="/blog" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Blog</a></li>
                             <li><a href="/sobre-nosotros" class="text-sm text-muted-foreground transition hover:text-[#2D6A4F]">Sobre Nosotros</a></li>

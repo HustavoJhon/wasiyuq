@@ -1,8 +1,8 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -11,13 +11,13 @@ export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 index.definition = {
     methods: ["get","head"],
-    url: '/veterinarias',
+    url: '/mi-adopcion/veterinarias',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ index.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -36,7 +36,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
@@ -46,7 +46,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(options),
@@ -56,7 +56,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url(options),
@@ -66,7 +66,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::index
 * @see app/Http/Controllers/Public/VeterinarianController.php:14
-* @route '/veterinarias'
+* @route '/mi-adopcion/veterinarias'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: index.url({
@@ -83,7 +83,7 @@ index.form = indexForm
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 export const show = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
@@ -92,13 +92,13 @@ export const show = (args: { id: string | number } | [id: string | number ] | st
 
 show.definition = {
     methods: ["get","head"],
-    url: '/veterinarias/{id}',
+    url: '/mi-adopcion/veterinarias/{id}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 show.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -125,7 +125,7 @@ show.url = (args: { id: string | number } | [id: string | number ] | string | nu
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 show.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
@@ -135,7 +135,7 @@ show.get = (args: { id: string | number } | [id: string | number ] | string | nu
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 show.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
@@ -145,7 +145,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 const showForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
@@ -155,7 +155,7 @@ const showForm = (args: { id: string | number } | [id: string | number ] | strin
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 showForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
@@ -165,7 +165,7 @@ showForm.get = (args: { id: string | number } | [id: string | number ] | string 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::show
 * @see app/Http/Controllers/Public/VeterinarianController.php:56
-* @route '/veterinarias/{id}'
+* @route '/mi-adopcion/veterinarias/{id}'
 */
 showForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
@@ -182,7 +182,7 @@ show.form = showForm
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::store
 * @see app/Http/Controllers/Public/VeterinarianController.php:84
-* @route '/veterinarias/agregar'
+* @route '/mi-adopcion/veterinarias/agregar'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
@@ -191,13 +191,13 @@ export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
 store.definition = {
     methods: ["post"],
-    url: '/veterinarias/agregar',
+    url: '/mi-adopcion/veterinarias/agregar',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::store
 * @see app/Http/Controllers/Public/VeterinarianController.php:84
-* @route '/veterinarias/agregar'
+* @route '/mi-adopcion/veterinarias/agregar'
 */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
@@ -206,7 +206,7 @@ store.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::store
 * @see app/Http/Controllers/Public/VeterinarianController.php:84
-* @route '/veterinarias/agregar'
+* @route '/mi-adopcion/veterinarias/agregar'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
@@ -216,7 +216,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::store
 * @see app/Http/Controllers/Public/VeterinarianController.php:84
-* @route '/veterinarias/agregar'
+* @route '/mi-adopcion/veterinarias/agregar'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(options),
@@ -226,7 +226,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::store
 * @see app/Http/Controllers/Public/VeterinarianController.php:84
-* @route '/veterinarias/agregar'
+* @route '/mi-adopcion/veterinarias/agregar'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(options),
@@ -238,7 +238,7 @@ store.form = storeForm
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::rate
 * @see app/Http/Controllers/Public/VeterinarianController.php:108
-* @route '/veterinarias/{id}/calificar'
+* @route '/mi-adopcion/veterinarias/{id}/calificar'
 */
 export const rate = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: rate.url(args, options),
@@ -247,13 +247,13 @@ export const rate = (args: { id: string | number } | [id: string | number ] | st
 
 rate.definition = {
     methods: ["post"],
-    url: '/veterinarias/{id}/calificar',
+    url: '/mi-adopcion/veterinarias/{id}/calificar',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::rate
 * @see app/Http/Controllers/Public/VeterinarianController.php:108
-* @route '/veterinarias/{id}/calificar'
+* @route '/mi-adopcion/veterinarias/{id}/calificar'
 */
 rate.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -280,7 +280,7 @@ rate.url = (args: { id: string | number } | [id: string | number ] | string | nu
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::rate
 * @see app/Http/Controllers/Public/VeterinarianController.php:108
-* @route '/veterinarias/{id}/calificar'
+* @route '/mi-adopcion/veterinarias/{id}/calificar'
 */
 rate.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: rate.url(args, options),
@@ -290,7 +290,7 @@ rate.post = (args: { id: string | number } | [id: string | number ] | string | n
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::rate
 * @see app/Http/Controllers/Public/VeterinarianController.php:108
-* @route '/veterinarias/{id}/calificar'
+* @route '/mi-adopcion/veterinarias/{id}/calificar'
 */
 const rateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: rate.url(args, options),
@@ -300,7 +300,7 @@ const rateForm = (args: { id: string | number } | [id: string | number ] | strin
 /**
 * @see \App\Http\Controllers\Public\VeterinarianController::rate
 * @see app/Http/Controllers/Public/VeterinarianController.php:108
-* @route '/veterinarias/{id}/calificar'
+* @route '/mi-adopcion/veterinarias/{id}/calificar'
 */
 rateForm.post = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: rate.url(args, options),

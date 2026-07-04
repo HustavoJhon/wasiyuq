@@ -58,7 +58,7 @@ function setRating(n: number) {
 }
 
 function submitRating() {
-    ratingForm.post('/veterinarias/' + props.veterinarian.id + '/calificar', {
+    ratingForm.post('/mi-adopcion/veterinarias/' + props.veterinarian.id + '/calificar', {
         preserveState: true,
     });
 }
@@ -87,7 +87,7 @@ function openMaps(vet: Veterinarian) {
 <template>
     <div class="min-h-screen bg-gradient-to-b from-background to-muted/30">
         <div class="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-            <a href="/veterinarias" class="mb-6 inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground">
+            <a href="/mi-adopcion/veterinarias" class="mb-6 inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground">
                 <ArrowLeft class="h-4 w-4" /> Volver a veterinarias
             </a>
 

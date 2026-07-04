@@ -2,11 +2,11 @@ import SitemapController from './SitemapController'
 import HomeController from './HomeController'
 import PetController from './PetController'
 import LostPetController from './LostPetController'
-import VeterinarianController from './VeterinarianController'
 import EventController from './EventController'
 import BlogController from './BlogController'
 import AboutController from './AboutController'
 import ContactController from './ContactController'
+import VeterinarianController from './VeterinarianController'
 import ChatbotController from './ChatbotController'
 
 const Public = {
@@ -14,11 +14,11 @@ const Public = {
     HomeController: Object.assign(HomeController, HomeController),
     PetController: Object.assign(PetController, PetController),
     LostPetController: Object.assign(LostPetController, LostPetController),
-    VeterinarianController: Object.assign(VeterinarianController, VeterinarianController),
     EventController: Object.assign(EventController, EventController),
     BlogController: Object.assign(BlogController, BlogController),
     AboutController: Object.assign(AboutController, AboutController),
     ContactController: Object.assign(ContactController, ContactController),
+    VeterinarianController: Object.assign(VeterinarianController, VeterinarianController),
     ChatbotController: Object.assign(ChatbotController, ChatbotController),
 }
 
