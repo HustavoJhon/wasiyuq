@@ -104,38 +104,23 @@ function addVet() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-background to-muted/30">
-        <!-- Hero -->
-        <section class="relative overflow-hidden bg-gradient-to-br from-[#1E3A5F] via-[#2563EB] to-[#60A5FA] px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-            <div class="relative mx-auto max-w-7xl">
-                <div class="mx-auto max-w-2xl text-center">
-                    <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm">
-                        <Stethoscope class="h-8 w-8 text-white" />
-                    </div>
-                    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Veterinarias</h1>
-                    <p class="mt-4 text-lg text-blue-100/80">
-                        {{ meta.total }} veterinarias en Cusco — encontrá la más cercana y calificala
-                    </p>
-                    <div class="mx-auto mt-8 flex max-w-lg items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-1 backdrop-blur-md focus-within:border-white/30 focus-within:bg-white/15">
-                        <Search class="h-5 w-5 shrink-0 text-blue-100/60" />
-                        <input type="text" :value="filters.search" @input="onSearchInput"
-                            placeholder="Buscar por nombre, dirección..."
-                            class="h-12 w-full border-0 bg-transparent text-white placeholder-blue-100/50 outline-none" />
-                    </div>
-                </div>
+    <div class="mx-auto max-w-5xl">
+        <!-- Header compact -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-foreground flex items-center gap-2"><Stethoscope class="h-6 w-6 text-blue-500" /> Veterinarias</h1>
+                <p class="mt-1 text-sm text-muted-foreground">{{ meta.total }} veterinarias registradas.</p>
             </div>
-        </section>
+            <button v-if="isAuthenticated" @click="showForm = true" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-blue-500/20 transition hover:from-[#1D4ED8] hover:to-[#2563EB]"><Plus class="h-4 w-4" /> Agregar</button>
+        </div>
 
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <!-- Filters + Add button -->
-            <div class="-mt-8 mb-6 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-lg backdrop-blur-xl">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-                            <Filter class="h-4 w-4" />
-                            <span>Filtros</span>
-                        </div>
+        <!-- Filters -->
+        <div class="mb-6 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-sm">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                    <Filter class="h-4 w-4" />
+                    <span>Filtros</span>
+                </div>
                         <select :value="filters.city || ''"
                             @change="applyFilters({ ...props.filters, city: ($event.target as HTMLSelectElement).value })"
                             class="rounded-xl border border-border bg-transparent px-3 py-2 text-sm text-muted-foreground outline-none focus:border-[#2563EB]">
@@ -153,13 +138,9 @@ function addVet() {
                             class="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50">
                             <X class="h-4 w-4" /> Limpiar
                         </button>
+                        <input :value="filters.search" @input="onSearchInput" type="text" placeholder="Buscar por nombre..." class="rounded-xl border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-[#2563EB] w-48" />
                     </div>
-                    <button v-if="isAuthenticated" @click="showForm = true"
-                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-blue-500/20 transition hover:from-[#1D4ED8] hover:to-[#2563EB]">
-                        <Plus class="h-4 w-4" /> Agregar veterinaria
-                    </button>
                 </div>
-            </div>
 
             <!-- Empty -->
             <div v-if="veterinarians.length === 0" class="flex flex-col items-center justify-center py-24">
@@ -224,7 +205,6 @@ function addVet() {
                     <ChevronRight class="h-4 w-4" />
                 </button>
             </div>
-        </div>
 
         <!-- Add Vet Modal -->
         <Teleport to="body">
