@@ -195,3 +195,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+
+// Página 404 personalizada
+Route::fallback(function () {
+    return \Inertia\Inertia::render('Error/NotFound');
+});
