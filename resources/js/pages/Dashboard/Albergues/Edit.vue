@@ -43,7 +43,7 @@ function onLogoChange(e: Event) {
 }
 
 function submit() {
-    form.post(`/${props.team.slug}/perfil`, { forceFormData: true, _method: 'put' });
+    form.put(`/${props.team.slug}/perfil`, { forceFormData: true });
 }
 
 function onGalleryFile(e: Event, i: number) {
