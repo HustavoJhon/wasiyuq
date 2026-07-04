@@ -53,7 +53,7 @@ const values = [
 ];
 
 // Yape QR URL — cambia esto por tu QR real
-const qrUrl = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="160" height="160" fill="#fff"/><rect x="20" y="20" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="70" y="20" width="20" height="20" fill="#7c3aed"/><rect x="110" y="20" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="20" y="70" width="20" height="20" fill="#7c3aed"/><rect x="60" y="60" width="40" height="40" rx="5" fill="#7c3aed"/><rect x="110" y="110" width="30" height="30" rx="3" fill="#7c3aed"/><rect x="70" y="110" width="20" height="20" fill="#7c3aed"/><rect x="20" y="110" width="30" height="30" rx="3" fill="#7c3aed"/><circle cx="55" cy="115" r="2" fill="#fff"/><circle cx="125" cy="115" r="2" fill="#fff"/><circle cx="125" cy="55" r="2" fill="#fff"/><circle cx="55" cy="55" r="2" fill="#fff"/></svg>');
+const qrUrl = '/icons/yape-qr.jpeg';
 </script>
 
 <template>
