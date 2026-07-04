@@ -128,13 +128,14 @@ const socialIcons: Record<string, any> = { facebook: Facebook, instagram: Camera
                 </div>
 
                 <!-- Support info -->
-                <div v-if="albergue.support_info && Object.values(albergue.support_info).filter(Boolean).length" class="rounded-2xl border border-border/50 bg-card p-5">
-                    <h3 class="text-sm font-semibold text-foreground mb-4 flex items-center gap-2"><DollarSign class="h-4 w-4 text-teal-500" /> Cuentas de apoyo</h3>
+                <div v-if="albergue.support_info && Object.keys(albergue.support_info).length" class="rounded-2xl border border-border/50 bg-card p-5">
+                    <h3 class="text-sm font-semibold text-foreground mb-4 flex items-center gap-2"><DollarSign class="h-4 w-4 text-teal-500" /> Cuentas de apoyo / donaciones</h3>
                     <div class="space-y-2">
-                        <div v-for="(value, key) in albergue.support_info" :key="key" v-if="value"
-                            class="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm">
+                        <div v-for="(value, key) in albergue.support_info" :key="key"
+                            class="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm"
+                            v-show="value">
                             <span class="text-muted-foreground uppercase text-xs font-semibold">{{ key }}</span>
-                            <span class="font-medium text-foreground">{{ value }}</span>
+                            <span class="font-medium text-foreground">{{ value || '—' }}</span>
                         </div>
                     </div>
                 </div>
