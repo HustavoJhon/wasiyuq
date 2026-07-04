@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Adopter\PetController::index
 * @see app/Http/Controllers/Adopter/PetController.php:14
@@ -217,6 +217,96 @@ storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 
 store.form = storeForm
 
-const PetController = { index, create, store }
+/**
+* @see \App\Http\Controllers\Adopter\PetController::destroy
+* @see app/Http/Controllers/Adopter/PetController.php:84
+* @route '/mi-adopcion/mascotas/{pet}'
+*/
+export const destroy = (args: { pet: string | { slug: string } } | [pet: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+destroy.definition = {
+    methods: ["delete"],
+    url: '/mi-adopcion/mascotas/{pet}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\Adopter\PetController::destroy
+* @see app/Http/Controllers/Adopter/PetController.php:84
+* @route '/mi-adopcion/mascotas/{pet}'
+*/
+destroy.url = (args: { pet: string | { slug: string } } | [pet: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { pet: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'slug' in args) {
+        args = { pet: args.slug }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            pet: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        pet: typeof args.pet === 'object'
+        ? args.pet.slug
+        : args.pet,
+    }
+
+    return destroy.definition.url
+            .replace('{pet}', parsedArgs.pet.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Adopter\PetController::destroy
+* @see app/Http/Controllers/Adopter/PetController.php:84
+* @route '/mi-adopcion/mascotas/{pet}'
+*/
+destroy.delete = (args: { pet: string | { slug: string } } | [pet: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+/**
+* @see \App\Http\Controllers\Adopter\PetController::destroy
+* @see app/Http/Controllers/Adopter/PetController.php:84
+* @route '/mi-adopcion/mascotas/{pet}'
+*/
+const destroyForm = (args: { pet: string | { slug: string } } | [pet: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Adopter\PetController::destroy
+* @see app/Http/Controllers/Adopter/PetController.php:84
+* @route '/mi-adopcion/mascotas/{pet}'
+*/
+destroyForm.delete = (args: { pet: string | { slug: string } } | [pet: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+const PetController = { index, create, store, destroy }
 
 export default PetController

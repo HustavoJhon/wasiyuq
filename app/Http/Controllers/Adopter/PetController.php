@@ -80,4 +80,20 @@ class PetController extends Controller
             'toast' => ['type' => 'success', 'message' => 'Mascota publicada correctamente.'],
         ]);
     }
+
+    public function destroy(Pet $pet)
+    {
+        $user = Auth::user();
+        $personalTeam = $user->personalTeam();
+
+        if (! $personalTeam || $pet->team_id !== $personalTeam->id) {
+            abort(403);
+        }
+
+        $pet->delete();
+
+        return back()->with('flash', [
+            'toast' => ['type' => 'success', 'message' => 'Mascota eliminada.'],
+        ]);
+    }
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { PawPrint, Plus, ChevronLeft, ChevronRight, Search } from 'lucide-vue-next';
+import { router } from '@inertiajs/vue3';
+import { PawPrint, Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-vue-next';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 const { photoUrl } = usePhotoUrl();
@@ -27,6 +28,12 @@ interface Meta {
 }
 
 defineProps<{ pets: Pet[]; meta: Meta }>();
+
+function deletePet(id: number, name: string) {
+    if (confirm(`¿Eliminar a "${name}"? La mascota dejará de mostrarse en adopción.`)) {
+        router.delete('/mi-adopcion/mascotas/' + id, { preserveState: true });
+    }
+}
 
 function speciesLabel(s: string): string {
     return { dog: 'Perro', cat: 'Gato', rabbit: 'Conejo', bird: 'Ave', other: 'Otro' }[s] ?? s;
@@ -70,28 +77,35 @@ const placeholderSrc = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://w
         </div>
 
         <div v-else class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a v-for="pet in pets" :key="pet.id"
-                :href="'/mascotas/' + pet.slug"
+            <div v-for="pet in pets" :key="pet.id"
                 class="group overflow-hidden rounded-xl border border-border/50 bg-card transition hover:-translate-y-1 hover:shadow-lg">
-                <div class="aspect-[4/3] overflow-hidden bg-muted/50">
-                    <img v-if="pet.photos?.length" :src="photoUrl(pet.photos[0])" :alt="pet.name"
-                        class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                        @error="($event.target as HTMLImageElement).src = placeholderSrc" />
-                    <div v-else class="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                        <PawPrint class="h-12 w-12 text-muted-foreground/25" />
+                <a :href="'/mascotas/' + pet.slug">
+                    <div class="aspect-[4/3] overflow-hidden bg-muted/50">
+                        <img v-if="pet.photos?.length" :src="photoUrl(pet.photos[0])" :alt="pet.name"
+                            class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                            @error="($event.target as HTMLImageElement).src = placeholderSrc" />
+                        <div v-else class="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
+                            <PawPrint class="h-12 w-12 text-muted-foreground/25" />
+                        </div>
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold text-[#2D6A4F]">
+                            {{ speciesLabel(pet.species) }}
+                        </span>
                     </div>
-                    <span class="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold text-[#2D6A4F]">
-                        {{ speciesLabel(pet.species) }}
-                    </span>
-                </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-foreground">{{ pet.name }}</h3>
-                    <div class="mt-1 flex flex-wrap gap-1 text-xs text-muted-foreground">
-                        <span v-if="pet.breed" class="rounded-md bg-muted/50 px-1.5 py-0.5">{{ pet.breed }}</span>
-                        <span class="rounded-md bg-muted/50 px-1.5 py-0.5">{{ formatAge(pet.age_years, pet.age_months) }}</span>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-foreground">{{ pet.name }}</h3>
+                        <div class="mt-1 flex flex-wrap gap-1 text-xs text-muted-foreground">
+                            <span v-if="pet.breed" class="rounded-md bg-muted/50 px-1.5 py-0.5">{{ pet.breed }}</span>
+                            <span class="rounded-md bg-muted/50 px-1.5 py-0.5">{{ formatAge(pet.age_years, pet.age_months) }}</span>
+                        </div>
                     </div>
+                </a>
+                <div class="border-t border-border/50 px-4 py-2">
+                    <button @click="deletePet(pet.id, pet.name)"
+                        class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-red-500 transition hover:bg-red-50 hover:text-red-600">
+                        <Trash2 class="h-3.5 w-3.5" /> Eliminar
+                    </button>
                 </div>
-            </a>
+            </div>
         </div>
 
         <div v-if="meta.last_page > 1" class="mt-6 flex items-center justify-center gap-2">
