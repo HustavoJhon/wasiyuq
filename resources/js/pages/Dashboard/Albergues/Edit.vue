@@ -33,6 +33,19 @@ const form = useForm({
 const galleryFiles = ref<(File | null)[]>(new Array(props.team.gallery?.length ?? 0).fill(null));
 const galleryPreviews = ref<string[]>(props.team.gallery ?? []);
 
+const logoPreview = ref<string | null>(props.team.logo ?? null);
+const socialPlatforms = ['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'whatsapp', 'linkedin'];
+const supportFields = ['yape', 'plin', 'bcp', 'bbva', 'interbank', 'scotiabank', 'nacion'];
+
+function onLogoChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) { form.logo = file; const r = new FileReader(); r.onload = () => logoPreview.value = r.result as string; r.readAsDataURL(file); }
+}
+
+function submit() {
+    form.post(`/${props.team.slug}/perfil`, { forceFormData: true, _method: 'put' });
+}
+
 function onGalleryFile(e: Event, i: number) {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) {
