@@ -21,6 +21,28 @@ interface RecommendedPet {
     team: { id: number; name: string; slug: string; city: string | null } | null;
 }
 
+interface MyPet {
+    id: number;
+    name: string;
+    slug: string;
+    species: string;
+    breed: string | null;
+    age_years: number;
+    age_months: number;
+    status: string;
+    photos: string[] | null;
+}
+
+interface LostPet {
+    id: number;
+    name: string | null;
+    species: string;
+    status: string;
+    last_seen_location: string;
+    created_at: string;
+    photos: string[] | null;
+}
+
 interface Application {
     id: number;
     name: string;
@@ -38,9 +60,11 @@ interface Stats {
     completed_adoptions: number;
     pending_follow_ups: number;
     recent_applications: Application[];
+    my_pets_count: number;
+    my_lost_pets_count: number;
 }
 
-defineProps<{ stats: Stats; recommendedPets: RecommendedPet[] }>();
+defineProps<{ stats: Stats; recommendedPets: RecommendedPet[]; myPets: MyPet[]; myLostPets: LostPet[] }>();
 
 function statusLabel(s: string): string {
     const labels: Record<string, string> = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Rechazada', completed: 'Completada', cancelled: 'Cancelada' };
@@ -88,6 +112,18 @@ function formatDate(d: string): string {
             </div>
         </div>
 
+        <!-- My Pets + My Lost Pets -->
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <a href="/mi-adopcion/mascotas" class="rounded-xl border border-emerald-200/60 bg-emerald-50/30 p-4 transition hover:bg-emerald-50 dark:border-emerald-900/30 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40">
+                <p class="text-sm text-muted-foreground">Mis mascotas publicadas</p>
+                <p class="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400">{{ stats.my_pets_count }}</p>
+            </a>
+            <div class="rounded-xl border border-red-200/60 bg-red-50/30 p-4 dark:border-red-900/30 dark:bg-red-950/20">
+                <p class="text-sm text-muted-foreground">Mascotas perdidas reportadas</p>
+                <p class="mt-1 text-2xl font-bold text-red-700 dark:text-red-400">{{ stats.my_lost_pets_count }}</p>
+            </div>
+        </div>
+
         <div class="mt-8 grid gap-6 lg:grid-cols-2">
             <div class="rounded-xl border border-border bg-card">
                 <div class="flex items-center justify-between border-b border-border px-5 py-4">
@@ -116,6 +152,18 @@ function formatDate(d: string): string {
                     <h2 class="font-semibold text-foreground">Acceso Rápido</h2>
                 </div>
                 <div class="space-y-2 p-5">
+                    <a href="/mi-adopcion/mascotas/publicar" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-[#2D6A4F]">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Publicar mascota
+                    </a>
+                    <a href="/mi-adopcion/mascotas" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                        </svg>
+                        Mis mascotas
+                    </a>
                     <a href="/mi-adopcion/postulaciones" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

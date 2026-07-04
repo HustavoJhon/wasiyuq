@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Adopter;
 use App\Http\Controllers\Controller;
 use App\Models\Adoption;
 use App\Models\FollowUp;
+use App\Models\LostPet;
+use App\Models\Pet;
 use App\Services\PetRecommendationService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -35,6 +37,20 @@ class DashboardController extends Controller
 
         $recommendedPets = $this->recommendationService->getRecommendedPets(Auth::user(), 6);
 
+        $myPets = Pet::query()
+            ->whereHas('team', fn ($q) => $q->where('is_personal', true))
+            ->whereHas('team.members', fn ($q) => $q->where('user_id', $userId))
+            ->where('status', 'available')
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $myLostPets = LostPet::query()
+            ->where('user_id', $userId)
+            ->latest()
+            ->take(4)
+            ->get();
+
         $stats = [
             'total_applications' => $applications->count(),
             'pending_applications' => $applications->where('status', 'pending')->count(),
@@ -42,11 +58,15 @@ class DashboardController extends Controller
             'completed_adoptions' => $applications->where('status', 'completed')->count(),
             'pending_follow_ups' => $upcomingFollowUps->count(),
             'recent_applications' => $applications->take(3)->values(),
+            'my_pets_count' => Pet::query()->whereHas('team', fn ($q) => $q->where('is_personal', true))->whereHas('team.members', fn ($q) => $q->where('user_id', $userId))->count(),
+            'my_lost_pets_count' => LostPet::query()->where('user_id', $userId)->count(),
         ];
 
         return Inertia::render('Adopter/Dashboard', [
             'stats' => $stats,
             'recommendedPets' => $recommendedPets,
+            'myPets' => $myPets->values(),
+            'myLostPets' => $myLostPets->values(),
         ]);
     }
 }
