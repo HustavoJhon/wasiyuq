@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'slug', 'is_personal', 'bio', 'logo', 'website', 'phone', 'address', 'city', 'state', 'social_links'])]
+#[Fillable(['name', 'slug', 'is_personal', 'bio', 'logo', 'website', 'phone', 'address', 'city', 'state', 'social_links', 'map_embed', 'gallery', 'support_info'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
@@ -100,6 +100,9 @@ class Team extends Model
         return [
             'is_personal' => 'boolean',
             'social_links' => 'array',
+            'gallery' => 'array',
+            'support_info' => 'array',
+            'map_embed' => 'string',
         ];
     }
 

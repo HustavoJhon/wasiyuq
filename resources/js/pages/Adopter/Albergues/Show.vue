@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import { ArrowLeft, MapPin, Phone, Star, Globe, MessageCircle, PawPrint, Calendar, Heart, Mail, Users } from 'lucide-vue-next';
+import { ArrowLeft, MapPin, Phone, Star, Globe, MessageCircle, PawPrint, Calendar, Heart, Edit, Share2, DollarSign, Camera, Facebook, Instagram, Youtube } from 'lucide-vue-next';
 import { usePhotoUrl } from '@/composables/usePhotoUrl';
 
 const { photoUrl } = usePhotoUrl();
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
+const currentTeam = computed(() => page.props.currentTeam as { slug: string; isPersonal: boolean } | null);
 
 interface Rating { id: number; rating: number; comment: string | null; created_at: string; user: { id: number; name: string }; }
-interface Albergue { id: number; name: string; slug: string; bio: string | null; logo: string | null; address: string | null; city: string | null; phone: string | null; website: string | null; social_links: any; average_rating: number; ratings_count: number; ratings: Rating[]; }
+interface Albergue { id: number; name: string; slug: string; bio: string | null; logo: string | null; address: string | null; city: string | null; phone: string | null; website: string | null; social_links: Record<string,string> | null; map_embed: string | null; gallery: string[] | null; support_info: Record<string,string> | null; average_rating: number; ratings_count: number; ratings: Rating[]; }
 interface UserRating { id: number; rating: number; comment: string | null; }
 interface Stats { pets_count: number; available_pets: number; adopted_pets: number; events_count: number; }
 
 const props = defineProps<{ albergue: Albergue; userRating: UserRating | null; stats: Stats }>();
+
+const canEdit = computed(() => currentTeam.value?.slug === props.albergue.slug && !currentTeam.value?.isPersonal);
 
 const ratingForm = useForm({ rating: props.userRating?.rating ?? 0, comment: props.userRating?.comment ?? '' });
 const hoverRating = ref(0);
@@ -22,11 +25,16 @@ function setRating(n: number) { ratingForm.rating = n; }
 function submitRating() { ratingForm.post('/mi-adopcion/albergues/' + props.albergue.slug + '/calificar', { preserveState: true }); }
 function renderStars(n: number): string[] { return Array.from({ length: 5 }, (_, i) => i < Math.round(n) ? '★' : '☆'); }
 function formatDate(d: string): string { return new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' }).format(new Date(d)); }
+
+const socialIcons: Record<string, any> = { facebook: Facebook, instagram: Camera, twitter: Share2, youtube: Youtube };
 </script>
 
 <template>
     <div class="mx-auto max-w-5xl">
-        <a href="/mi-adopcion/albergues" class="mb-6 inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted"><ArrowLeft class="h-4 w-4" /> Volver a albergues</a>
+        <div class="flex items-center justify-between mb-6">
+            <a href="/mi-adopcion/albergues" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted"><ArrowLeft class="h-4 w-4" /> Volver a albergues</a>
+            <a v-if="canEdit" :href="'/' + albergue.slug + '/perfil'" class="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700"><Edit class="h-4 w-4" /> Editar perfil</a>
+        </div>
 
         <!-- Header -->
         <div class="mb-8 rounded-2xl border border-border/50 bg-card overflow-hidden">
@@ -59,9 +67,38 @@ function formatDate(d: string): string { return new Intl.DateTimeFormat('es-PE',
                 </div>
 
                 <!-- Bio -->
-                <div v-if="albergue.bio" class="rounded-2xl border border-border/50 bg-card p-5">
-                    <h3 class="text-sm font-semibold text-foreground mb-2">Sobre nosotros</h3>
+                <div v-if="albergue.bio" class="rounded-2xl border border-border/50 bg-card p-6">
+                    <h3 class="text-sm font-semibold text-foreground mb-3 flex items-center gap-2"><Heart class="h-4 w-4 text-teal-500" /> Sobre nosotros</h3>
                     <p class="text-muted-foreground leading-relaxed text-sm whitespace-pre-wrap">{{ albergue.bio }}</p>
+                </div>
+
+                <!-- Redes sociales -->
+                <div v-if="albergue.social_links && Object.values(albergue.social_links).filter(Boolean).length" class="rounded-2xl border border-border/50 bg-card p-5">
+                    <h3 class="text-sm font-semibold text-foreground mb-3">Redes sociales</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <a v-for="(url, platform) in albergue.social_links" :key="platform" v-if="url" :href="url" target="_blank"
+                            class="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground">
+                            <component :is="socialIcons[platform]" v-if="socialIcons[platform]" class="h-3.5 w-3.5" />
+                            <Globe v-else class="h-3.5 w-3.5" />
+                            {{ platform }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div v-if="albergue.map_embed" class="rounded-2xl border border-border/50 bg-card overflow-hidden">
+                    <div class="px-5 pt-5"><h3 class="text-sm font-semibold text-foreground flex items-center gap-2"><MapPin class="h-4 w-4 text-teal-500" /> Ubicación</h3></div>
+                    <div class="p-3"><div class="overflow-hidden rounded-xl" v-html="albergue.map_embed" style="height: 300px;" /></div>
+                </div>
+
+                <!-- Gallery -->
+                <div v-if="albergue.gallery?.length" class="rounded-2xl border border-border/50 bg-card p-5">
+                    <h3 class="text-sm font-semibold text-foreground mb-3 flex items-center gap-2"><Camera class="h-4 w-4 text-teal-500" /> Galería</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div v-for="(url, i) in albergue.gallery" :key="i" class="aspect-square overflow-hidden rounded-xl border border-border bg-muted">
+                            <img :src="url" :alt="albergue.name + ' ' + (i+1)" class="h-full w-full object-cover" />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Ratings list -->
@@ -90,7 +127,19 @@ function formatDate(d: string): string { return new Intl.DateTimeFormat('es-PE',
                         <div v-if="albergue.address" class="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground"><MapPin class="h-4 w-4 text-teal-500 shrink-0" />{{ albergue.address }}{{ albergue.city ? ', ' + albergue.city : '' }}</div>
                         <a v-if="albergue.phone" :href="'tel:' + albergue.phone" class="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted hover:border-teal-300"><Phone class="h-4 w-4 text-teal-500" />{{ albergue.phone }}</a>
                         <a v-if="albergue.website" :href="albergue.website" target="_blank" class="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted hover:border-teal-300"><Globe class="h-4 w-4 text-teal-500" />Sitio web</a>
-                        <a :href="'/mascotas?team=' + albergue.slug" class="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted hover:border-teal-300"><PawPrint class="h-4 w-4 text-teal-500" />Ver mascotas de {{ albergue.name }}</a>
+                        <a :href="'/mascotas?team=' + albergue.slug" class="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted hover:border-teal-300"><PawPrint class="h-4 w-4 text-teal-500" />Ver mascotas</a>
+                    </div>
+                </div>
+
+                <!-- Support info -->
+                <div v-if="albergue.support_info && Object.values(albergue.support_info).filter(Boolean).length" class="rounded-2xl border border-border/50 bg-card p-5">
+                    <h3 class="text-sm font-semibold text-foreground mb-4 flex items-center gap-2"><DollarSign class="h-4 w-4 text-teal-500" /> Cuentas de apoyo</h3>
+                    <div class="space-y-2">
+                        <div v-for="(value, key) in albergue.support_info" :key="key" v-if="value"
+                            class="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm">
+                            <span class="text-muted-foreground uppercase text-xs font-semibold">{{ key }}</span>
+                            <span class="font-medium text-foreground">{{ value }}</span>
+                        </div>
                     </div>
                 </div>
 

@@ -181,7 +181,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Public\AlbergueController::rate
-* @see app/Http/Controllers/Public/AlbergueController.php:68
+* @see app/Http/Controllers/Public/AlbergueController.php:73
 * @route '/mi-adopcion/albergues/{slug}/calificar'
 */
 export const rate = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +196,7 @@ rate.definition = {
 
 /**
 * @see \App\Http\Controllers\Public\AlbergueController::rate
-* @see app/Http/Controllers/Public/AlbergueController.php:68
+* @see app/Http/Controllers/Public/AlbergueController.php:73
 * @route '/mi-adopcion/albergues/{slug}/calificar'
 */
 rate.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -223,7 +223,7 @@ rate.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Public\AlbergueController::rate
-* @see app/Http/Controllers/Public/AlbergueController.php:68
+* @see app/Http/Controllers/Public/AlbergueController.php:73
 * @route '/mi-adopcion/albergues/{slug}/calificar'
 */
 rate.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -233,7 +233,7 @@ rate.post = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Public\AlbergueController::rate
-* @see app/Http/Controllers/Public/AlbergueController.php:68
+* @see app/Http/Controllers/Public/AlbergueController.php:73
 * @route '/mi-adopcion/albergues/{slug}/calificar'
 */
 const rateForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -243,7 +243,7 @@ const rateForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Public\AlbergueController::rate
-* @see app/Http/Controllers/Public/AlbergueController.php:68
+* @see app/Http/Controllers/Public/AlbergueController.php:73
 * @route '/mi-adopcion/albergues/{slug}/calificar'
 */
 rateForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

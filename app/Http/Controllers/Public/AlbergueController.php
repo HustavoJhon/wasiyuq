@@ -47,20 +47,25 @@ class AlbergueController extends Controller
 
         $userRating = Auth::check() ? TeamRating::where('team_id', $team->id)->where('user_id', Auth::id())->first() : null;
 
-        $petsCount = $team->pets()->count();
-        $availablePets = $team->pets()->where('status', 'available')->count();
-        $adoptedPets = $team->pets()->where('status', 'adopted')->count();
-        $eventsCount = $team->announcements()->count();
+        $stats = [
+            'pets_count' => $team->pets()->count(),
+            'available_pets' => $team->pets()->where('status', 'available')->count(),
+            'adopted_pets' => $team->pets()->where('status', 'adopted')->count(),
+            'events_count' => $team->announcements()->count(),
+        ];
 
         return Inertia::render('Adopter/Albergues/Show', [
-            'albergue' => $team,
+            'albergue' => array_merge($team->toArray(), [
+                'social_links' => $team->social_links,
+                'map_embed' => $team->map_embed,
+                'gallery' => $team->gallery,
+                'support_info' => $team->support_info,
+                'average_rating' => $team->averageRating(),
+                'ratings_count' => $team->ratingsCount(),
+                'ratings' => $team->ratings,
+            ]),
             'userRating' => $userRating,
-            'stats' => [
-                'pets_count' => $petsCount,
-                'available_pets' => $availablePets,
-                'adopted_pets' => $adoptedPets,
-                'events_count' => $eventsCount,
-            ],
+            'stats' => $stats,
             'seo' => ['title' => $team->name.' — Albergue en '.($team->city ?? 'Cusco'), 'description' => \Illuminate\Support\Str::limit(strip_tags((string) ($team->bio ?? '')), 160), 'url' => url('/mi-adopcion/albergues/'.$team->slug), 'type' => 'place'],
         ]);
     }

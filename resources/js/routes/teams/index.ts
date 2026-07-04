@@ -4,6 +4,7 @@ import adoptions from './adoptions'
 import followUps from './follow-ups'
 import blog from './blog'
 import events from './events'
+import profile from './profile'
 import members from './members'
 import veterinarians from './veterinarians'
 import invitations from './invitations'
@@ -515,6 +516,7 @@ const teams = {
     followUps: Object.assign(followUps, followUps),
     blog: Object.assign(blog, blog),
     events: Object.assign(events, events),
+    profile: Object.assign(profile, profile),
     members: Object.assign(members, members),
     veterinarians: Object.assign(veterinarians, veterinarians),
     index: Object.assign(index, index),

@@ -153,6 +153,9 @@ Route::prefix('{current_team}')
         Route::put('eventos/{id}', [DashboardEventController::class, 'update'])->name('events.update');
         Route::delete('eventos/{id}', [DashboardEventController::class, 'destroy'])->name('events.destroy');
 
+        Route::get('perfil', [\App\Http\Controllers\Teams\TeamProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('perfil', [\App\Http\Controllers\Teams\TeamProfileController::class, 'update'])->name('profile.update');
+
         Route::get('miembros', function (Team $current_team) {
             return \Inertia\Inertia::render('Dashboard/Members/Index', [
                 'members' => $current_team->members()->get()->map(fn ($member) => [
