@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PetController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleManagementController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VeterinarianController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')
@@ -77,4 +78,8 @@ Route::prefix('admin')
         Route::get('/seguimiento/{followUp}/editar', [FollowUpController::class, 'edit'])->name('follow-ups.edit');
         Route::put('/seguimiento/{followUp}', [FollowUpController::class, 'update'])->name('follow-ups.update');
         Route::delete('/seguimiento/{followUp}', [FollowUpController::class, 'destroy'])->name('follow-ups.destroy');
+
+        Route::get('/veterinarias', [VeterinarianController::class, 'index'])->name('veterinarians.index');
+        Route::post('/veterinarias/{veterinarian}/verificar', [VeterinarianController::class, 'toggleVerification'])->name('veterinarians.toggle-verification');
+        Route::delete('/veterinarias/{veterinarian}', [VeterinarianController::class, 'destroy'])->name('veterinarians.destroy');
     });

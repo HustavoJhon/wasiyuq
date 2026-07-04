@@ -8,6 +8,7 @@ import EventController from './EventController'
 import BlogPostController from './BlogPostController'
 import AdoptionController from './AdoptionController'
 import FollowUpController from './FollowUpController'
+import VeterinarianController from './VeterinarianController'
 
 const Admin = {
     DashboardController: Object.assign(DashboardController, DashboardController),
@@ -20,6 +21,7 @@ const Admin = {
     BlogPostController: Object.assign(BlogPostController, BlogPostController),
     AdoptionController: Object.assign(AdoptionController, AdoptionController),
     FollowUpController: Object.assign(FollowUpController, FollowUpController),
+    VeterinarianController: Object.assign(VeterinarianController, VeterinarianController),
 }
 
 export default Admin

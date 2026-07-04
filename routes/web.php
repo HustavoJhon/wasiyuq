@@ -157,6 +157,10 @@ Route::prefix('{current_team}')
                 'currentTeam' => $current_team,
             ]);
         })->name('members.index');
+
+        Route::get('veterinarias', [\App\Http\Controllers\Teams\VeterinarianController::class, 'index'])->name('veterinarians.index');
+        Route::post('veterinarias', [\App\Http\Controllers\Teams\VeterinarianController::class, 'store'])->name('veterinarians.store');
+        Route::delete('veterinarias/{veterinarian}', [\App\Http\Controllers\Teams\VeterinarianController::class, 'destroy'])->name('veterinarians.destroy');
     });
 
 // Postulación pública (requiere auth)
