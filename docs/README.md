@@ -30,14 +30,16 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 - **Pendiente de confirmación:** requiere validación con stakeholders o ejecución/entorno real.
 - **Implementado vs planificado:** se distingue lo presente en código de lo mencionado solo en README/documentos.
 
-## Fuentes principales inspeccionadas (inicial)
+## Fuentes principales inspeccionadas (inicial, Fase 0)
 
 - `README.md`, `composer.json`, `package.json`, `Makefile`, `.env.example`
 - `docker-compose.yml`, `docker/`, `vite.config.ts`, `tsconfig.json`, `capacitor/`
 - `routes/` (`web.php`, `public.php`, `admin.php`, `settings.php`, `console.php`)
 - `app/` (Enums, Models, Services, Repositories, Http/Middleware, etc.)
-- `database/migrations/`, `database/seeders/`, `database/stored-procedures/`
+- Migraciones Laravel legacy (`database/migrations/`, **retiradas en limpieza Fase 1**), `database/seeders/`, `database/stored-procedures/` (referencias conservadas según decisión)
 - `resources/js/`, `config/`
+
+> **WASIYUQ 2.0:** las migraciones de base de datos ya no usan Laravel/Artisan; la estructura de migraciones pertenece exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL, preparada, sin esquema funcional completo aún). `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
 
 ## Índice rápido
 

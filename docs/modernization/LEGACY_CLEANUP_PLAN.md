@@ -5,10 +5,11 @@
 **Alcance:** preparación y ejecución inicial de retiro para WASIYUQ 2.0 (Bun, TypeScript, Hono, PostgreSQL, Drizzle, React, TanStack, shadcn/ui/Tailwind).
 
 ## Estado de ejecución (Fase 1 — 2026-11-16)
-- **Ejecutado:** retiro del código/config/tooling operativo Laravel/PHP/Composer/Inertia/Vue del proyecto activo; respaldo de referencias/assets legacy en `legacy-assets/**`; preservación de `docs/**` y referencias de BD en `database/{migrations,factories,seeders,stored-procedures}`; inicialización de monorepo Bun/Turborepo/TS con `apps/{api,web,mobile}`, `modules/*`, `packages/*`, `infra/docker` y `.env.example`.
+- **Ejecutado:** retiro del código/config/tooling operativo Laravel/PHP/Composer/Inertia/Vue del proyecto activo; respaldo de referencias/assets legacy en `legacy-assets/**`; preservación de `docs/**` y referencias legacy de BD en `database/{factories,seeders,stored-procedures}`; inicialización de monorepo Bun/Turborepo/TS con `apps/{api,web,mobile}`, `modules/*`, `packages/*`, `infra/docker` y `.env.example`.
+- **Limpieza adicional:** eliminación de `database/migrations/**` (migraciones Laravel/SQL Server legacy). La estructura de migraciones de WASIYUQ 2.0 pertenece exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL, preparada sin esquema funcional completo).
 - **Registro detallado:** `docs/development/LEGACY_CLEANUP_LOG.md` (qué se eliminó, conservó, reemplazó, verificaciones y riesgos).
 - **Pendiente de retiro físico en entorno (permisos root, no trackeado):** `vendor/**`, parte de `public/build/**` y symlink `public/storage` residual.
-- **No realizado:** eliminación de bases de datos originales, borrado de respaldos/archivos históricos externos, implementación de módulos de negocio, deploy.
+- **No realizado:** eliminación de bases de datos originales, borrado de respaldos/archivos históricos externos, implementación de módulos de negocio, deploy. No se eliminaron `database/stored-procedures/**`, `database/factories/**` ni `database/seeders/**` (decisión independiente).
 
 ## 1. Inventario por categoría
 
@@ -16,7 +17,7 @@
 
 | Categoría | Rutas/elementos | Motivo | Acción futura |
 |---|---|---|---|
-| Núcleo aplicación PHP | `app/`, `bootstrap/`, `config/`, `routes/`, `database/migrations/`, `database/factories/`, `database/seeders/`, `resources/views/` (Blade), `tests/` (Pest/PHPUnit), `artisan` | Implementación y framework Laravel | Reemplazar por nueva implementación TS; retirar tras paridad/cutover |
+| Núcleo aplicación PHP | `app/`, `bootstrap/`, `config/`, `routes/`, `resources/views/` (Blade), `tests/` (Pest/PHPUnit), `artisan`; referencias BD legacy en `database/` | Implementación y framework Laravel | Reemplazado por monorepo TS (Fase 1). `database/migrations/**` retirado; migraciones 2.0 en `packages/db/migrations/` (Drizzle/PostgreSQL). `database/factories/`, `database/seeders/`, `database/stored-procedures/` conservados como referencia pendiente. |
 | Dependencias PHP | `composer.json`, `composer.lock`, `vendor/` (si existe) | Gestor y paquetes Laravel/PHP | Eliminar en fase de limpieza |
 | Config/tooling PHP | `phpunit.xml`, `.php-cs-fixer*`, `pint.json`/config Pint si aplica, `.editorconfig` secciones PHP (revisar) | Calidad/tests PHP | Reemplazar por toolchain TS (Biome/ESLint, Vitest, etc.) |
 | Frontend acoplado a Laravel/Inertia Vue | `resources/js/` (Vue/Inertia), `vite.config.ts` (si es el de Laravel/Vue), `components.json` (shadcn-vue), `tailwind.config*` actual, `package.json` scripts/build actuales orientados a Laravel | UI legacy | Reemplazar por React/Vite nuevo; conservar solo assets referenciados (ver 1.4) |
@@ -54,7 +55,7 @@
 |---|---|---|
 | Expediente de auditoría y modernización | `docs/**` | **Conservar**; actualizar como fuente de verdad de paridad y decisiones |
 | README/historial de decisiones | `README.md` (actualizar cuando corresponda), ADRs en `docs/modernization/` | Conservar y evolucionar para 2.0 |
-| Especificación de SPs y esquema | `database/stored-procedures/**`, `database/migrations/**`, `docs/technical/DATABASE_SCHEMA.md` | Conservar como referencia de migración hasta cierre de paridad de datos |
+| Especificación de SPs y esquema | `database/stored-procedures/**`, `database/factories/**`, `database/seeders/**`, `docs/technical/DATABASE_SCHEMA.md` (migraciones Laravel legacy eliminadas del repo en Fase 1) | Conservar como referencia de migración/paridad; migraciones 2.0 en `packages/db/migrations/` (Drizzle) |
 
 ### 1.6 Datos e información que NO deben perderse (respaldos obligatorios antes de cualquier limpieza/cutover)
 
