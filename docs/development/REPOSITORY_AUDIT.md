@@ -17,7 +17,7 @@ El repositorio incluye además configuración para **PWA** (Vite PWA), **app nat
 | `app/` | Código backend Laravel: Actions, Concerns, Console, Enums, Events, Http (Controllers/Middleware/Requests), Jobs, Listeners, Mail, Models, Notifications, Policies, Providers, Repositories, Rules, Services, Support |
 | `bootstrap/` | Bootstrap de aplicación (`bootstrap/app.php` configura routing/middleware) |
 | `config/` | Configuración Laravel (auth, database, services, fortify, filesystems, etc.) |
-| `database/` | Migraciones, seeders, factories, stored procedures (`database/stored-procedures/`, `database/migrations/stored_procedures/`) |
+| `database/` | Seeders, factories y stored procedures legacy conservados como referencia (`database/stored-procedures/`). Las migraciones Laravel (`database/migrations/`) fueron retiradas en Fase 1; migraciones 2.0 en `packages/db/migrations/` (Drizzle). |
 | `docker/` | Dockerfiles/config: `php/Dockerfile`, `php/entrypoint.sh`, `nginx/default.conf`, `minio/init.sh` |
 | `resources/` | Frontend: `js/` (pages, components, layouts, composables, stores, types), `css/app.css`, `views/` (Blade, emails) |
 | `routes/` | `web.php`, `public.php`, `admin.php`, `settings.php`, `console.php` |
@@ -69,7 +69,7 @@ El repositorio incluye además configuración para **PWA** (Vite PWA), **app nat
 
 ## 8. Base de datos y artefactos
 
-- 25+ migraciones en `database/migrations/` (usuarios, cache/jobs, passkeys, 2FA, teams/memberships, pets, announcements, blog, adoptions, follow-ups, campos adicionales, lost_pets, veterinarians, team_ratings, perfil de equipos) + subcarpeta `stored_procedures`.
+- (Histórico Fase 0) 25+ migraciones Laravel en `database/migrations/`; **retiradas del repo en limpieza Fase 1**. Estructura de migraciones 2.0: `packages/db/migrations/` (Drizzle ORM + PostgreSQL).
 - Directorio `database/stored-procedures/{pets,adoptions,announcements,blog,reports}/` y comando `app:load-stored-procedures` (según scripts/comandos Make). **Uso real de SPs vs Eloquent pendiente de verificación detallada** en servicios/repositorios/controladores.
 - Seeder principal extenso (`DatabaseSeeder`) con datos demo (usuarios, organizaciones, mascotas, eventos, posts, adopciones/seguimientos — lectura parcial durante muestreo).
 

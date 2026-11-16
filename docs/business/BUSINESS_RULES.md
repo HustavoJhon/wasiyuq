@@ -1,7 +1,7 @@
 # Reglas de negocio
 
 **Fecha:** 2026-11-16  
-**Fuente principal:** `app/Services/*.php`, `app/Enums/*.php`, `app/Models/*.php`, `routes/*.php`, `app/Http/Middleware/*.php`, `database/migrations/*`.  
+**Fuente principal:** `app/Services/*.php`, `app/Enums/*.php`, `app/Models/*.php`, `routes/*.php`, `app/Http/Middleware/*.php`, `database/migrations/*` (migraciones Laravel legacy, retiradas en Fase 1; recuperables en el historial git previo a `f02d015`).  
 **Método:** extracción desde implementación observable. Donde la regla no está completamente evidenciada, se marca como **pendiente de verificación**.
 
 ## 1. Identidad, acceso y contexto

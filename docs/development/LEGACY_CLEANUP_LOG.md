@@ -8,17 +8,17 @@
 ## 1. Estado previo (verificado)
 - Stack legacy presente: Laravel 13/PHP (app, bootstrap, config, routes, resources Blade/Vue-Inertia, tests Pest/PHPUnit, artisan, composer), frontend Vue 3 + Inertia v3 + Vite + Tailwind + shadcn-vue, Capacitor, Docker (Nginx/PHP/SQL Server/Redis/MinIO/Mailpit), Makefile.
 - Artefactos runtime/build locales: `node_modules/`, `vendor/`, `public/build/`, `public/dist/`, caches/logs de `storage/`.
-- Referencias de datos en repo: `database/migrations/`, `database/factories/`, `database/seeders/`, `database/stored-procedures/`.
+- Referencias de datos en repo (al inicio de Fase 1): `database/migrations/` (Laravel, **retirado posteriormente**), `database/factories/`, `database/seeders/`, `database/stored-procedures/`.
 - Archivo sensible local detectado: `.env` (preservado localmente como `.env.legacy`, no versionado).
 
 ## 2. Conservado (protegido)
 - **Documentación íntegra:** `docs/**` (business, domain, functional, technical, modernization, development, `TRACEABILITY_MATRIX.md`, `FINAL_AUDIT_REPORT.md`, etc.).
-- **Referencias de base de datos/migración (no operativas en 2.0):** `database/stored-procedures/**`, `database/migrations/**`, `database/factories/**`, `database/seeders/**`.
+- **Referencias legacy de BD conservadas (no operativas en 2.0, decisión independiente):** `database/stored-procedures/**`, `database/factories/**`, `database/seeders/**`.
 - **Respaldos/referencias legacy y recursos reutilizables:**
   - `legacy-assets/public/**` (favicons, íconos PWA, imágenes hero, OG, QR Yape, offline/robots/placeholder, verificación Google).
   - `legacy-assets/docs-ref/{README.legacy.md,docker-compose.legacy.yml,.env.legacy.example,Makefile.legacy}`.
 - **Copia local no versionada:** `.env.legacy` (contenido legacy preservado; ignorado por git).
-- **No modificadas/borradas:** bases de datos originales, respaldos externos, archivos históricos de usuarios/adopciones/fotos/documentos/certificados (no presentes como activos gestionados por esta limpieza más allá de lo ya existente en repo).
+- **No modificadas/borradas:** bases de datos originales, respaldos externos/SQL Server, archivos históricos de usuarios/adopciones/fotos/documentos/certificados (no presentes como activos gestionados por esta limpieza más allá de lo ya existente en repo).
 
 ## 3. Eliminado / reemplazado (por commit)
 
@@ -31,8 +31,12 @@
 | `b83558b` | Eliminación de tooling/config legacy y artefactos: `package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig.json`, `eslint.config.js`, `.prettierrc`, `.prettierignore`, `.npmrc`, `components.json`, `pnpm-workspace.yaml`, `Makefile`, `docker/`, `docker-compose.yml`, `public/index.php`, `public/.htaccess`, `public/dist/**`, `task/`, caches/logs runtime de `storage/`. |
 | `28f31e0` | Eliminación del `.env` trackeado del índice (evita versionar secretos/locales; `.env*` ignorados con excepciones de ejemplo). |
 | `a7b833c`–`78e1923` (y fixes intermedios) | Reemplazo por fundación monorepo 2.0: workspaces Bun, Turbo, tsconfig base, paquetes, módulos, apps, infra Docker PostgreSQL, `.env.example`, README 2.0, lockfile y ajustes de verificación. |
+| `f02d015` | Eliminación de migraciones legacy Laravel: `database/migrations/**` (26 migraciones PHP + `stored_procedures/.gitkeep`). |
+| `0fd4f4e` | Preparación de estructura de migraciones 2.0 en `packages/db` (Drizzle ORM + PostgreSQL): `migrations/`, `drizzle.config.ts`, `src/schema/`, README (sin esquema funcional). |
+| (este lote) | Actualización de documentación/configuración para reflejar que migraciones 2.0 viven en `packages/db/migrations/` y que `database/migrations/**` ya no forma parte del proyecto operativo; workflows CI actualizados a Bun/Turbo. |
 
 **Dependencias operativas retiradas del nuevo proyecto:** Laravel, PHP, Composer, Inertia, Vue (y tooling específico asociado).  
+**Migraciones:** las migraciones de WASIYUQ 2.0 pertenecen exclusivamente a `packages/db/migrations/` (Drizzle). `database/migrations/**` legacy eliminado; `database/factories/**`, `database/seeders/**`, `database/stored-procedures/**` se conservan como referencias legacy pendientes de decisión independiente.  
 **No retirado del disco por permisos (root-owned, no trackeado en git):** `vendor/**`; parte de `public/build/**` (symlink `public/storage` también root-owned). `vendor/` permanece ignorado por `.gitignore`.
 
 ## 4. Reemplazos introducidos (nuevo stack)

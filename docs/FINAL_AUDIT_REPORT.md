@@ -4,7 +4,8 @@
 **Rama:** `dev` (documentación Fase 0: `2665584`, `86eac2d`, `1110843`, `161b3c7`; Fase 1: múltiples commits hasta la verificación/fundación 2.0)  
 **Alcance:**  
 - **Fase 0:** auditoría estática e ingeniería inversa documental (sin modificar código de aplicación, dependencias, migraciones ni BD).  
-- **Fase 1:** retiro del runtime legacy Laravel/PHP/Composer/Inertia/Vue del proyecto activo y preparación del monorepo Bun/TypeScript. **`docs/**` conservado**, referencias de BD preservadas (`database/migrations|factories|seeders|stored-procedures`), respaldos/referencias en `legacy-assets/**`. **No se modificaron ni destruyeron bases de datos originales. No se implementaron módulos de negocio ni se realizó deploy.**  
+- **Fase 1:** retiro del runtime legacy Laravel/PHP/Composer/Inertia/Vue del proyecto activo y preparación del monorepo Bun/TypeScript. **`docs/**` conservado**, referencias legacy de BD conservadas (`database/factories|seeders|stored-procedures`; `database/migrations/**` Laravel retirado en limpieza adicional), respaldos/referencias en `legacy-assets/**`. **No se modificaron ni destruyeron bases de datos originales. No se implementaron módulos de negocio ni se realizó deploy.**  
+- **Migraciones 2.0:** `packages/db/migrations/` (Drizzle ORM + PostgreSQL, estructura preparada; sin esquema funcional completo).  
 **Registro operativo:** `docs/development/LEGACY_CLEANUP_LOG.md`.
 
 ## 1. Qué es WASIYUQ

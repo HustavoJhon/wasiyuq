@@ -9,6 +9,7 @@
 - `apps/web`: React + Vite + TanStack Router/Query + Tailwind scaffold operativo.
 - `apps/mobile`: preparado (sin implementación funcional).
 - Módulos y paquetes creados con límites/exports mínimos (`index.ts`); sin lógica de negocio implementada aún.
+- **Migraciones 2.0:** estructura exclusiva en `packages/db/migrations/` con configuración Drizzle ORM + PostgreSQL preparada (sin esquema funcional completo). Las migraciones Laravel legacy `database/migrations/**` fueron retiradas; `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
 
 ## 1. Principios
 
