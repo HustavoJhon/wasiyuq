@@ -1,7 +1,7 @@
 # Catálogo de entidades
 
 **Fecha:** 2026-11-16  
-**Fuentes:** `app/Models/*.php`, `database/migrations/*.php`, `app/Enums/*.php`.
+**Fuentes:** `app/Models/*.php`, `database/migrations/*.php` (Laravel legacy, retiradas en Fase 1; historial git previo a `f02d015`), `app/Enums/*.php`.
 
 ## 1. Entidades principales
 

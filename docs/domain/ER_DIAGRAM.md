@@ -191,7 +191,7 @@ erDiagram
 
 | Tema | Observación | Estado |
 |---|---|---|
-| Columnas exactas/tipos/índices/FKs | Resumidos; fuente de verdad en migraciones (`database/migrations/**`) y `docs/technical/DATABASE_SCHEMA.md` | Parcial |
+| Columnas exactas/tipos/índices/FKs | Resumidos; referencia legacy en `docs/technical/DATABASE_SCHEMA.md` (migraciones Laravel `database/migrations/**` retiradas en Fase 1); en 2.0 la fuente de verdad será el esquema Drizzle en `packages/db` | Parcial |
 | `RATINGS` / tablas de calificación | Relaciones inferidas de rutas/controladores (`calificar` veterinarias/albergues); estructura exacta **pendiente de confirmación** | Inferido |
 | `TEAM_USER` pivot | Nombre real de tabla pivot (`team_user`/`memberships`) a confirmar en migración/modelo | Pendiente |
 | Campos extendidos de seguimiento | Requests aceptan `weight_kg`, `vaccines`, `behavior`, `health_status`, `drive_link`; persistencia real no confirmada en servicio/modelo | Brecha verificada |

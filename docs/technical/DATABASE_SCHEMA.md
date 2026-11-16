@@ -1,7 +1,7 @@
 # Esquema de base de datos (estado actual)
 
 **Fecha:** 2026-11-16  
-**Fuentes:** `database/migrations/*.php` (26 archivos + `migrations/stored_procedures/.gitkeep`), `database/stored-procedures/**/*.sql` (9), `app/Models/*`, auditoría estática.  
+**Fuentes (auditoría Fase 0):** migraciones Laravel `database/migrations/*.php` (26 archivos, **retiradas del repo en limpieza Fase 1**), `database/stored-procedures/**/*.sql` (9, conservados como referencia), `app/Models/*`, auditoría estática. **WASIYUQ 2.0:** migraciones en `packages/db/migrations/` (Drizzle ORM + PostgreSQL, preparadas).  
 **Motor previsto en entorno:** SQL Server (`sqlsrv`, ver `docker-compose.yml`, `.env.example`, `config/database.php`). Las migraciones usan API Laravel/Blueprint; los procedimientos almacenados están en **T-SQL** (`[dbo]`, `NVARCHAR`, `OFFSET/FETCH`, etc.).
 
 > **Nota:** No se ejecutaron migraciones ni se inspeccionó una BD en ejecución; el esquema se documenta a partir de definiciones en código.
