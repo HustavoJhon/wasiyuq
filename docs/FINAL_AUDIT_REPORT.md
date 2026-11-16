@@ -1,8 +1,11 @@
-# Informe final de auditoría — WASIYUQ
+# Informe final de auditoría y transición — WASIYUQ
 
-**Fecha:** 2026-11-16 (actualizado — cierre Fase 0 documental)  
-**Rama:** `dev` (commits previos: `2665584`, `86eac2d`; este cierre añade commits documentales adicionales)  
-**Alcance:** auditoría estática e ingeniería inversa documental del repositorio. **Sin modificaciones de código de aplicación, dependencias, migraciones ni base de datos. No se eliminó Laravel.**
+**Fecha:** 2026-11-16 (Fase 0 documental + Fase 1 fundación/limpieza en `dev`)  
+**Rama:** `dev` (documentación Fase 0: `2665584`, `86eac2d`, `1110843`, `161b3c7`; Fase 1: múltiples commits hasta la verificación/fundación 2.0)  
+**Alcance:**  
+- **Fase 0:** auditoría estática e ingeniería inversa documental (sin modificar código de aplicación, dependencias, migraciones ni BD).  
+- **Fase 1:** retiro del runtime legacy Laravel/PHP/Composer/Inertia/Vue del proyecto activo y preparación del monorepo Bun/TypeScript. **`docs/**` conservado**, referencias de BD preservadas (`database/migrations|factories|seeders|stored-procedures`), respaldos/referencias en `legacy-assets/**`. **No se modificaron ni destruyeron bases de datos originales. No se implementaron módulos de negocio ni se realizó deploy.**  
+**Registro operativo:** `docs/development/LEGACY_CLEANUP_LOG.md`.
 
 ## 1. Qué es WASIYUQ
 Plataforma web para **adopción responsable de mascotas en Cusco, Perú**. Conecta organizaciones (equipos/albergues) con ciudadanos para publicar mascotas, gestionar postulaciones, realizar seguimiento post-adopción y difundir contenido comunitario.  
@@ -105,10 +108,17 @@ Detalle: `docs/modernization/TARGET_STACK.md`, `docs/modernization/TARGET_ARCHIT
 7. Plan de migración SQL Server→PostgreSQL, archivos, credenciales/factores y cutover/rollback.  
 8. Eliminación de excepciones hardcodeadas (superadmin) y modelo final de roles/permisos.
 
-## 13. Siguiente paso recomendado
-1. **Validar con negocio:** gaps C/P críticos (cierre adopción, documentos, campos seguimiento, SPs).  
-2. **Respaldos y descubrimiento de datos reales:** inventario de BD/archivos/secretos en entornos (sin exponer secretos en repo).  
-3. **Spikes técnicos:** (a) Hono+Drizzle+Postgres identidad/equipos/RBAC, (b) migración de muestra SQL Server→Postgres, (c) paridad auth y almacenamiento/documentos.  
-4. **Congelar trazabilidad aprobada** y entonces iniciar Fase 1 de reconstrucción.  
+## 13. Resultado Fase 1 (fundación 2.0)
+- **Estructura:** monorepo Bun workspaces + Turborepo con `apps/{api,web,mobile}`, `modules/{identity,organizations,pets,adoptions,follow-ups,content,community,integrations}`, `packages/{core,db,auth,validation,api-client,ui,config}`, `infra/docker`.
+- **Stack activo (scaffold):** Bun 1.3.14, TypeScript 5.9.3, Turbo 2.11.11, Hono 4.7.x, Zod 3.24.x, Drizzle ORM 0.44.x/postgres 3.4.x (base), React 19.3.x, Vite 6.4.x, TanStack Router 1.114.x, TanStack Query 5.66.x, Tailwind 3.4.17, Expo ~52/RN 0.76 preparado, PostgreSQL 16 compose.
+- **Verificaciones:** `bun install`, `bun run build|lint|typecheck|test` OK (18/18 build/lint/typecheck, 19/19 test; API health test pasa). `docker compose config` OK (bind de puertos bloqueado en entorno de prueba por puertos ocupados). Hono `GET /health` responde; frontend React/Vite inicia.
+- **Limpieza:** dependencias operativas Laravel/PHP/Composer/Inertia/Vue retiradas; activos/referencias conservados en `legacy-assets/` y `database/`; detalles en `docs/development/LEGACY_CLEANUP_LOG.md`.
+- **Pendientes/riesgos:** `vendor/**` y parte de `public/build/**` root-owned en disco (no trackeados); historial git contiene rename de `.env` en `b83558b` (retirado del índice en `28f31e0`); implementación de módulos de negocio, migración SQL Server→PostgreSQL, paridad auth/documentos/seguimientos/SPs y decisiones abiertas (secciones 8, 12).
 
-> **Conclusión:** la Fase 0 queda documentada de forma integral para soportar la limpieza del stack Laravel y la reconstrucción de WASIYUQ 2.0. Persisten decisiones y validaciones operativas puntuales que deben cerrarse antes de declarar paridad funcional total y ejecutar migración/cutover.
+## 14. Siguiente paso recomendado
+1. **Validar con negocio:** gaps C/P críticos (cierre adopción, documentos, campos seguimiento, SPs) y congelar decisiones de paridad.  
+2. **Respaldos y descubrimiento de datos reales:** inventario de BD/archivos/secretos en entornos (sin exponer secretos en repo).  
+3. **Implementación Fase 2:** módulos de negocio por prioridad (identidad/organizaciones/mascotas/adopciones/seguimientos), integración PostgreSQL/Drizzle, auth evaluada, y migración de datos/archivos con pruebas de paridad.  
+4. **Operación:** resolver limpieza de residuos root-owned, rotar secretos si aplica por historial, y asegurar entorno Docker con puertos disponibles para CI/dev.
+
+> **Conclusión:** Fase 0 documentada y Fase 1 completada a nivel de fundación técnica y retiro del runtime legacy. Persisten decisiones de negocio/migración y la implementación funcional de módulos antes de paridad y cutover.
