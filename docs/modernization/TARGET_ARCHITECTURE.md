@@ -1,7 +1,14 @@
 # Arquitectura objetivo
 
-**Fecha:** 2026-11-16  
+**Fecha:** 2026-11-16 (actualizado tras Fase 1)  
 **Objetivo:** reconstruir WASIYUQ como plataforma moderna, mantenible y preparada para web y móvil, preservando dominio y reglas de negocio.
+
+## Estado Fase 1 (fundación creada)
+- Monorepo Bun/Turborepo/TypeScript inicializado con workspaces: `apps/{api,web,mobile}`, `modules/{identity,organizations,pets,adoptions,follow-ups,content,community,integrations}`, `packages/{core,db,auth,validation,api-client,ui,config}`, `infra/docker`, `docs/`.
+- `apps/api`: Hono operativo con `GET /health`, logging JSON estructurado y prueba básica.
+- `apps/web`: React + Vite + TanStack Router/Query + Tailwind scaffold operativo.
+- `apps/mobile`: preparado (sin implementación funcional).
+- Módulos y paquetes creados con límites/exports mínimos (`index.ts`); sin lógica de negocio implementada aún.
 
 ## 1. Principios
 
@@ -11,25 +18,36 @@
 - **Seguridad por defecto:** autorización centralizada, sin excepciones hardcodeadas, auditoría de acciones sensibles.
 - **Trazabilidad:** cada capacidad mapeada al inventario funcional actual.
 
-## 2. Estructura de monorepo (propuesta)
+## 2. Estructura de monorepo (implementada en Fase 1 / propuesta de evolución)
 
 ```text
 apps/
-  api/          # Hono/Elysia, casos de uso, HTTP, workers
-  web/          # React 19 + Vite + TanStack Router/Query
-  mobile/       # React Native + Expo (fase posterior)
+  api/          # Hono (scaffold + /health), casos de uso/HTTP/workers futuros
+  web/          # React 19 + Vite + TanStack Router/Query + Tailwind
+  mobile/       # React Native + Expo (preparado)
+modules/
+  identity/
+  organizations/
+  pets/
+  adoptions/
+  follow-ups/
+  content/
+  community/
+  integrations/ # límites por bounded context (domain/app/infra/presentation a evolucionar)
 packages/
-  domain/       # Entidades, VOs, reglas, estados, políticas puras
-  contracts/    # Schemas Zod, DTOs, tipos compartidos
-  application/  # Casos de uso/servicios de aplicación (opcional)
-  db/           # Drizzle schema, migraciones, repositorios
-  auth/         # Integración auth y RBAC
-  ui/           # Componentes compartidos web (si aplica)
-  config/       # eslint/tsconfig/tailwind/env tooling
+  core/         # utilidades/dominio compartido base
+  db/           # Drizzle/PostgreSQL (base preparada)
+  auth/         # integración auth (pendiente evaluación Better Auth)
+  validation/   # esquemas Zod compartidos
+  api-client/   # cliente/contratos tipados (base)
+  ui/           # componentes compartidos web (base)
+  config/       # configuración compartida (base)
 infra/
-  docker/
-  terraform/ (si aplica)
+  docker/       # docker-compose PostgreSQL dev
+docs/
 ```
+
+> La separación fina `domain/application/infrastructure/presentation` dentro de cada módulo y la consolidación de `contracts/application` se completarán al implementar los módulos de negocio, manteniendo encapsulación vía `index.ts` y dependencias explícitas.
 
 ## 3. Bounded contexts propuestos
 

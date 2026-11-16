@@ -1,8 +1,14 @@
-# Stack tecnológico objetivo (propuesta)
+# Stack tecnológico objetivo
 
-**Fecha:** 2026-11-16  
+**Fecha:** 2026-11-16 (actualizado tras Fase 1)  
 **Base:** requerimientos de modernización del mandato + hallazgos de auditoría actual.  
 **Principio:** no agregar tecnologías por moda; justificar por necesidad de negocio, paridad funcional y mantenibilidad.
+
+## Estado Fase 1 (scaffold ejecutado)
+- **Seleccionado para API inicial:** **Hono** (`apps/api`, health check + logging estructurado).
+- **Instalado/configurado (verificado):** Bun 1.3.14, Turbo 2.11.11, TypeScript 5.9.3, Hono 4.7.x, Zod 3.24.x, Drizzle ORM 0.44.x + `postgres` 3.4.x + drizzle-kit 0.30.x (base en `packages/db`), React 19.3.x, Vite 6.4.x, TanStack Router 1.114.x, TanStack Query 5.66.x, Tailwind CSS 3.4.17, Expo ~52 / React Native 0.76 (workspace móvil preparado), PostgreSQL 16 Alpine (compose dev).
+- **Verificaciones:** `bun install/build/lint/typecheck/test` OK; API Hono responde `/health`; frontend React/Vite inicia; `docker compose config` OK (arranque de contenedor sujeto a puerto libre en host).
+- **Pendiente:** integración real de Drizzle/PostgreSQL en runtime, Better Auth (evaluación/paridad), shadcn/ui componentes, implementación de módulos de negocio y migración de datos.
 
 ## 1. Resumen recomendado
 

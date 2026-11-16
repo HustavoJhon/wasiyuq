@@ -1,8 +1,14 @@
-# Plan de retiro de legado (Laravel) — sin eliminaciones
+# Plan de retiro de legado (Laravel)
 
-**Fecha:** 2026-11-16  
-**Objetivo:** inventariar con precisión qué pertenece al stack Laravel legacy, qué debe reemplazarse, conservarse o respaldarse, y qué integraciones/datos requieren reconstrucción o migración, **sin eliminar nada todavía**.  
-**Alcance:** preparación para WASIYUQ 2.0 (Bun, TypeScript, Hono, PostgreSQL, Drizzle, React, TanStack, shadcn/ui).
+**Fecha:** 2026-11-16 (actualizado tras Fase 1)  
+**Objetivo:** inventariar con precisión qué pertenece al stack Laravel legacy, qué debe reemplazarse, conservarse o respaldarse, y qué integraciones/datos requieren reconstrucción o migración.  
+**Alcance:** preparación y ejecución inicial de retiro para WASIYUQ 2.0 (Bun, TypeScript, Hono, PostgreSQL, Drizzle, React, TanStack, shadcn/ui/Tailwind).
+
+## Estado de ejecución (Fase 1 — 2026-11-16)
+- **Ejecutado:** retiro del código/config/tooling operativo Laravel/PHP/Composer/Inertia/Vue del proyecto activo; respaldo de referencias/assets legacy en `legacy-assets/**`; preservación de `docs/**` y referencias de BD en `database/{migrations,factories,seeders,stored-procedures}`; inicialización de monorepo Bun/Turborepo/TS con `apps/{api,web,mobile}`, `modules/*`, `packages/*`, `infra/docker` y `.env.example`.
+- **Registro detallado:** `docs/development/LEGACY_CLEANUP_LOG.md` (qué se eliminó, conservó, reemplazó, verificaciones y riesgos).
+- **Pendiente de retiro físico en entorno (permisos root, no trackeado):** `vendor/**`, parte de `public/build/**` y symlink `public/storage` residual.
+- **No realizado:** eliminación de bases de datos originales, borrado de respaldos/archivos históricos externos, implementación de módulos de negocio, deploy.
 
 ## 1. Inventario por categoría
 
