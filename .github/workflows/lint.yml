@@ -1,51 +1,32 @@
-name: linter
+name: lint
 
 on:
   push:
     branches:
-      - develop
+      - dev
       - main
-      - master
-      - workos
   pull_request:
     branches:
-      - develop
+      - dev
       - main
-      - master
-      - workos
-
-permissions:
-  contents: write
 
 jobs:
-  quality:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          persist-credentials: false
+          bun-version: latest
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
-        with:
-          php-version: '8.4'
+      - name: Install dependencies
+        run: bun install
 
-      - name: Install Dependencies
-        run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+      - name: Lint
+        run: bun run lint
 
-      - name: Run Pint
-        run: composer lint
-
-      - name: Format Frontend
-        run: npm run format
-
-      - name: Lint Frontend
-        run: npm run lint
-
-      # - name: Commit Changes
-      #   uses: stefanzweifel/git-auto-commit-action@v7
-      #   with:
-      #     commit_message: fix code style
-      #     commit_options: '--no-verify'
+      - name: Typecheck
+        run: bun run typecheck

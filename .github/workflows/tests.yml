@@ -3,56 +3,36 @@ name: tests
 on:
   push:
     branches:
-      - develop
+      - dev
       - main
-      - master
-      - workos
   pull_request:
     branches:
-      - develop
+      - dev
       - main
-      - master
-      - workos
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version: ['8.4', '8.5']
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          persist-credentials: false
+          bun-version: latest
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer:v2
-          coverage: xdebug
+      - name: Install dependencies
+        run: bun install
 
-      - name: Setup Node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: '22'
+      - name: Typecheck
+        run: bun run typecheck
 
-      - name: Install Node Dependencies
-        run: npm i
+      - name: Lint
+        run: bun run lint
 
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      - name: Test
+        run: bun run test
 
-      - name: Copy Environment File
-        run: cp .env.example .env
-
-      - name: Generate Application Key
-        run: php artisan key:generate
-
-      - name: Build Assets
-        run: npm run build
-
-      - name: Tests
-        run: ./vendor/bin/pest
+      - name: Build
+        run: bun run build
