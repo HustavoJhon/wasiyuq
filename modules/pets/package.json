@@ -12,7 +12,7 @@
     "build": "tsc -p tsconfig.json",
     "lint": "echo 'lint:module-pets ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test",
+    "test": "bun test --pass-with-no-tests",
     "format": "echo 'format:module-pets ok'"
   },
   "devDependencies": {

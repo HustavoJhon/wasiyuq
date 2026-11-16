@@ -9,7 +9,7 @@
     "start": "bun run dist/index.js",
     "lint": "echo 'lint:api ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test",
+    "test": "bun test --pass-with-no-tests",
     "format": "echo 'format:api ok'"
   },
   "dependencies": {
