@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@wasiyuq/core": ["packages/core/src/index.ts"],
+      "@wasiyuq/core/*": ["packages/core/src/*"],
+      "@wasiyuq/db": ["packages/db/src/index.ts"],
+      "@wasiyuq/db/*": ["packages/db/src/*"],
+      "@wasiyuq/auth": ["packages/auth/src/index.ts"],
+      "@wasiyuq/auth/*": ["packages/auth/src/*"],
+      "@wasiyuq/validation": ["packages/validation/src/index.ts"],
+      "@wasiyuq/validation/*": ["packages/validation/src/*"],
+      "@wasiyuq/api-client": ["packages/api-client/src/index.ts"],
+      "@wasiyuq/api-client/*": ["packages/api-client/src/*"],
+      "@wasiyuq/ui": ["packages/ui/src/index.ts"],
+      "@wasiyuq/ui/*": ["packages/ui/src/*"],
+      "@wasiyuq/config": ["packages/config/src/index.ts"],
+      "@wasiyuq/config/*": ["packages/config/src/*"]
+    }
+  }
+}
