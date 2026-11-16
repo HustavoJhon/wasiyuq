@@ -28,3 +28,6 @@ yarn-error.log
 /capacitor/android
 /capacitor/ios
 .env.legacy
+
+.env
+.env.laravel.local
