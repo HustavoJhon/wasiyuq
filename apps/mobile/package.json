@@ -1,0 +1,22 @@
+{
+  "name": "@wasiyuq/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo 'mobile: expo workspace prepared (not implemented)'",
+    "build": "echo 'build:mobile ok'",
+    "lint": "echo 'lint:mobile ok'",
+    "typecheck": "echo 'typecheck:mobile ok'",
+    "test": "echo 'test:mobile ok'",
+    "format": "echo 'format:mobile ok'"
+  },
+  "dependencies": {
+    "expo": "~52.0.0",
+    "react": "^19.0.0",
+    "react-native": "0.76.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}
