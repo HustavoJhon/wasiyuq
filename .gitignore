@@ -27,3 +27,4 @@ yarn-error.log
 /.zed
 /capacitor/android
 /capacitor/ios
+.env.legacy
