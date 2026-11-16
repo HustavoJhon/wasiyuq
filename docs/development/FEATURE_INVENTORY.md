@@ -1,104 +1,96 @@
 # Inventario de funcionalidades
 
-**Fecha:** 2026-11-16  
-**Estado:** inventario inicial basado en rutas, controladores detectados, modelos, servicios y navegación inferida. Requiere ampliación con lectura exhaustiva de cada controlador/página Vue.
+**Fecha:** 2026-11-16 (actualizado — Fase 0 cierre documental)  
+**Estado:** ampliado con evidencia de requests, servicios, eventos, jobs, listeners, notificaciones, SPs, storage y pruebas.  
+**Leyenda:** **V**=Verificado, **P**=Parcial, **I**=Inferido, **C**=Pendiente de confirmación. IDs y descripciones alineados con `docs/development/TRACEABILITY_MATRIX.md`.
 
-## 1. Convenciones
-
-- **Evidencia:** archivo/ruta donde se observa la funcionalidad.
-- **Estado:** `Implementado (observado en código)`, `Parcial/por verificar`, `No confirmado`.
-- **Actor:** visitante, adoptante, miembro equipo, admin plataforma (según middleware/rutas).
-
-## 2. Funcionalidades públicas
-
+## 1. Público
 | ID | Funcionalidad | Actor | Evidencia | Estado |
 |---|---|---|---|---|
-| PUB-01 | Página de inicio | Visitante | `routes/public.php` → `HomeController@index` | Implementado |
-| PUB-02 | Listado de mascotas con filtros/búsqueda (según README/controlador) | Visitante | `/mascotas`, `Public\PetController@index`, `PetService/PetRepository` | Implementado (detalle por verificar) |
-| PUB-03 | Detalle de mascota por slug | Visitante | `/mascotas/{slug}`, `Public\PetController@show` | Implementado |
-| PUB-04 | Listado de mascotas perdidas | Visitante | `/mascotas-perdidas`, `Public\LostPetController@index` | Implementado |
-| PUB-05 | Detalle de mascota perdida | Visitante | `/mascotas-perdidas/{id}` | Implementado |
-| PUB-06 | Reporte público de mascota perdida | Visitante | `POST /mascotas-perdidas/reportar`, `LostPetController@store` | Implementado |
-| PUB-07 | Listado y detalle de eventos/anuncios | Visitante | `/eventos`, `/eventos/{slug}`, `Public\EventController` | Implementado |
-| PUB-08 | Listado y detalle de blog | Visitante | `/blog`, `/blog/{slug}`, `Public\BlogController` | Implementado |
-| PUB-09 | Página sobre nosotros | Visitante | `/sobre-nosotros`, `AboutController` | Implementado |
-| PUB-10 | Contacto (ver + enviar) | Visitante | `/contacto` GET/POST, `ContactController`, modelo `ContactRequest` | Implementado |
-| PUB-11 | Sitemap y health check | Sistema/SEO | `/sitemap.xml`, `/health` | Implementado |
+| PUB-01 | Página de inicio | Visitante | `routes/public.php` → `HomeController@index` | V |
+| PUB-02 | Catálogo y detalle de mascotas | Visitante | `Public\PetController`, `PetService/Repository` | V |
+| PUB-03 | Listado/detalle/reporte de mascotas perdidas | Visitante | `Public\LostPetController`, rutas `mascotas-perdidas*` | V |
+| PUB-04 | Listado/detalle de eventos/anuncios | Visitante | `Public\EventController` | V |
+| PUB-05 | Listado/detalle de blog | Visitante | `Public\BlogController` | V |
+| PUB-06 | Sobre nosotros | Visitante | `AboutController` | V |
+| PUB-07 | Contacto (formulario + envío de correo) | Visitante | `POST /contacto`, `App\Mail\ContactMessage` | V |
+| PUB-08 | Sitemap y health check | Sistema/SEO | `/sitemap.xml`, `/health` | V |
 
-## 3. Autenticación y cuenta
-
+## 2. Autenticación, cuenta y equipos
 | ID | Funcionalidad | Actor | Evidencia | Estado |
 |---|---|---|---|---|
-| AUTH-01 | Login/registro/password/2FA (Fortify) | Usuario | Dependencias Fortify, rutas settings/security, `config/fortify.php` (a revisar) | Implementado/parcial por verificar UI |
-| AUTH-02 | Login con Google (OAuth) | Usuario | `/auth/google`, `/auth/google/callback`, `SocialLoginController`, `config/services.php` | Implementado |
-| AUTH-03 | Gestión de perfil y seguridad | Autenticado | `routes/settings.php`, `Settings\ProfileController`, `SecurityController` | Implementado |
-| AUTH-04 | Apariencia | Autenticado | `settings/appearance` (Inertia) | Implementado (UI por verificar) |
-| AUTH-05 | Gestión de equipos personales/organizaciones del usuario | Autenticado | `settings/teams*`, `Teams\TeamController` | Implementado |
-| AUTH-06 | Invitaciones a equipo (crear/aceptar/cancelar) | Autenticado/miembro | `TeamInvitationController`, rutas settings e `invitations/{invitation}/accept` | Implementado |
+| AUTH-01 | Login/registro/password/2FA (Fortify) | Usuario | Stack Fortify, tests auth, `Settings\SecurityController` | P |
+| AUTH-02 | Login Google OAuth | Usuario | `/auth/google*`, `SocialLoginController`, `config/services.php` | V/P |
+| AUTH-03 | Perfil y seguridad | Autenticado | `Settings\ProfileController`, `SecurityController` | V |
+| AUTH-04 | Apariencia | Autenticado | `settings/appearance` | P |
+| AUTH-05 | Gestión de equipos y contexto | Autenticado | `settings/teams*`, `Teams\TeamController`, redirect dashboard | V |
+| AUTH-06 | Invitaciones (crear/aceptar/cancelar) | Autenticado/miembro | `TeamInvitationController`, requests teams, `Notifications\Teams\TeamInvitation` | V |
+| AUTH-07 | Control acceso equipo (membresía, no personal) y bypass superadmin | Sistema | `EnsureTeamMembership` | V |
+| AUTH-08 | Control acceso admin | Sistema | `IsSuperAdmin` (flag o email hardcodeado) | V (riesgo) |
 
-## 4. Área adoptante (`/mi-adopcion`)
-
+## 3. Área adoptante (`/mi-adopcion`)
 | ID | Funcionalidad | Actor | Evidencia | Estado |
 |---|---|---|---|---|
-| ADP-01 | Dashboard adoptante | Adoptante | `Adopter\DashboardController@index`, `/mi-adopcion`, `/mi-adopcion/inicio` | Implementado |
-| ADP-02 | Ver postulaciones propias | Adoptante | `/mi-adopcion/postulaciones`, `Adopter\ApplicationController@index` | Implementado |
-| ADP-03 | Publicar mascota (crear/listar/eliminar propias) | Adoptante | `/mi-adopcion/mascotas*`, `Adopter\PetController` | Implementado |
-| ADP-04 | Gestionar mascotas perdidas propias (listar/editar/actualizar/eliminar) | Adoptante | `/mi-adopcion/mascotas-perdidas*`, `Adopter\LostPetController` | Implementado |
-| ADP-05 | Directorio veterinarias (listar/ver/agregar/calificar) | Adoptante | `/mi-adopcion/veterinarias*`, `Public\VeterinarianController` (usado en contexto adoptante) | Implementado |
-| ADP-06 | Directorio albergues (listar/ver/calificar) | Adoptante | `/mi-adopcion/albergues*`, `Public\AlbergueController` | Implementado |
-| ADP-07 | Seguimientos (listar/ver/reportar hito con datos/fotos) | Adoptante | `/mi-adopcion/seguimientos*`, `Adopter\FollowUpReportController`, `FollowUpService` | Implementado |
-| ADP-08 | Postular a adopción de mascota | Adoptante | `POST /mascotas/{slug}/postular`, `Adopter\ApplicationController@store` | Implementado |
+| ADP-01 | Dashboard adoptante | Adoptante | `Adopter\DashboardController` | V |
+| ADP-02 | Ver postulaciones propias | Adoptante | `Adopter\ApplicationController@index` | V |
+| ADP-03 | Postular a adopción con screening y anti-duplicado | Adoptante | `POST /mascotas/{slug}/postular`, `StoreApplicationRequest`, `ApplicationController@store` | V |
+| ADP-04 | Publicar/listar/eliminar mascotas propias | Adoptante | `Adopter\PetController` | V/P |
+| ADP-05 | Gestionar mascotas perdidas propias | Adoptante | `Adopter\LostPetController` | V/P |
+| ADP-06 | Directorio/calificación veterinarias y albergues | Adoptante | rutas/controladores veterinarias y albergues | P |
+| ADP-07 | Listar/ver/reportar seguimientos (notas/fotos) | Adoptante | `Adopter\FollowUpReportController`, `FollowUpService::reportMilestone` | V |
 
-## 5. Panel de equipo/organización (`/{current_team}`)
-
+## 4. Panel de equipo (`/{current_team}`)
 | ID | Funcionalidad | Actor | Evidencia | Estado |
 |---|---|---|---|---|
-| TEAM-01 | Dashboard con métricas y recientes | Miembro equipo | `routes/web.php` closure dashboard, consultas `Pet/Adoption/Announcement/BlogPost/FollowUp` | Implementado |
-| TEAM-02 | CRUD mascotas del equipo | Miembro equipo (según permisos) | `Teams\PetController`, rutas `mascotas*` | Implementado |
-| TEAM-03 | Gestión adopciones (listar, ver, aprobar, rechazar) | Miembro equipo | `Dashboard\AdoptionController`, `AdoptionService` | Implementado |
-| TEAM-04 | Gestión seguimientos (listar, ver, completar, marcar no realizado, programar) | Miembro equipo | `Dashboard\FollowUpController`, `FollowUpService` | Implementado |
-| TEAM-05 | CRUD blog del equipo | Miembro equipo | `Dashboard\BlogPostController` | Implementado |
-| TEAM-06 | CRUD eventos/anuncios del equipo | Miembro equipo | `Dashboard\EventController` | Implementado |
-| TEAM-07 | Editar perfil de equipo | Miembro equipo | `Teams\TeamProfileController` | Implementado |
-| TEAM-08 | Ver miembros del equipo | Miembro equipo | ruta `miembros` (closure Inertia) | Implementado |
-| TEAM-09 | Gestionar veterinarias vinculadas al equipo | Miembro equipo | `Teams\VeterinarianController` | Implementado |
+| TEAM-01 | Dashboard con métricas y recientes | Miembro | closure dashboard en `routes/web.php` | V |
+| TEAM-02 | CRUD mascotas (fotos/storage) | Miembro | `Teams\PetController`, `Store/UpdatePetRequest` | V |
+| TEAM-03 | Listar/ver/aprobar/rechazar adopciones | Miembro | `Dashboard\AdoptionController`, `AdoptionService` | V |
+| TEAM-04 | Gestionar seguimientos (listar, ver, completar, missed, programar) | Miembro | `Dashboard\FollowUpController`, `FollowUpService` | V |
+| TEAM-05 | CRUD blog | Miembro | `Dashboard\BlogPostController` | V |
+| TEAM-06 | CRUD eventos/anuncios | Miembro | `Dashboard\EventController` | V |
+| TEAM-07 | Perfil de equipo (logo/galería) | Miembro | `Teams\TeamProfileController` | V |
+| TEAM-08 | Ver miembros | Miembro | ruta `miembros` | V/P |
+| TEAM-09 | Veterinarias del equipo | Miembro | `Teams\VeterinarianController` | P |
 
-## 6. Administración global (`/admin`)
-
+## 5. Administración (`/admin`)
 | ID | Funcionalidad | Actor | Evidencia | Estado |
 |---|---|---|---|---|
-| ADM-01 | Dashboard admin | Super admin | `Admin\DashboardController` | Implementado |
-| ADM-02 | Perfil admin | Super admin | `Admin\ProfileController` | Implementado |
-| ADM-03 | Consulta de roles | Super admin | `Admin\RoleManagementController` | Implementado |
-| ADM-04 | Gestión de usuarios (CRUD, rol, membresías) | Super admin | `Admin\UserController` | Implementado |
-| ADM-05 | Gestión global de mascotas | Super admin | `Admin\PetController` | Implementado |
-| ADM-06 | Gestión de organizaciones/equipos | Super admin | `Admin\OrganizationController` | Implementado |
-| ADM-07 | Gestión global de eventos | Super admin | `Admin\EventController` | Implementado |
-| ADM-08 | Gestión global de blog | Super admin | `Admin\BlogPostController` | Implementado |
-| ADM-09 | Consulta de adopciones | Super admin | `Admin\AdoptionController` (index/show) | Implementado (alcance por verificar) |
-| ADM-10 | Gestión de seguimientos | Super admin | `Admin\FollowUpController` (CRUD) | Implementado |
-| ADM-11 | Gestión/verificación de veterinarias | Super admin | `Admin\VeterinarianController` | Implementado |
-| ADM-12 | Listado de albergues | Super admin | `Admin\AlbergueController` | Implementado |
+| ADM-01..12 | Dashboard, perfil, roles, usuarios/membresías, organizaciones, mascotas, eventos, blog, adopciones, seguimientos, veterinarias (verificación), albergues | Super admin | `routes/admin.php`, `Admin\*Controller` | V/P (alcance fino variable) |
 
-## 7. APIs y utilidades integradas
+## 6. Procesos asíncronos y automatismos
+| ID | Funcionalidad | Evidencia | Estado |
+|---|---|---|---|
+| ASYNC-01 | Notificación a admins al enviar postulación (queued) | `AdoptionApplicationSubmitted` → `NotifyEntityOfNewApplication` | V |
+| ASYNC-02 | Notificación a adoptante al aprobar + generación de acta PDF (queued) | `AdoptionApproved` → `NotifyAdopterOfApproval` → `GenerateAdoptionActaJob` | V |
+| ASYNC-03 | Creación de plan 5 seguimientos al completar adopción (queued listener) | `AdoptionCompleted` → `CreateFollowUpPlan` | V (disparo `complete` **C**) |
+| ASYNC-04 | Vencimiento diario de seguimientos (`pending`→`missed`) | `routes/console.php`, `CheckOverdueMilestonesJob` | V (requiere scheduler/worker) |
+| ASYNC-05 | Generación de certificado PDF | `GenerateAdoptionCertificateJob` | P (sin invocación hallada) |
 
-| ID | Funcionalidad | Actor | Evidencia | Estado |
-|---|---|---|---|---|
-| API-01 | Chatbot por reglas (respuestas/botones) | Visitante/app | `POST /api/chatbot/ask`, `Public\ChatbotController`, `ChatbotService` | Implementado (lógica en memoria/reglas) |
-| API-02 | Consulta DNI externa | Autenticado/contexto app | `POST /api/dni/lookup`, `Api\DniController`, `DniLookupService` | Implementado (depende de token externo) |
+## 7. APIs e integraciones
+| ID | Funcionalidad | Evidencia | Estado |
+|---|---|---|---|
+| API-01 | Chatbot por reglas | `POST /api/chatbot/ask`, `ChatbotService` | V |
+| API-02 | Consulta DNI externa | `POST /api/dni/lookup`, `DniLookupService`, `services.dni` | V |
+| API-03 | OAuth Google | rutas auth/google, `SocialLoginController` | V/P |
 
-## 8. Capacidades transversales observadas
+## 8. Datos, documentos y almacenamiento
+| ID | Funcionalidad | Evidencia | Estado |
+|---|---|---|---|
+| DATA-01 | Stored procedures T-SQL (búsqueda/detalle/reportes) definidos | `database/stored-procedures/**` (9 archivos) | V (definición); uso app **no evidenciado** |
+| DATA-02 | PDFs acta/certificado en storage público | `pdfs/*`, jobs DomPDF, `acta_path` | V (semántica/descarga **P**) |
+| DATA-03 | Uploads de imágenes (pets, lost-pets, teams, follow-ups) | usos `Storage::disk('public')`/`->store` en controladores/servicios | V |
 
-- PWA con manifest, offline fallback y caché de assets/fuentes/imágenes (`vite.config.ts`).
-- Soporte Capacitor para empaquetado móvil (`capacitor/`, plugins cámara/notificaciones/splash/status bar).
-- Soft deletes en entidades clave (`Pet`, `Team`, `Adoption`, `Announcement`, `BlogPost`, `LostPet`, `Veterinarian`).
-- Slugs para rutas públicas/amigables en pets, teams, announcements, blog posts.
-- Enums para estados/tipos (adopción, seguimiento, especie/tamaño/estado mascota, tipo anuncio, roles/permisos equipo).
+## 9. Pruebas (estado real)
+| Área | Cobertura | Evidencia | Estado |
+|---|---|---|---|
+| Auth/Teams/Settings/Dashboard | Tests scaffolding/presentes | `tests/Feature/Auth/*`, `Teams/*`, `Settings/*`, `DashboardTest` | P |
+| Dominio adopciones/seguimientos/contenido/integraciones | Sin tests dedicados | ausencia en `tests/` | V (gap) |
+| Entorno de test | SQLite in-memory, queue sync | `phpunit.xml` | V |
 
-## 9. Pendientes de verificación
-
-- Reglas exactas de validación en Form Requests y autorización en Policies por acción.
-- Campos y pantallas reales en cada página Vue (formularios, filtros, exportaciones, reportes).
-- Uso efectivo de stored procedures, jobs/eventos/listeners/notificaciones/mail en flujos reales.
-- Generación de PDF/actas (`acta_path` en adopciones, DomPDF instalado) y descargas/exportaciones.
-- Cobertura de pruebas y funcionalidades incompletas o deshabilitadas.
+## 10. Hallazgos y gaps clave (resumen)
+- **GAP-01 (C):** `complete`/`cancel` en servicio sin disparador UI/ruta confirmado.
+- **GAP-02 (V):** campos extendidos de seguimiento en requests no persistidos por `FollowUpService`.
+- **GAP-03 (V):** SPs sin invocación en runtime; paridad a decidir.
+- **GAP-04 (V/P):** doble job PDF escribiendo `acta_path`; descarga no confirmada.
+- **GAP-05 (V):** bypass superadmin por email hardcodeado.
+- **GAP-06 (V):** cobertura de pruebas de dominio nula.

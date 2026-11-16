@@ -1,109 +1,114 @@
 # Informe final de auditoría — WASIYUQ
 
-**Fecha:** 2026-11-16  
-**Rama:** `dev`  
-**Alcance:** auditoría estática e ingeniería inversa documental del repositorio (sin modificaciones de código de aplicación, dependencias, migraciones ni base de datos).
+**Fecha:** 2026-11-16 (actualizado — cierre Fase 0 documental)  
+**Rama:** `dev` (commits previos: `2665584`, `86eac2d`; este cierre añade commits documentales adicionales)  
+**Alcance:** auditoría estática e ingeniería inversa documental del repositorio. **Sin modificaciones de código de aplicación, dependencias, migraciones ni base de datos. No se eliminó Laravel.**
 
 ## 1. Qué es WASIYUQ
-
-WASIYUQ es una plataforma web para **adopción responsable de mascotas en Cusco, Perú**. Conecta organizaciones (albergues/equipos) con ciudadanos para publicar mascotas, gestionar postulaciones de adopción, realizar seguimiento post-adopción y difundir actividades/contenido comunitario.  
-**Evidencia:** `README.md`, `routes/public.php`, `routes/web.php`, modelos (`Pet`, `Adoption`, `FollowUp`, `Team`, `Announcement`, `BlogPost`, `LostPet`, `Veterinarian`), configuración locale/timezone.
+Plataforma web para **adopción responsable de mascotas en Cusco, Perú**. Conecta organizaciones (equipos/albergues) con ciudadanos para publicar mascotas, gestionar postulaciones, realizar seguimiento post-adopción y difundir contenido comunitario.  
+**Evidencia:** `README.md`, rutas públicas/web/admin, modelos (`Pet`, `Adoption`, `FollowUp`, `Team`, `Announcement`, `BlogPost`, `LostPet`, `Veterinarian`, `ContactRequest`), locale `es` / timezone `America/Lima`. **Estado: Verificado.**
 
 ## 2. Cómo funciona el negocio (resumen)
+1. **Descubrimiento público:** mascotas, eventos, blog, mascotas perdidas, contacto, chatbot.  
+2. **Postulación:** usuario autenticado envía screening; se crea adopción `pending`, mascota pasa a `in_process` y se notifica a admins del equipo.  
+3. **Revisión:** equipo aprueba (mascota `adopted`, notificación y acta PDF) o rechaza (mascota `available`).  
+4. **Cierre y seguimiento:** `complete` (lógica existe) dispara plan de 5 hitos; adoptante reporta evidencia; equipo gestiona/programa; job diario marca vencidos como `missed`.  
+5. **Comunidad/admin:** contenido, directorios/calificaciones, mascotas perdidas, panel admin global.
 
-1. **Descubrimiento público:** visitantes exploran mascotas, eventos, blog, mascotas perdidas y contactan a la plataforma.
-2. **Postulación:** usuarios autenticados aplican a adoptar mascotas completando información de screening.
-3. **Gestión organizacional:** equipos gestionan mascotas, revisan adopciones (aprobar/rechazar), programan y controlan seguimientos.
-4. **Seguimiento:** adoptantes reportan hitos con evidencia/datos; el sistema/organización controla estados y atrasos.
-5. **Comunidad y soporte:** publicación de eventos/blog, directorio y calificación de veterinarias/albergues, reportes de mascotas perdidas, contacto y chatbot/DNI.
-6. **Gobernanza:** super administración gestiona usuarios, organizaciones y contenido global.
+Detalle: `docs/business/WORKFLOWS.md`, `docs/domain/STATE_MACHINES.md`.
 
-## 3. Funcionalidades identificadas
+## 3. Funcionalidades identificadas (actualizado)
+- **Público:** home, catálogo/detalle mascotas, mascotas perdidas (listar/detalle/reportar), eventos, blog, sobre nosotros, contacto, sitemap, health.
+- **Adoptante:** dashboard, postulaciones (anti-duplicado), publicar mascotas propias, mascotas perdidas propias, directorios/calificaciones, seguimientos y reporte de hitos con fotos.
+- **Equipo:** dashboard con métricas, CRUD mascotas/blog/eventos, gestión adopciones (aprobar/rechazar) y seguimientos (completar/missed/programar), perfil/logo/galería, miembros, veterinarias.
+- **Admin:** gestión global de usuarios/roles/membresías, organizaciones, mascotas, eventos, blog, adopciones, seguimientos, veterinarias (verificación), albergues.
+- **APIs/utilidades:** chatbot por reglas, consulta DNI, OAuth Google, PWA/Capacitor.
+- **Automatismos:** eventos/listeners/notificaciones en cola, generación PDF (acta; certificado definido), scheduler diario de vencimientos.
 
-- **Público:** home, catálogo/detalle de mascotas, mascotas perdidas (listar/detalle/reportar), eventos, blog, sobre nosotros, contacto, sitemap, health.
-- **Adoptante (`/mi-adopcion`):** dashboard, postulaciones, publicar mascotas propias, gestionar mascotas perdidas, directorio/calificación de veterinarias y albergues, seguimientos y reporte de hitos.
-- **Equipo (`/{team}`):** dashboard con métricas, CRUD mascotas/blog/eventos, gestión adopciones y seguimientos, perfil, miembros, veterinarias.
-- **Admin (`/admin`):** usuarios/roles/membresías, organizaciones, mascotas, eventos, blog, adopciones, seguimientos, veterinarias (verificación), albergues.
-- **Cuenta/auth:** registro/login Fortify, 2FA/passkeys (soporte en stack), Google OAuth, perfil/seguridad/apariencia, equipos e invitaciones.
-- **APIs/utilidades:** chatbot por reglas, consulta DNI, PWA/Capacitor.
-
-Detalle: `docs/development/FEATURE_INVENTORY.md`, `docs/technical/API_CATALOG.md`.
+Detalle: `docs/development/FEATURE_INVENTORY.md`, `docs/functional/FUNCTIONAL_REQUIREMENTS.md`, `docs/functional/USE_CASES.md`, `docs/technical/API_CATALOG.md`.
 
 ## 4. Tecnologías actuales
+- **Backend:** PHP `^8.4`, Laravel `^13.7`, Inertia Laravel 3, Fortify, Socialite, DomPDF, Wayfinder.
+- **Frontend:** Vue 3, Inertia Vue 3, TypeScript, Vite 8, Tailwind CSS 4, reka-ui/shadcn-vue, PWA, Capacitor 8.
+- **Datos/infra dev:** SQL Server 2019 (`sqlsrv/pdo_sqlsrv`), migraciones + 9 SPs T-SQL (`database/stored-procedures/**`), Redis/MinIO/Mailpit en Docker (uso real por confirmar).
+- **Integraciones:** Google OAuth, apisperu DNI, correo/notificaciones, GA4 (config), storage local/S3-compatible.
 
-- **Backend:** PHP `^8.4` (composer) / Docker `php:8.4-fpm`, Laravel `^13.7`, Inertia Laravel 3, Fortify, Socialite, DomPDF, Wayfinder.
-- **Frontend:** Vue 3, Inertia Vue 3, TypeScript, Vite 8, Tailwind CSS 4, reka-ui/shadcn-vue patterns, PWA plugin, Capacitor 8.
-- **Datos/infra dev:** SQL Server 2019 (driver `sqlsrv/pdo_sqlsrv`), migraciones + stored procedures T-SQL, Redis/MinIO/Mailpit en Docker; `.env.example` usa `file/sync/local` por defecto.
-- **Integraciones:** Google OAuth, API DNI (apisperu), GA4 configurado.
-
-Detalle: `docs/technical/CURRENT_STACK.md`, `docs/technical/DATABASE_SCHEMA.md`, `docs/technical/CURRENT_ARCHITECTURE.md`.
+Detalle: `docs/technical/CURRENT_STACK.md`, `docs/technical/INTEGRATIONS.md`, `docs/technical/DATABASE_SCHEMA.md`.
 
 ## 5. Cómo está construido actualmente
+- Monolito Laravel + Inertia/Vue; rutas web principales y endpoints JSON puntuales.
+- Multi-tenancy lógico por `Team` (slug), equipos personales vs organizacionales, RBAC por `TeamRole/TeamPermission`.
+- Dominios: identidad/equipos, mascotas, adopciones, seguimientos, contenido, comunidad, directorios, soporte.
+- Patrones mixtos: Services/Repositories, eventos/jobs/listeners/notificaciones y lógica en closures/controladores.
+- **Persistencia:** Eloquent como vía observada; **SPs definidos sin invocaciones halladas** en `app/`. PDFs y uploads en disco `public`.
 
-- **Monolito Laravel + Inertia/Vue** con rutas web como interfaz principal y pocos endpoints JSON.
-- **Multi-tenancy lógico por Team:** equipos personales vs organizacionales, panel por slug, membresías con roles/permisos (`TeamRole`, `TeamPermission`).
-- **Dominios:** mascotas, adopciones, seguimientos, eventos, blog, mascotas perdidas, veterinarias, calificaciones, contacto, admin.
-- **Patrones mixtos:** Services/Repositories en áreas clave, eventos/jobs/listeners/notificaciones para adopciones/seguimientos/documentos, lógica también en closures de rutas y UI.
-- **Persistencia híbrida:** Eloquent/migraciones + procedimientos almacenados T-SQL (con indicios de desfase respecto a esquema evolucionado).
+Detalle: `docs/technical/CURRENT_ARCHITECTURE.md`, `docs/domain/DOMAIN_MODEL.md`, `docs/domain/ER_DIAGRAM.md`.
 
-## 6. Problemas y riesgos detectados
+## 6. Clasificación de estado (Fase 0)
 
-| Severidad | Hallazgo |
+| Clasificación | Elementos principales |
 |---|---|
-| Alta | Superadmin hardcodeado por email en middlewares (`IsSuperAdmin`, `EnsureTeamMembership`) |
-| Alta | Riesgo operativo por `.env` presente en árbol y posibles exposiciones de configuración |
-| Media | Enforcement fino de permisos no verificado exhaustivamente frente al catálogo definido |
-| Media | Endpoints públicos (chatbot/DNI) sin controles de abuso explícitos en rutas revisadas |
-| Media/Alta | Desfase potencial entre SPs T-SQL, migraciones recientes y factories |
-| Media | Discrepancias README vs implementación/versiones reales; defaults `sync/file` vs servicios disponibles |
-| Media | Deuda de consistencia arquitectónica (closures, convenciones mixtas, UI legacy) |
+| **Verificado** | Flujos adopción/seguimiento y side-effects en código; requests/middleware/policies clave; eventos/listeners/jobs/notificaciones/PDFs; SPs definidos (sin uso app); integraciones configuradas en código; inventario de tests y `phpunit.xml`; estructura repo/configs; gaps de seguridad y pruebas |
+| **Inferido** | Detalle fino de algunas pantallas/acciones admin, uso real en entorno de Redis/MinIO/S3/colas no-sync, partes de OAuth/2FA, campos exactos de tablas auxiliares/calificaciones |
+| **Incompleto (gap conocido)** | Campos extendidos de seguimiento no persistidos; semántica/descarga de acta vs certificado; modelo de ratings parcialmente trazado; cobertura de pruebas de dominio nula |
+| **Pendiente de confirmación** | Disparo UI/ruta de `complete`/`cancel` adopción; ejecución real de scheduler/colas; uso operativo de SPs; resultados de tests y paridad de negocio con stakeholders; estrategia de migración de credenciales/factores |
 
-Detalle: `docs/technical/SECURITY_AUDIT.md`, `docs/technical/TECHNICAL_DEBT.md`.
+## 7. Hallazgos nuevos relevantes (cierre documental)
+1. **SPs sin uso en runtime:** 9 procedimientos T-SQL presentes y cargables, pero sin llamadas desde la aplicación (Eloquent domina).  
+2. **Brecha de persistencia en seguimientos:** `Store/UpdateFollowUpRequest` acepta `weight_kg`, `vaccines`, `behavior`, `health_status`, `drive_link`, `photos` URL, pero `FollowUpService` no persiste estos metadatos.  
+3. **Documentos PDF duplicados/ambiguos:** `GenerateAdoptionActaJob` (disparado al aprobar) y `GenerateAdoptionCertificateJob` (sin disparador hallado) escriben ambos en `acta_path` con rutas distintas.  
+4. **Ciclo de adopción parcialmente trazado en operación:** `complete()` crea plan vía evento/listener; `cancel()` existe; invocación desde UI/rutas no confirmada.  
+5. **Seguridad:** bypass de superadmin por email hardcodeado en `IsSuperAdmin` y `EnsureTeamMembership`.  
+6. **Pruebas:** 17 archivos concentrados en auth/teams/settings/dashboard (scaffolding) y **cero** pruebas de dominio (adopciones, seguimientos, contenido, integraciones, jobs).  
+7. **Integraciones:** DNI (apisperu) con manejo de token/errores y timeout 10s sin rate-limit visible; chatbot por reglas en memoria; cola default `database` pero pruebas y dev suelen `sync`.
 
-## 7. Arquitectura y tecnologías propuestas
+## 8. Problemas y riesgos detectados
+| Severidad | Hallazgo | Estado |
+|---|---|---|
+| Alta | Superadmin hardcodeado por email en middlewares | V |
+| Alta | Ciclo crítico dependiente de scheduler/colas (vencimientos, notificaciones, PDFs, plan) sin garantía de operación verificada | V/C |
+| Alta | Migración de datos/credenciales (SQL Server→PostgreSQL, hashes, 2FA, passkeys, archivos) sin estrategia ejecutada | C |
+| Media-Alta | Gaps de dominio: `complete/cancel` no confirmados, campos seguimiento no persistidos, acta/certificado ambiguo | V/C |
+| Media | SPs definidos no usados / posible drift con esquema y factories | V |
+| Media | Endpoints públicos (chatbot/DNI) sin controles de abuso explícitos evidenciados | V |
+| Media | Discrepancias README vs implementación; defaults de infra (sync/file) vs servicios disponibles | V/P |
+| Media | Deuda de consistencia (closures, authz fina parcial, UI legacy) | V/P |
 
-- **Objetivo:** Modular Monolith en **TypeScript** (monorepo Turborepo+Bun workspaces), **API-first**, contratos compartidos con **Zod**.
+Detalle: `docs/technical/SECURITY_AUDIT.md`, `docs/technical/TECHNICAL_DEBT.md`, `docs/technical/TESTING_AUDIT.md`.
+
+## 9. Arquitectura y tecnologías propuestas
+- **Objetivo:** Modular Monolith en **TypeScript** (monorepo Turborepo+Bun), API-first, contratos con **Zod**.
 - **Backend:** Bun + Hono (preferido) o Elysia, Drizzle ORM, PostgreSQL.
-- **Frontend:** React 19 + Vite + TanStack Router/Query (+ Form cuando aporte), shadcn/ui + Tailwind.
-- **Móvil:** React Native + Expo (fase posterior) reutilizando contratos/cliente API.
-- **Auth:** Better Auth u alternativa condicionada a paridad (OAuth Google, 2FA, passkeys, equipos/RBAC).
-- **Infra:** Docker, S3-compatible para archivos, Redis solo si se justifica, CI/CD, logging/monitoreo/backups.
+- **Frontend:** React 19 + Vite + TanStack Router/Query, shadcn/ui + Tailwind.
+- **Móvil:** React Native + Expo (fase posterior).
+- **Auth/infra:** solución con paridad (OAuth Google, 2FA, passkeys, equipos/RBAC), storage S3-compatible, colas/workers, observabilidad y CI/CD.
 
-Detalle: `docs/modernization/TARGET_STACK.md`, `docs/modernization/TARGET_ARCHITECTURE.md`, `docs/modernization/TECHNOLOGY_DECISIONS.md`.
+Detalle: `docs/modernization/TARGET_STACK.md`, `docs/modernization/TARGET_ARCHITECTURE.md`, `docs/modernization/MODULE_BOUNDARIES.md`, `docs/modernization/TECHNOLOGY_DECISIONS.md`.
 
-## 8. Roadmap de reconstrucción
+## 10. Preparación para retiro de Laravel
+- **Inventario y plan sin eliminaciones:** `docs/modernization/LEGACY_CLEANUP_PLAN.md` (código/deps/config Docker a reemplazar, assets/docs a conservar, respaldos de BD/archivos/secretos, integraciones a reconstruir, secuencia segura y criterios de listo).
+- **Trazabilidad completa:** `docs/development/TRACEABILITY_MATRIX.md`.
 
-Fases propuestas: (1) fundación/monorepo, (2) infraestructura y BD, (3) identidad/permisos, (4) dominio núcleo, (5) módulos complementarios, (6) integraciones, (7) frontend web, (8) móvil, (9) pruebas/validación, (10) despliegue/cutover.  
-Prioridad máxima inicial: identidad/RBAC, mascotas, adopciones y seguimientos.
+## 11. Documentación producida en Fase 0 (nuevos/clave)
+- Negocio/dominio: `docs/business/WORKFLOWS.md`, `BUSINESS_MODEL.md`, `GLOSSARY.md`, `docs/domain/DOMAIN_MODEL.md`, `ER_DIAGRAM.md`, `STATE_MACHINES.md`.
+- Funcional: `docs/functional/FUNCTIONAL_REQUIREMENTS.md`, `USE_CASES.md`, `USER_STORIES.md`, `REPORTS_AND_EXPORTS.md`.
+- Técnico/modernización: `docs/technical/INTEGRATIONS.md`, `TESTING_AUDIT.md`, `docs/modernization/MODULE_BOUNDARIES.md`, `LEGACY_CLEANUP_PLAN.md`.
+- Trazabilidad y control: `docs/development/TRACEABILITY_MATRIX.md`, actualizaciones en `DOCUMENTATION_COVERAGE.md`, `FEATURE_INVENTORY.md`, `FINAL_AUDIT_REPORT.md`.
 
-Detalle: `docs/modernization/RECONSTRUCTION_ROADMAP.md`, `docs/modernization/MIGRATION_STRATEGY.md`.
+## 12. Decisiones que requieren aprobación
+1. Confirmar operación real de `complete/cancel` adopción y política de cierre/seguimiento.  
+2. Definir documento oficial (acta vs certificado), almacenamiento, descarga y permisos.  
+3. Decidir persistencia de metadatos clínicos de seguimiento y ajustes de esquema.  
+4. Destino de SPs (portar/descartar/equivalentes) y estrategia de paridad de consultas.  
+5. Framework HTTP (Hono vs Elysia) y proveedor de auth con paridad (OAuth/2FA/passkeys).  
+6. Estrategia SEO/SSR, alcance móvil (Expo/RN) y priorización de MVP.  
+7. Plan de migración SQL Server→PostgreSQL, archivos, credenciales/factores y cutover/rollback.  
+8. Eliminación de excepciones hardcodeadas (superadmin) y modelo final de roles/permisos.
 
-## 9. Qué falta investigar / validar
+## 13. Siguiente paso recomendado
+1. **Validar con negocio:** gaps C/P críticos (cierre adopción, documentos, campos seguimiento, SPs).  
+2. **Respaldos y descubrimiento de datos reales:** inventario de BD/archivos/secretos en entornos (sin exponer secretos en repo).  
+3. **Spikes técnicos:** (a) Hono+Drizzle+Postgres identidad/equipos/RBAC, (b) migración de muestra SQL Server→Postgres, (c) paridad auth y almacenamiento/documentos.  
+4. **Congelar trazabilidad aprobada** y entonces iniciar Fase 1 de reconstrucción.  
 
-- Reglas y validaciones exactas en `Form Requests`, `Policies`, controladores y UI por cada acción.
-- Efectos reales de `Events/Listeners/Jobs/Notifications/Mail` y su ejecución (colas/scheduler).
-- Uso efectivo de stored procedures, Redis, storage S3/local y generación de PDFs/actas en flujos reales.
-- Cobertura y resultados de pruebas (`tests/`) y casos borde de negocio.
-- Conciliación de roles del README con implementación real y expectativas de negocio.
-- Estrategia de migración de credenciales (hashes, 2FA, passkeys) y compatibilidad.
-
-Cobertura y pendientes: `docs/development/DOCUMENTATION_COVERAGE.md`.
-
-## 10. Decisiones que requieren aprobación
-
-1. Framework HTTP definitivo (Hono vs Elysia) y proveedor de autenticación (paridad comprobada).
-2. Estrategia SEO/SSR para sitio público.
-3. Alcance y momento de app móvil (Expo/RN).
-4. Modelo final de roles/permisos y eliminación de excepciones hardcodeadas.
-5. Plan de migración de datos/archivos (incl. SQL Server→PostgreSQL, SPs, documentos).
-6. Priorización de negocio para MVP de paridad.
-
-## 11. Siguiente paso recomendado
-
-1. **Cerrar auditoría profunda pendiente:** Requests/Policies/Jobs/Events/Listeners/Tests y trazado de uso real de SPs/storage/colas.
-2. **Completar artefactos críticos:** `WORKFLOWS.md`, `STATE_MACHINES.md`, `MIGRATION_STRATEGY` detallada por tabla/flujo, `INTEGRATIONS.md`, `TESTING_AUDIT.md`, `TECHNICAL_DEBT` priorizada.
-3. **Construir matriz de trazabilidad completa** (funcionalidad → regla → entidad → módulo nuevo → prioridad → estado).
-4. **Ejecutar spikes de validación:** (a) Hono+Drizzle+PostgreSQL con identidad/equipos, (b) migración de datos de muestra, (c) paridad auth (OAuth/2FA/passkeys).
-5. **Aprobar ADRs clave** y solo entonces iniciar implementación de la Fase 1 de reconstrucción.
-
-> **Conclusión:** se cuenta con un expediente inicial verificable y estructurado en `docs/` para guiar la reconstrucción sin depender de Laravel, aunque se requiere completar la verificación fina de reglas/efectos secundarios antes de declarar paridad funcional total. 
+> **Conclusión:** la Fase 0 queda documentada de forma integral para soportar la limpieza del stack Laravel y la reconstrucción de WASIYUQ 2.0. Persisten decisiones y validaciones operativas puntuales que deben cerrarse antes de declarar paridad funcional total y ejecutar migración/cutover.
