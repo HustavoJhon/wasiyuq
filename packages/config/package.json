@@ -1,0 +1,21 @@
+{
+  "name": "@wasiyuq/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "echo 'lint:config ok'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "bun test --pass-with-no-tests",
+    "format": "echo 'format:config ok'"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}
