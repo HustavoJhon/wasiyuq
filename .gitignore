@@ -44,3 +44,5 @@ bootstrap/cache/
 
 # Bun
 bun.lockb
+
+public/storage
