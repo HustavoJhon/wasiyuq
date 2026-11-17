@@ -13,6 +13,8 @@
     "vite.config.ts",
     "index.html",
     "tailwind.config.ts",
-    "postcss.config.js"
+    "postcss.config.js",
+    "e2e",
+    "playwright.config.ts"
   ]
 }

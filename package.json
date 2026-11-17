@@ -15,7 +15,8 @@
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "format": "turbo format",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "test:e2e": "bun run --filter @wasiyuq/web test:e2e"
   },
   "devDependencies": {
     "turbo": "^2.5.0",
