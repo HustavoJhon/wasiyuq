@@ -10,7 +10,7 @@
 | PostgreSQL 16 (Docker) | `infra/docker/docker-compose.yml` | Proyecto Compose `wasiyuq2`, contenedor `wasiyuq2-postgres`, volumen `wasiyuq2_postgres_data`, puerto host `127.0.0.1:55432` |
 | BD de test | `infra/docker/postgres/initdb/01-create-test-database.sh` | Crea `wasiyuq_test` al inicializar el volumen por primera vez |
 | Paquete de BD | `packages/db` | Configuración tipada (Zod), cliente Drizzle + postgres.js, health check, runner de migraciones con salvaguardas |
-| Esquema Drizzle | `packages/db/src/schema/` | Vacío a propósito (sin tablas de negocio) |
+| Esquema Drizzle | `packages/db/src/schema/` | `identity.ts` (users, sessions, accounts, verifications, rate_limits) y `organizations.ts` (organizations, memberships, invitations, contexts) desde Fase 3; sin tablas de negocio de mascotas/adopciones |
 | Migraciones | `packages/db/migrations/` | Único directorio de migraciones de 2.0 (generadas por Drizzle Kit) |
 | API | `apps/api` | `GET /health` (liveness) y `GET /ready` (readiness con BD), apagado ordenado |
 | CI | `.github/workflows/tests.yml` | Servicio PostgreSQL efímero `wasiyuq_test` + migraciones + tests |
@@ -105,8 +105,16 @@ Las suites que requieren BD se omiten (no fallan) si `TEST_DATABASE_URL` no est�
 
 ## 8. Limitaciones conocidas
 
-- No hay tablas de negocio ni migraciones de dominio (fases posteriores: identity, organizations, pets, adoptions, follow-ups…).
+- Migración aplicada: `0000_identity_organizations` (Fase 3). Sin tablas de pets, adoptions, follow-ups (fases posteriores).
 - No hay configuración de producción: el destino `development` lee `DATABASE_URL`; las migraciones están bloqueadas con `NODE_ENV=production`. El despliegue requiere una decisión propia (gestión de secretos, TLS, rol de migración separado).
 - `wasiyuq_test` solo se crea automáticamente en volúmenes nuevos; volúmenes previos requieren `createdb` manual.
 - No hay migración de datos desde SQL Server/SQLite legacy ni traducción de stored procedures T-SQL.
 - `lint` sigue siendo un placeholder (`echo`) en los paquetes.
+
+## 9. Actualización Fase 3 (2026-11-17)
+
+- Drizzle ORM 0.45.4 / drizzle-kit 0.31.11 (requisito de Better Auth). Zod 4.6.7.
+- Migración `packages/db/migrations/0000_identity_organizations.sql`: solo `CREATE TABLE/INDEX` y claves foráneas (aditiva). Aplicada a `wasiyuq_dev` y `wasiyuq_test` con `db:migrate` / `db:migrate:test`; re-ejecución idempotente; `drizzle-kit check` sin conflictos; `db:generate` sin cambios pendientes.
+- Restricciones y cascadas cubiertas por `packages/db/src/__tests__/schema.test.ts`.
+- Variables nuevas de autenticación: ver `docs/technical/AUTHENTICATION.md` y `.env.example`.
+- Salvaguardas de migración sin cambios (no se debilitaron).
