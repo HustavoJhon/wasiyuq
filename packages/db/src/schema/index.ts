@@ -1,2 +1,4 @@
-// Database schema definitions for WASIYUQ 2.0 will be added here (Drizzle ORM + PostgreSQL).
-export {};
+// Drizzle schema for WASIYUQ 2.0 (PostgreSQL). Each file is owned by one module.
+// After changing it run `bun run db:generate` and review the generated SQL in packages/db/migrations.
+export * from "./identity";
+export * from "./organizations";

@@ -12,13 +12,14 @@
     "build": "tsc -p tsconfig.json",
     "lint": "echo 'lint:validation ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test --pass-with-no-tests",
+    "test": "bun test ./src --pass-with-no-tests",
     "format": "echo 'format:validation ok'"
   },
   "dependencies": {
-    "zod": "^3.24.0"
+    "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.0",
     "typescript": "^5.8.0"
   }
 }

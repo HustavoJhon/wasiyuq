@@ -87,3 +87,26 @@ stateDiagram-v2
 | `TeamInvitation` | Aceptada/cancelada/vigente | Flujo de invitación y aceptación por código | Parcial (controladores/requests existen) |
 | `Veterinarian` | `is_verified` | Verificación por admin | Parcial |
 | `LostPet` | Estados de reporte (abierto/encontrado etc.) | Definición exacta en modelo/enum a confirmar | Pendiente |
+
+## 5. Estados implementados en 2.0 (Fase 3)
+
+### 5.1 Cuenta de usuario (`users.status`)
+
+```mermaid
+stateDiagram-v2
+  [*] --> active: registro (email/contraseña u OAuth)
+  active --> suspended: admin de plataforma (no a sí mismo); revoca todas las sesiones
+  suspended --> active: admin de plataforma
+```
+
+Verificación de email (`email_verified`) es ortogonal: `false` al registrarse con contraseña, `true` tras el enlace o con Google. Sin verificar se puede iniciar sesión, pero no usar funciones de organización.
+
+### 5.2 Sesión
+
+`creada` (sign-in/sign-up/verificación) → `expirada` (7 días sin renovar; renovación diaria) | `revocada` (sign-out, revocación desde perfil, restablecer contraseña, suspensión). Sin caché: el cambio es efectivo en la siguiente petición.
+
+### 5.3 Organización, membresía e invitación
+
+Ver diagramas en `docs/domain/ORGANIZATION_MEMBERSHIP.md`:
+- Organización: `active` → `archived` (terminal, conserva fila y slug).
+- Invitación: `pending` → `accepted` | `cancelled` | `expired` (precedencia accepted > cancelled > expired > pending).

@@ -13,6 +13,24 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    services:
+      # Isolated, throwaway PostgreSQL for integration tests (never a real or legacy database).
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: wasiyuq
+          POSTGRES_PASSWORD: wasiyuq
+          POSTGRES_DB: wasiyuq_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U wasiyuq -d wasiyuq_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://wasiyuq:wasiyuq@127.0.0.1:55432/wasiyuq_test
+      DB_MIGRATION_ALLOWED_DATABASES: wasiyuq_test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,6 +48,9 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      - name: Apply migrations to test database
+        run: bun run --filter @wasiyuq/db db:migrate:test
 
       - name: Test
         run: bun run test

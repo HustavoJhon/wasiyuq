@@ -13,13 +13,13 @@
 | F-PUB-05 | Mascotas perdidas público (listar/detalle/reportar) | Reporte abierto; gestión propia autenticada | `lost_pets`, `users` | `Public\LostPetController`, `Adopter\LostPetController` | community | Media | V/P |
 | F-PUB-06 | Formulario de contacto | Registrar solicitud y enviar correo (reply-to) | `contact_requests` | `routes/public.php` POST contacto, `ContactMessage` | support/notifications | Media | V |
 | F-PUB-07 | Sitemap y health | Exponer endpoints técnicos/SEO | N/A | `routes/public.php` | platform-public | Baja | V |
-| F-AUTH-01 | Registro/login/recuperación/2FA | Fortify; políticas de password en prod | `users`, tablas Fortify/2FA | stack Fortify, settings/security | identity-access | Alta | P |
-| F-AUTH-02 | Login Google OAuth | Vincular/autenticar vía proveedor | `users` (google_id) | `SocialLoginController`, `services.google` | identity-access/integrations | Alta | V/P |
-| F-AUTH-03 | Perfil y seguridad de cuenta | Usuario autenticado edita sus datos | `users` | `Settings\ProfileController`, `SecurityController` | identity-access | Alta | V/P |
-| F-AUTH-04 | Gestión de equipos y contexto actual | Usuario pertenece a teams; switch de team actual | `teams`, `team_user` | `Teams\TeamController`, dashboard redirect | organizations | Alta | V |
-| F-AUTH-05 | Invitaciones a equipo | Crear/aceptar/cancelar con rol y código | `team_invitations`, `teams`, `users` | `TeamInvitationController`, requests, `Teams\TeamInvitation` | organizations/notifications | Media | V |
-| F-AUTH-06 | Control acceso panel equipo | Debe ser miembro; team no personal→panel org; superadmin bypass | `teams`, membresías | `EnsureTeamMembership` | organizations/identity-access | Alta | V |
-| F-AUTH-07 | Control acceso admin | Solo superadmin (flag o email hardcodeado) | `users` | `IsSuperAdmin` | identity-access/platform-admin | Alta | V (riesgo) |
+| F-AUTH-01 | Registro/login/recuperación/2FA | Fortify; políticas de password en prod | `users`, tablas Fortify/2FA | stack Fortify, settings/security | identity-access | Alta | P → **2.0: registro, login, verificación y recuperación implementados (Better Auth); 2FA/passkeys diferidos** |
+| F-AUTH-02 | Login Google OAuth | Vincular/autenticar vía proveedor | `users` (google_id) | `SocialLoginController`, `services.google` | identity-access/integrations | Alta | V/P → **2.0: implementado (configurable), sin prueba real con Google** |
+| F-AUTH-03 | Perfil y seguridad de cuenta | Usuario autenticado edita sus datos | `users` | `Settings\ProfileController`, `SecurityController` | identity-access | Alta | V/P → **2.0: perfil (nombre/DNI/WhatsApp), sesiones y revocación implementados; cambio de email/borrado de cuenta pendientes** |
+| F-AUTH-04 | Gestión de equipos y contexto actual | Usuario pertenece a teams; switch de team actual | `teams`, `team_user` | `Teams\TeamController`, dashboard redirect | organizations | Alta | V → **2.0: implementado (crear, editar, archivar, multi-organización, contexto activo)** |
+| F-AUTH-05 | Invitaciones a equipo | Crear/aceptar/cancelar con rol y código | `team_invitations`, `teams`, `users` | `TeamInvitationController`, requests, `Teams\TeamInvitation` | organizations/notifications | Media | V → **2.0: implementado con endurecimientos (token hasheado, sin escalada, re-validación del emisor)** |
+| F-AUTH-06 | Control acceso panel equipo | Debe ser miembro; team no personal→panel org; superadmin bypass | `teams`, membresías | `EnsureTeamMembership` | organizations/identity-access | Alta | V → **2.0: autorización por permiso en servidor, aislamiento probado; sin bypass de superadmin (ADR-011)** |
+| F-AUTH-07 | Control acceso admin | Solo superadmin (flag o email hardcodeado) | `users` | `IsSuperAdmin` | identity-access/platform-admin | Alta | V (riesgo) → **2.0: `platform_role` explícito, sin email hardcodeado; panel mínimo (usuarios, suspensión)** |
 | F-ADOP-01 | Postular a adopción | Screening obligatorio; sin duplicado activo mismo user/pet | `adoptions`, `pets`, `users`, `teams` | `Adopter\ApplicationController@store`, `StoreApplicationRequest` | adoptions | Alta | V |
 | F-ADOP-02 | Crear adopción (transición inicial) | Crea `pending`, pet→`in_process`, emite evento | `adoptions`, `pets` | `AdoptionService::create`, `AdoptionApplicationSubmitted` | adoptions | Alta | V |
 | F-ADOP-03 | Notificar nueva postulación | Notificar miembros rol ≥ Admin por email (cola) | `notifications` (sistema), `users` | `NotifyEntityOfNewApplication`, `AdoptionApplicationSubmittedNotification` | notifications | Alta | V |
@@ -65,3 +65,17 @@
 | Doble job PDF sobre `acta_path` y sin descarga confirmada | Integridad documental | `adoptions`, storage | documents | V/P |
 | Bypass superadmin por email hardcodeado | Seguridad/gobernanza | acceso global | identity-access/platform-admin | V |
 | Cobertura de pruebas de dominio nula | Riesgo de regresión en reconstrucción | todos núcleo | QA transversal | V |
+
+## Actualización Fase 3 (2026-11-17)
+
+Las filas F-AUTH-01…07 indican el estado 2.0 tras "→". Trazabilidad a implementación:
+
+| ID | Módulo / código 2.0 | Pruebas |
+|---|---|---|
+| F-AUTH-01 | `modules/identity/src/infrastructure/authentication.ts`, `apps/web/src/routes/auth.tsx` | `modules/identity/src/__tests__/authentication.test.ts`, `apps/api/src/__tests__/identity-api.test.ts`, E2E |
+| F-AUTH-02 | ídem (proveedor `google` condicional) | Test de proveedores públicos |
+| F-AUTH-03 | `IdentityService`, `routes/me.ts`, `routes/profile.tsx` | Tests API (perfil, DNI duplicado, sesiones) |
+| F-AUTH-04 | `OrganizationService`, `routes/organizations.ts`, `routes/organizations.tsx` | `modules/organizations/src/__tests__/organization-service.test.ts`, tests API |
+| F-AUTH-05 | `OrganizationService.invite/accept/cancel`, `routes/invitations.ts`, `routes/invitation.tsx` | Tests servicio + API + E2E |
+| F-AUTH-06 | `domain/policy.ts`, `domain/roles.ts`, `OrganizationService.authorize` | Tests de dominio (paridad legacy) y aislamiento |
+| F-AUTH-07 | `routes/admin.ts`, CLI `admin:grant` | Test admin API |

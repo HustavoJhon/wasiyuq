@@ -86,3 +86,59 @@
 | Frontend React inicia | OK — `bun run --filter @wasiyuq/web dev` (Vite en `127.0.0.1:5174`), respuesta HTTP 200 y HTML de la app servido. |
 
 **Conclusión de fase:** fundación técnica 2.0 operativa en monorepo (install/build/lint/typecheck/test/API/web verificados). Quedan pendientes de entorno/permisos y trabajo funcional de módulos de negocio y migración de datos.
+
+## 8. Auditoría de limpieza de BD legacy (2026-11-17)
+
+Auditoría focalizada tras retirar `database/migrations/**` (commit `f02d015`, 26 migraciones PHP + `stored_procedures/.gitkeep`).
+
+### Búsqueda realizada
+`git grep` sobre todo el repo (excluyendo `docs/`, `legacy-assets/`, `database/`) de: `laravel`, `artisan`, `eloquent`, `Illuminate`, `sqlsrv`, `SQL Server`, `mssql`, `tedious`, `pdo_`, `composer`, `migrate:`, `db:seed`, `DB_CONNECTION`, `DB_HOST`. Revisados también `package.json` raíz y de cada workspace, `turbo.json`, `.github/workflows/*.yml`, `.env.example`, `infra/docker/`, y `bun.lock`.
+
+### Resultado: dependencias operativas
+**Ninguna.** No existen scripts, workflows CI, configuraciones ni dependencias que ejecuten migraciones Laravel, comandos Artisan, Eloquent o drivers de SQL Server.
+
+| Hallazgo | Tipo | Valoración |
+|---|---|---|
+| `README.md` (nota sobre retiro de Laravel), `packages/db/README.md` (nota sobre retiro de migraciones) | Histórico/aclaratorio | Correcto, se mantiene |
+| `.gitignore` → `.env.laravel.local` | Protección | Evita versionar secretos legacy; se mantiene |
+| `bun.lock` → `mysql2`, `sqlite3`, `better-sqlite3` | `peerDependencies` opcionales de `drizzle-orm` | No instalados; no operativos |
+| `database/factories/*.php`, `database/seeders/DatabaseSeeder.php` (usan `Illuminate`/Eloquent) | Referencia legacy | No ejecutables sin Laravel; conservados por decisión independiente |
+| `database/stored-procedures/**/*.sql` (T-SQL) | Referencia legacy | Conservados para paridad funcional |
+| `docs/**` | Histórico | Citas de auditoría marcadas como retiradas (commit `76a672f`) |
+| `legacy-assets/docs-ref/{docker-compose.legacy.yml,Makefile.legacy,README.legacy.md}` | Respaldo documental | Incluye comandos Artisan/SQL Server históricos; no operativos |
+
+### Datos legacy locales detectados (no versionados, preservados)
+- `.env.legacy` declara `DB_CONNECTION=sqlite` → `database/database.sqlite` (ignorado vía `database/.gitignore`). El entorno Docker legacy (`docker-compose.legacy.yml`) usaba SQL Server. **Ambos se tratan como bases de datos originales: no se modifican ni eliminan.**
+
+### Infraestructura de migraciones 2.0
+- Único sistema previsto: **Drizzle Kit** en `packages/db` (`drizzle.config.ts`, salida `packages/db/migrations/`, dialecto `postgresql`).
+- Ninguna otra carpeta de migraciones ni otro ORM en workspaces.
+
+### Riesgos remanentes
+- Las factories/seeders legacy pueden confundirse con tooling 2.0; pendientes de decisión (archivar en `legacy-assets/` o eliminar).
+- `database/database.sqlite` vive dentro del árbol de trabajo; se recomienda respaldarlo fuera del repo antes de cualquier limpieza física.
+
+
+## 9. Fase 2 — fundación de base de datos (2026-11-17)
+
+Relación con la limpieza legacy: la nueva infraestructura PostgreSQL/Drizzle se construyó **sin tocar** ningún recurso legacy.
+
+- **Colisión detectada y resuelta:** el `docker-compose.yml` de 2.0 usaba implícitamente el mismo nombre de proyecto Compose (`wasiyuq`) que el stack Laravel, cuyos contenedores (`wasiyuq-sqlserver-1`, `wasiyuq-minio-1`, `wasiyuq-redis-1`, `wasiyuq-app-1`, `wasiyuq-nginx-1`, `wasiyuq-mailpit-1`; detenidos) y volúmenes (`wasiyuq_sqlserver_data`, `wasiyuq_minio_data`, `wasiyuq_redis_data`) siguen en el host. Un `docker compose down --remove-orphans` desde 2.0 podía eliminar esos contenedores. Se renombró el proyecto 2.0 a **`wasiyuq2`** (contenedor `wasiyuq2-postgres`, volumen `wasiyuq2_postgres_data`). El contenedor y el volumen 2.0 creados minutos antes con el nombre conflictivo (vacíos) se eliminaron por nombre exacto; **ningún contenedor ni volumen legacy fue modificado**.
+- **Volumen residual de Fase 1:** `docker_wasiyuq_postgres_data` (creado 2026-11-16 por el intento de arranque de Fase 1, proyecto `docker`). No se eliminó; puede borrarse manualmente si se confirma que no contiene datos útiles.
+- **Puertos:** el host tiene otras instancias PostgreSQL en 5432/5433 (otros proyectos). 2.0 usa `127.0.0.1:55432` y las salvaguardas de migración rechazan BD no listadas (verificado: un intento contra `127.0.0.1:5432/postgres` se rechaza sin conectar).
+- **Salvaguardas anti-legacy:** URLs no PostgreSQL (SQL Server/MySQL/SQLite) se rechazan en la validación; las migraciones rechazan puertos 1433/1434 y nombres con `legacy|laravel|sqlserver|mssql|sqlite|forge|homestead`.
+- **Sin operaciones destructivas automáticas:** ningún script hace `DROP DATABASE`/`migrate:fresh`/reset. El reset de desarrollo está documentado como procedimiento manual en `infra/docker/README.md`.
+- Detalle técnico: `docs/technical/DATABASE_FOUNDATION.md`.
+
+### Verificaciones Fase 2
+
+| Verificación | Resultado |
+|---|---|
+| `docker compose --env-file .env -f infra/docker/docker-compose.yml up -d` | OK — `wasiyuq2-postgres` `healthy`; BD `wasiyuq_dev` y `wasiyuq_test` creadas |
+| `bun run --filter @wasiyuq/db db:generate` | OK — sin cambios de esquema (esquema vacío); `meta/_journal.json` creado |
+| `db:migrate` / `db:migrate:test` | OK — `applied`, `appliedTotal: 0` (solo esquema de control `drizzle`) |
+| `db:migrate` con allow-list vacía / contra `postgres` en 5432 | Rechazado por salvaguardas, exit 1, sin conexión |
+| `bun run test` | OK — `@wasiyuq/db` 22 pass (unitarios + integración en `wasiyuq_test`, incl. generate+migrate en esquema efímero); `@wasiyuq/api` 7 pass |
+| Tests sin BD (`TEST_DATABASE_URL` ausente o inalcanzable) | Integración omitida, 0 fallos |
+| `bun run lint` / `typecheck` / `build` | OK |
+| API real (`PORT=3101`) | `/health` 200; `/ready` 200 → `docker stop wasiyuq2-postgres` → `/ready` 503 `ECONNREFUSED` (log JSON sin credenciales), `/health` 200 → `docker start` → `/ready` 200; `SIGTERM` → `api shutting down`/`api stopped`, proceso termina |

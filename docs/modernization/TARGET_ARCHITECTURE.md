@@ -1,6 +1,6 @@
 # Arquitectura objetivo
 
-**Fecha:** 2026-11-16 (actualizado tras Fase 1)  
+**Fecha:** 2026-11-17 (actualizado tras Fase 2 — fundación de BD)  
 **Objetivo:** reconstruir WASIYUQ como plataforma moderna, mantenible y preparada para web y móvil, preservando dominio y reglas de negocio.
 
 ## Estado Fase 1 (fundación creada)
@@ -10,6 +10,42 @@
 - `apps/mobile`: preparado (sin implementación funcional).
 - Módulos y paquetes creados con límites/exports mínimos (`index.ts`); sin lógica de negocio implementada aún.
 - **Migraciones 2.0:** estructura exclusiva en `packages/db/migrations/` con configuración Drizzle ORM + PostgreSQL preparada (sin esquema funcional completo). Las migraciones Laravel legacy `database/migrations/**` fueron retiradas; `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
+
+## Estado Fase 2 (fundación de base de datos)
+- `packages/db` (`@wasiyuq/db`): configuración tipada por destino (`development` → `DATABASE_URL`, `test` → `TEST_DATABASE_URL`) validada con Zod; cliente Drizzle sobre postgres.js con ciclo de vida (`createDatabase`/`close`); `checkDatabaseHealth`; `runMigrations` con salvaguardas (lista explícita de BD, host local, separación dev/test, bloqueo en producción, rechazo de indicadores legacy SQL Server); exports explícitos en `src/index.ts`.
+- `apps/api`: depende de `@wasiyuq/db`; `GET /health` (liveness, sin BD) y `GET /ready` (readiness, consulta PostgreSQL, 503 con código de fallo); logs JSON estructurados de fallos de conexión sin credenciales; `SIGINT`/`SIGTERM` con apagado ordenado.
+- `packages/validation`: `readinessResponseSchema` compartido.
+- `infra/docker`: PostgreSQL 16 aislado del stack legacy (proyecto Compose `wasiyuq2`).
+- Esquema Drizzle vacío: los módulos de negocio definirán sus tablas en fases posteriores.
+- Referencia completa: `docs/technical/DATABASE_FOUNDATION.md`.
+
+```mermaid
+flowchart LR
+  API["apps/api (Hono)"] -->|createDatabase / checkDatabaseHealth| DB["packages/db"]
+  DB -->|postgres.js + Drizzle| PG[("PostgreSQL 16\nwasiyuq_dev / wasiyuq_test")]
+  CLI["db:migrate / db:migrate:test"] -->|assertMigrationTargetAllowed| DB
+  KIT["drizzle-kit generate"] -->|SQL| MIG["packages/db/migrations"]
+  MIG --> CLI
+```
+
+## Estado Fase 3 (identidad y organizaciones, 2026-11-17)
+- `modules/identity`: dominio (`IdentityUser`, estado de cuenta, rol de plataforma), aplicación (`IdentityService`: perfil, sesiones, administración de cuentas) e infraestructura (adaptador Better Auth, repositorios Drizzle, correo). Better Auth solo vive en `infrastructure/authentication.ts`.
+- `modules/organizations`: dominio (catálogo rol→permiso legacy, políticas deny-by-default, invitaciones, slugs), aplicación (`OrganizationService`) e infraestructura (repositorio Drizzle transaccional).
+- `apps/api`: `/api/auth/*` (Better Auth) + `/api/v1/*` (Hono: errores uniformes, Zod, sesión, verificación de email, CSRF, rate limit, logs sin secretos). Composición en `src/services.ts`.
+- `apps/web`: React + TanStack Router/Query + componentes estilo shadcn/ui + Tailwind (login, registro, recuperación, shell autenticado, perfil y sesiones, organizaciones, miembros, invitaciones, administración), navegación según permisos.
+- `packages/validation` (contratos Zod compartidos) y `packages/api-client` (cliente tipado que valida respuestas).
+- Referencias: `docs/technical/AUTHENTICATION.md`, `AUTHORIZATION_RBAC.md`, `API_IDENTITY_CONTRACT.md`, `SECURITY_DECISIONS.md`, `docs/domain/ORGANIZATION_MEMBERSHIP.md`.
+
+```mermaid
+flowchart TB
+  WEB["apps/web"] -->|"/api/auth (cookie)"| API["apps/api"]
+  WEB -->|"/api/v1 via api-client"| API
+  API --> ID["modules/identity"]
+  API --> ORG["modules/organizations"]
+  ID -->|"Better Auth + Drizzle"| DB[("PostgreSQL")]
+  ORG -->|Drizzle| DB
+  API -. "hook post-registro / notificador" .-> ORG
+```
 
 ## 1. Principios
 
@@ -92,6 +128,7 @@ flowchart TB
 
 - **PostgreSQL** como fuente de verdad nueva; esquema diseñado desde dominio y mapeado a esquema actual.
 - Estrategia de migración: extracción desde SQL Server, transformación (tipos, JSON, enums/strings, timestamps, soft deletes), carga verificable y reconciliación.
+- **Implementado (Fase 2):** infraestructura de migraciones Drizzle Kit con salvaguardas; ver `docs/technical/DATABASE_FOUNDATION.md`. Aún sin esquema de dominio ni migración de datos.
 - Reemplazo de **stored procedures T-SQL** por consultas/repositorios/casos de uso en Drizzle, manteniendo resultados funcionales equivalentes.
 
 ## 7. Seguridad objetivo

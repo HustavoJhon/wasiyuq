@@ -1,21 +1,35 @@
+# WASIYUQ 2.0 — local development infrastructure.
+# Usage (from repo root): docker compose --env-file .env -f infra/docker/docker-compose.yml up -d
+# Project name "wasiyuq2" is intentionally distinct from the legacy Laravel stack ("wasiyuq"),
+# whose containers and volumes (SQL Server, MinIO, Redis) must never be touched from here.
+# See infra/docker/README.md for start/stop/logs/reset procedures.
+
+name: wasiyuq2
+
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: wasiyuq-postgres-dev
+    container_name: wasiyuq2-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-wasiyuq}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wasiyuq}
       POSTGRES_DB: ${POSTGRES_DB:-wasiyuq_dev}
+      # Created on first initialization only (see postgres/initdb).
+      POSTGRES_TEST_DB: ${POSTGRES_TEST_DB:-wasiyuq_test}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      # Bound to loopback only. Default 55432 avoids clashing with other local PostgreSQL instances on 5432.
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
     volumes:
-      - wasiyuq_postgres_data:/var/lib/postgresql/data
+      - wasiyuq2_postgres_data:/var/lib/postgresql/data
+      - ./postgres/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-wasiyuq} -d ${POSTGRES_DB:-wasiyuq_dev}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
 volumes:
-  wasiyuq_postgres_data:
+  wasiyuq2_postgres_data:
+    name: wasiyuq2_postgres_data
