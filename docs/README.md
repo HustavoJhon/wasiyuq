@@ -41,6 +41,8 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 
 > **WASIYUQ 2.0:** las migraciones de base de datos ya no usan Laravel/Artisan; pertenecen exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL). Desde la Fase 2 la infraestructura es operativa (configuración validada, migraciones con salvaguardas, readiness en la API), aún sin esquema de negocio; ver [DATABASE_FOUNDATION.md](technical/DATABASE_FOUNDATION.md). `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
 
+> **Fase 3 (2026-11-17):** identidad y organizaciones implementadas (Better Auth para autenticación; RBAC propio con los 8 roles y 31 permisos legacy; aislamiento multi-organización probado). 2FA y passkeys diferidos. Ver [AUTHENTICATION.md](technical/AUTHENTICATION.md).
+
 ## Índice rápido
 
 - [Auditoría del repositorio](development/REPOSITORY_AUDIT.md)
@@ -50,9 +52,14 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 - [Matriz de trazabilidad](development/TRACEABILITY_MATRIX.md)
 - [Registro de limpieza Fase 1](development/LEGACY_CLEANUP_LOG.md)
 - [Plan de retiro de legado](modernization/LEGACY_CLEANUP_PLAN.md)
-- [Stack objetivo (Fases 1–2 aplicadas)](modernization/TARGET_STACK.md)
+- [Stack objetivo (Fases 1–3 aplicadas)](modernization/TARGET_STACK.md)
 - [Arquitectura objetivo](modernization/TARGET_ARCHITECTURE.md)
 - [Fundación de base de datos (Fase 2)](technical/DATABASE_FOUNDATION.md)
+- [Autenticación (Fase 3)](technical/AUTHENTICATION.md)
+- [Autorización y RBAC (Fase 3)](technical/AUTHORIZATION_RBAC.md)
+- [Contrato API de identidad y organizaciones](technical/API_IDENTITY_CONTRACT.md)
+- [Decisiones de seguridad](technical/SECURITY_DECISIONS.md)
+- [Ciclo de vida de organizaciones y membresías](domain/ORGANIZATION_MEMBERSHIP.md)
 - [Roadmap de reconstrucción](modernization/RECONSTRUCTION_ROADMAP.md)
 
 ## Notas

@@ -60,12 +60,20 @@ Migrations only run against databases listed in `DB_MIGRATION_ALLOWED_DATABASES`
 ### Web only
 ```bash
 bun run --filter @wasiyuq/web dev
-# http://localhost:5173
+# http://localhost:5173 (proxies /api to VITE_API_PROXY_TARGET, default http://localhost:3001)
 ```
+
+Auth docs: [`docs/technical/AUTHENTICATION.md`](docs/technical/AUTHENTICATION.md),
+[`docs/technical/AUTHORIZATION_RBAC.md`](docs/technical/AUTHORIZATION_RBAC.md),
+[`docs/technical/API_IDENTITY_CONTRACT.md`](docs/technical/API_IDENTITY_CONTRACT.md).
 
 ## Notes
 
 - Database/stack migration is in progress; original databases are not modified by this repository setup.
-- Database foundation (PostgreSQL + Drizzle, Phase 2) is in place without business tables.
-- Better Auth and business modules are not implemented yet.
+- Database foundation (PostgreSQL + Drizzle, Phase 2).
+- Identity & organizations (Phase 3): email/password sign-up, email verification, password recovery, sessions,
+  optional Google OAuth (Better Auth), organizations, memberships, invitations and organization-scoped RBAC.
+  2FA and passkeys are deferred. Pets, adoptions and follow-ups are not implemented yet.
+- Grant platform administration: `bun run --filter @wasiyuq/api admin:grant -- user@example.com`.
+- In development, emails (verification, reset, invitations) are printed in the API output (`MAIL_TRANSPORT=console`).
 - See `docs/development/LEGACY_CLEANUP_LOG.md` for cleanup record and risks.
