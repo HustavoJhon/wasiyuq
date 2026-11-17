@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { createDatabase, sessions, users, type DatabaseConfig, type DatabaseHandle } from "@wasiyuq/db";
 import { CLIENT_IP_HEADER, loadAuthConfig } from "../infrastructure/auth-config";
 import { createAuthentication, type Authentication } from "../infrastructure/authentication";
+import { EmailDispatcher } from "../infrastructure/email/dispatcher";
 import { MemoryEmailSender } from "../infrastructure/email/senders";
 import { resolveTestDatabase, uniqueEmail, uniqueIp } from "./support";
 
@@ -14,16 +15,16 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
   let auth: Authentication;
   const mailer = new MemoryEmailSender();
   const created: string[] = [];
+  const config = loadAuthConfig({
+    AUTH_SECRET: "test-secret-test-secret-test-secret-123",
+    AUTH_BASE_URL: BASE,
+    WEB_APP_URL: BASE,
+    MAIL_TRANSPORT: "memory",
+  });
 
   beforeAll(() => {
     handle = createDatabase(testDb as DatabaseConfig);
-    const config = loadAuthConfig({
-      AUTH_SECRET: "test-secret-test-secret-test-secret-123",
-      AUTH_BASE_URL: BASE,
-      WEB_APP_URL: BASE,
-      MAIL_TRANSPORT: "memory",
-    });
-    auth = createAuthentication(handle.db, config, mailer, { onUserCreated: async (u) => void created.push(u.id) });
+    auth = createAuthentication(handle.db, config, new EmailDispatcher(mailer), { onUserCreated: async (u) => void created.push(u.id) });
   });
   afterAll(async () => handle?.close());
 
@@ -46,21 +47,27 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
       .getSetCookie()
       .map((c) => c.split(";")[0])
       .join("; ");
+  /** Sign up, then sign in (sign-up never opens a session) and return the session cookie. */
   const signUp = async (email = uniqueEmail(), password = "correct-horse-battery") => {
     const res = await call("/sign-up/email", { body: { name: "Ana Test", email, password } });
-    return { res, email, password, cookie: cookieOf(res) };
+    const signIn = await call("/sign-in/email", { body: { email, password } });
+    return { res, signIn, email, password, cookie: cookieOf(signIn) };
   };
 
-  test("sign-up creates an unverified user, a session cookie, a verification email and runs the hook", async () => {
-    const { res, email, cookie } = await signUp();
+  test("sign-up creates an unverified user and a verification email, but no session", async () => {
+    const { res, signIn, email, cookie } = await signUp();
     expect(res.status).toBe(200);
-    const setCookie = res.headers.getSetCookie().join("\n");
-    expect(setCookie).toContain("wasiyuq.session_token=");
-    expect(setCookie.toLowerCase()).toContain("httponly");
-    expect(setCookie.toLowerCase()).toContain("samesite=lax");
+    expect(res.headers.getSetCookie().join("\n")).not.toContain("session_token");
     const body = await res.clone().text();
     expect(body).not.toContain("password");
     expect(body).not.toContain('"token"');
+
+    expect(signIn.status).toBe(200);
+    const setCookie = signIn.headers.getSetCookie().join("\n");
+    expect(setCookie).toContain("wasiyuq.session_token=");
+    expect(setCookie.toLowerCase()).toContain("httponly");
+    expect(setCookie.toLowerCase()).toContain("samesite=lax");
+    expect(setCookie.toLowerCase()).not.toContain("secure"); // development config; production adds Secure
 
     const session = await auth.getSession(new Headers({ cookie }));
     expect(session?.user).toMatchObject({ email, emailVerified: false, platformRole: "user", status: "active" });
@@ -76,11 +83,18 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(rows[0]!.password.length).toBeGreaterThan(40);
   });
 
-  test("duplicate emails are rejected", async () => {
-    const { email } = await signUp();
+  test("sign-up with an existing email is indistinguishable from a new sign-up (no enumeration)", async () => {
+    const { email, password } = await signUp();
+    const fresh = await call("/sign-up/email", { body: { name: "Other", email: uniqueEmail(), password: "another-password-1" } });
     const again = await call("/sign-up/email", { body: { name: "Other", email, password: "another-password-1" } });
-    expect(again.status).toBeGreaterThanOrEqual(400);
-    expect(again.status).toBeLessThan(500);
+    expect(again.status).toBe(fresh.status);
+    expect(again.headers.getSetCookie()).toEqual([]);
+    const keys = (body: { user: Record<string, unknown> }) => Object.keys(body.user).sort();
+    expect(keys(await again.json())).toEqual(keys(await fresh.json()));
+    // The real owner is told by email; their account and password are untouched.
+    expect(mailer.last(email, "account_exists")?.text).toContain(`${BASE}/login`);
+    expect((await call("/sign-in/email", { body: { email, password } })).status).toBe(200);
+    expect((await call("/sign-in/email", { body: { email, password: "another-password-1" } })).status).toBe(401);
   });
 
   test("weak passwords are rejected", async () => {
@@ -96,6 +110,20 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect([200, 302]).toContain(res.status);
     const [user] = await handle.db.select().from(users).where(eq(users.email, email));
     expect(user!.emailVerified).toBe(true);
+
+    // Reusing the link does not sign anyone in again.
+    const reuse = await call(`${url.pathname.replace("/api/auth", "")}${url.search}`);
+    expect(reuse.headers.getSetCookie().join("")).not.toContain("session_token=");
+  });
+
+  test("tampered verification links are rejected", async () => {
+    const { email } = await signUp();
+    const link = new URL(mailer.last(email, "email_verification")!.text.match(/https?:\/\/\S+/)![0]);
+    link.searchParams.set("token", `${link.searchParams.get("token")}x`);
+    const res = await call(`${link.pathname.replace("/api/auth", "")}${link.search}`);
+    expect(res.headers.getSetCookie().join("")).not.toContain("session_token=");
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    expect(user!.emailVerified).toBe(false);
   });
 
   test("invalid credentials return a generic 401 for unknown email and wrong password alike", async () => {
@@ -148,11 +176,54 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(reuse.status).toBe(400);
     const signIn = await call("/sign-in/email", { body: { email, password: "brand-new-password-9" } });
     expect(signIn.status).toBe(200);
+    expect(mailer.last(email, "password_changed")).toBeDefined();
+  });
+
+  test("password reset tokens expire", async () => {
+    const { email } = await signUp();
+    await call("/request-password-reset", { body: { email, redirectTo: `${BASE}/reset-password` } });
+    const token = new URL(mailer.last(email, "password_reset")!.text.match(/https?:\/\/\S+/)![0]).pathname.split("/").pop()!;
+    // Identifiers are stored hashed, so expire every pending reset token of this test run's user via its value row.
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    await handle.sql`update verifications set expires_at = now() - interval '1 minute' where value = ${user!.id}`;
+    const reset = await call("/reset-password", { body: { token, newPassword: "brand-new-password-9" } });
+    expect(reset.status).toBe(400);
   });
 
   test("password reset for unknown emails responds identically (no account enumeration)", async () => {
-    const res = await call("/request-password-reset", { body: { email: uniqueEmail("nobody"), redirectTo: `${BASE}/reset-password` } });
-    expect(res.status).toBe(200);
+    const { email } = await signUp();
+    const known = await call("/request-password-reset", { body: { email, redirectTo: `${BASE}/reset-password` } });
+    const unknown = await call("/request-password-reset", { body: { email: uniqueEmail("nobody"), redirectTo: `${BASE}/reset-password` } });
+    expect(unknown.status).toBe(200);
+    expect(known.status).toBe(200);
+    expect(await unknown.text()).toBe(await known.text());
+  });
+
+  test("email provider failures never change auth responses or leak tokens into logs", async () => {
+    const logs: string[] = [];
+    const failing = new EmailDispatcher(
+      { send: async () => Promise.reject(Object.assign(new Error("550 rejected"), { code: "EENVELOPE", responseCode: 550 })) },
+      { log: (level, message, meta) => void logs.push(JSON.stringify({ level, message, meta })) },
+    );
+    const broken = createAuthentication(handle.db, config, failing);
+    const req = (path: string, body: unknown) =>
+      broken.handler(
+        new Request(`${BASE}/api/auth${path}`, {
+          method: "POST",
+          headers: { "content-type": "application/json", origin: BASE, [CLIENT_IP_HEADER]: uniqueIp() },
+          body: JSON.stringify(body),
+        }),
+      );
+    const email = uniqueEmail("mailfail");
+    expect((await req("/sign-up/email", { name: "Mail Fail", email, password: "correct-horse-battery" })).status).toBe(200);
+    expect((await req("/request-password-reset", { email, redirectTo: `${BASE}/reset-password` })).status).toBe(200);
+    await failing.drain(2000);
+    expect(failing.health().failed).toBe(2);
+    const joined = logs.join("\n");
+    expect(joined).toContain("email delivery failed");
+    expect(joined).not.toContain(email);
+    expect(joined).not.toContain("token");
+    expect(joined).not.toContain("reset-password");
   });
 
   test("suspending an account invalidates its existing sessions immediately (fail closed)", async () => {

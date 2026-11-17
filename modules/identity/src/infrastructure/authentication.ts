@@ -4,10 +4,11 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
 import { accounts, rateLimits, sessions, users, verifications, type Database } from "@wasiyuq/db";
 import type { AccountStatus, PlatformRole } from "@wasiyuq/validation";
-import type { EmailSender } from "../domain/ports";
+import type { EmailOutbox } from "../domain/ports";
 import type { IdentityUser } from "../domain/user";
 import { CLIENT_IP_HEADER, type AuthConfig } from "./auth-config";
 import { emailTemplates } from "./email/templates";
+import { createPasswordHasher, type PasswordHasher } from "./password-hasher";
 
 export interface AuthenticatedSession {
   session: { id: string; expiresAt: Date; createdAt: Date };
@@ -17,8 +18,10 @@ export interface AuthenticatedSession {
 export interface AuthenticationHooks {
   /** Called after any user is created (email sign-up or OAuth). Must be idempotent. */
   onUserCreated?: (user: { id: string; name: string; email: string }) => Promise<void>;
-  /** Structured logger for non-fatal failures inside auth callbacks (no secrets). */
-  logError?: (message: string, meta: Record<string, unknown>) => void;
+  /** Structured logger (no secrets). Also receives Better Auth's own log lines, redacted. */
+  log?: (level: "info" | "warn" | "error", message: string, meta: Record<string, unknown>) => void;
+  /** Override the password hasher (tests). Defaults to the bounded scrypt hasher. */
+  passwordHasher?: PasswordHasher;
 }
 
 export interface Authentication {
@@ -37,8 +40,10 @@ const ONE_DAY = 60 * 60 * 24;
  * Better Auth adapter. Provider details stay here: the rest of the system only sees `Authentication`
  * and `IdentityUser`.
  */
-export function createAuthentication(db: Database, config: AuthConfig, mailer: EmailSender, hooks: AuthenticationHooks = {}): Authentication {
-  const logError = hooks.logError ?? (() => {});
+export function createAuthentication(db: Database, config: AuthConfig, outbox: EmailOutbox, hooks: AuthenticationHooks = {}): Authentication {
+  const log = hooks.log ?? (() => {});
+  const passwordHasher = hooks.passwordHasher ?? createPasswordHasher({ concurrency: config.passwordHashConcurrency });
+  const loginUrl = `${config.webAppUrl}/login`;
 
   const auth = betterAuth({
     appName: "WASIYUQ",
@@ -47,6 +52,14 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
     secret: config.secret,
     trustedOrigins: config.trustedOrigins,
     telemetry: { enabled: false },
+    // Better Auth logs errors with raw arguments (database errors can carry emails and SQL parameters). Route its
+    // lines through the structured logger with emails redacted and arguments reduced to their error type.
+    logger: {
+      level: "warn",
+      log: (level, message, ...args) => {
+        log(level === "debug" ? "info" : level, "better-auth", { detail: redactEmails(message), errorTypes: args.map(describeArgument) });
+      },
+    },
     database: drizzleAdapter(db, {
       provider: "pg",
       schema: { user: users, session: sessions, account: accounts, verification: verifications, rateLimit: rateLimits },
@@ -63,13 +76,27 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       enabled: true,
       minPasswordLength: 8,
       maxPasswordLength: 128,
-      autoSignIn: true,
+      // No session on sign-up: Better Auth then answers a sign-up for an existing email exactly like a new one
+      // (same status, same body shape, password hashed in both paths), so the endpoint cannot enumerate accounts.
+      // The owner of the existing account is told by email instead (onExistingUserSignUp).
+      autoSignIn: false,
       // Legacy parity: unverified users may sign in, but organization features require a verified email.
       requireEmailVerification: false,
+      password: {
+        hash: (password) => passwordHasher.hash(password),
+        verify: (input) => passwordHasher.verify(input),
+      },
       resetPasswordTokenExpiresIn: 60 * 60,
       revokeSessionsOnPasswordReset: true,
+      // Emails go to the background outbox: responses never wait for (or reveal) delivery.
       sendResetPassword: async ({ user, url }) => {
-        await mailer.send(emailTemplates.passwordReset(user.email, user.name, url));
+        outbox.dispatch(emailTemplates.passwordReset(user.email, user.name, url));
+      },
+      onPasswordReset: async ({ user }) => {
+        outbox.dispatch(emailTemplates.passwordChanged(user.email, user.name, loginUrl));
+      },
+      onExistingUserSignUp: async ({ user }) => {
+        outbox.dispatch(emailTemplates.accountExists(user.email, user.name, loginUrl));
       },
     },
     emailVerification: {
@@ -77,7 +104,7 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       autoSignInAfterVerification: true,
       expiresIn: ONE_DAY,
       sendVerificationEmail: async ({ user, url }) => {
-        await mailer.send(emailTemplates.verification(user.email, user.name, url));
+        outbox.dispatch(emailTemplates.verification(user.email, user.name, url));
       },
     },
     verification: { storeIdentifier: "hashed" },
@@ -92,6 +119,8 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
         enabled: true,
         // Legacy parity (Socialite): a Google sign-in links to an existing account with the same verified email.
         trustedProviders: ["google"],
+        // Never attach Google to a local account whose email was not verified (pre-registration takeover).
+        requireLocalEmailVerified: true,
       },
     },
     socialProviders: config.google
@@ -134,7 +163,7 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
               await hooks.onUserCreated?.({ id: user.id, name: user.name, email: user.email });
             } catch (error) {
               // The account exists; the personal organization is re-ensured on the next /me request.
-              logError("post sign-up hook failed", { userId: user.id, error: error instanceof Error ? error.message : String(error) });
+              log("error", "post sign-up hook failed", { userId: user.id, errorType: describeArgument(error) });
             }
           },
         },
@@ -207,4 +236,20 @@ export async function stripSessionTokens(response: Response): Promise<Response> 
   const headers = new Headers(response.headers);
   headers.delete("content-length");
   return new Response(JSON.stringify(scrub(body)), { status: response.status, statusText: response.statusText, headers });
+}
+
+const EMAIL_PATTERN = /[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+/g;
+
+/** Replace anything that looks like an email address. */
+export function redactEmails(text: string): string {
+  return text.replace(EMAIL_PATTERN, "[email]");
+}
+
+/** Safe description of a log argument: its type and, for errors, the PostgreSQL SQLSTATE. Never the message. */
+function describeArgument(value: unknown): string {
+  if (value instanceof Error) {
+    const code = (value as { code?: unknown }).code;
+    return typeof code === "string" && /^[A-Z0-9_]{2,32}$/.test(code) ? `${value.name}:${code}` : value.name;
+  }
+  return typeof value;
 }
