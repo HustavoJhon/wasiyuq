@@ -90,6 +90,7 @@
 | Rate limiting login | Implementado (configurable) | Almacenamiento en memoria por proceso: insuficiente con varias réplicas |
 
 - **Consecuencias:** dependencia de una librería con ritmo de releases alto (fijar versiones y revisar changelog al actualizar); 2FA/passkeys quedan como brecha de paridad documentada.
+- **Ajustes descubiertos al implementar (2026-11-17):** Better Auth devuelve el token de sesión en JSON (se elimina de todas las respuestas); desactiva las comprobaciones de origen/CSRF cuando detecta entorno de test (se fuerzan explícitamente); `/list-sessions` expone tokens (desactivado); requiere `drizzle-orm ≥ 0.45.2` (actualizado a 0.45.4 / drizzle-kit 0.31.11). Registro completo en `docs/technical/SECURITY_DECISIONS.md`.
 
 ## ADR-011 — RBAC por organización con catálogo centralizado (Fase 3)
 - **Decisión:** se preservan los 8 roles y 31 permisos legacy (`TeamRole`/`TeamPermission`) con los mismos identificadores (`team:update`, `pets:view`, …) en un catálogo central; autorización **deny-by-default** evaluada en servidor por membresía activa en la organización del recurso.

@@ -28,6 +28,25 @@ flowchart LR
   MIG --> CLI
 ```
 
+## Estado Fase 3 (identidad y organizaciones, 2026-11-17)
+- `modules/identity`: dominio (`IdentityUser`, estado de cuenta, rol de plataforma), aplicación (`IdentityService`: perfil, sesiones, administración de cuentas) e infraestructura (adaptador Better Auth, repositorios Drizzle, correo). Better Auth solo vive en `infrastructure/authentication.ts`.
+- `modules/organizations`: dominio (catálogo rol→permiso legacy, políticas deny-by-default, invitaciones, slugs), aplicación (`OrganizationService`) e infraestructura (repositorio Drizzle transaccional).
+- `apps/api`: `/api/auth/*` (Better Auth) + `/api/v1/*` (Hono: errores uniformes, Zod, sesión, verificación de email, CSRF, rate limit, logs sin secretos). Composición en `src/services.ts`.
+- `apps/web`: React + TanStack Router/Query + componentes estilo shadcn/ui + Tailwind (login, registro, recuperación, shell autenticado, perfil y sesiones, organizaciones, miembros, invitaciones, administración), navegación según permisos.
+- `packages/validation` (contratos Zod compartidos) y `packages/api-client` (cliente tipado que valida respuestas).
+- Referencias: `docs/technical/AUTHENTICATION.md`, `AUTHORIZATION_RBAC.md`, `API_IDENTITY_CONTRACT.md`, `SECURITY_DECISIONS.md`, `docs/domain/ORGANIZATION_MEMBERSHIP.md`.
+
+```mermaid
+flowchart TB
+  WEB["apps/web"] -->|"/api/auth (cookie)"| API["apps/api"]
+  WEB -->|"/api/v1 via api-client"| API
+  API --> ID["modules/identity"]
+  API --> ORG["modules/organizations"]
+  ID -->|"Better Auth + Drizzle"| DB[("PostgreSQL")]
+  ORG -->|Drizzle| DB
+  API -. "hook post-registro / notificador" .-> ORG
+```
+
 ## 1. Principios
 
 - **Modular Monolith primero:** desplegable único con límites internos claros; evolución a servicios solo con evidencia de necesidad.
