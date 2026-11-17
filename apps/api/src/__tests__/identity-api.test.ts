@@ -103,6 +103,11 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
     expect(apiErrorSchema.parse(await res.json()).error.code).toBe("UNAUTHENTICATED");
   });
 
+  test("public auth providers reflect configuration (Google disabled without credentials)", async () => {
+    const res = await request("/api/public/auth-providers");
+    expect(await res.json()).toEqual({ emailPassword: true, google: false });
+  });
+
   test("security headers are set", async () => {
     const res = await request("/health");
     expect(res.headers.get("x-content-type-options")).toBe("nosniff");

@@ -74,6 +74,9 @@ export function createApp(options: AppOptions) {
     // Authentication (Better Auth): sign-up/in/out, verification, password reset, OAuth. Responses use Better Auth's format.
     app.on(["GET", "POST"], `${services.auth.basePath}/*`, (c) => services.auth.handler(c.req.raw));
 
+    // Public: which sign-in methods the UI should offer.
+    app.get("/api/public/auth-providers", (c) => c.json(services.providers));
+
     const v1 = new Hono<AppEnv>();
     v1.use("*", originGuard(services));
     v1.use("*", requireAuth(services));

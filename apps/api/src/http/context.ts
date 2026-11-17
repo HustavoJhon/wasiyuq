@@ -8,6 +8,8 @@ export interface ApiServices {
   organizations: OrganizationService;
   /** Origins allowed to make cookie-authenticated, state-changing requests. */
   trustedOrigins: string[];
+  /** Sign-in methods enabled on this deployment (public, no secrets). */
+  providers: { emailPassword: boolean; google: boolean };
 }
 
 export interface AuthState {

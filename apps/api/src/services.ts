@@ -35,5 +35,6 @@ export function createServices(database: DatabaseHandle, config: AuthConfig, mai
     organizations,
     identity: new IdentityService(new DrizzleUserRepository(database.db), new DrizzleSessionRepository(database.db)),
     trustedOrigins: config.trustedOrigins,
+    providers: { emailPassword: true, google: Boolean(config.google) },
   };
 }
