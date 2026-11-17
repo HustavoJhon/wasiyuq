@@ -33,7 +33,7 @@ export class DatabaseConfigError extends Error {
 }
 
 const postgresUrlSchema = z
-  .string({ required_error: "is required" })
+  .string({ error: "is required" })
   .trim()
   .min(1, "is required")
   .superRefine((value, ctx) => {

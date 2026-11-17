@@ -16,7 +16,7 @@
     "format": "echo 'format:validation ok'"
   },
   "dependencies": {
-    "zod": "^3.24.0"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/bun": "^1.2.0",
