@@ -69,12 +69,9 @@ export function createApp(options: AppOptions) {
       checks: {
         database: check,
         ...(services
-          ? {
-              email: {
-                status: services.email.health().consecutiveFailures >= 3 ? ("degraded" as const) : ("ok" as const),
-                pending: services.email.health().pending,
-              },
-            }
+          ? // Coarse status only: per-message counters on a public endpoint would reveal whether a request
+            // (e.g. a password reset for some address) produced an email, i.e. whether the account exists.
+            { email: { status: services.email.health().consecutiveFailures >= 3 ? ("degraded" as const) : ("ok" as const) } }
           : {}),
       },
     });

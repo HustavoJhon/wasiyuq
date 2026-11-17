@@ -32,7 +32,6 @@ export const readinessResponseSchema = z.object({
     email: z
       .object({
         status: z.enum(["ok", "degraded"]),
-        pending: z.number().int().nonnegative(),
       })
       .optional(),
   }),
