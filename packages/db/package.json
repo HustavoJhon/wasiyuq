@@ -12,14 +12,20 @@
     "build": "tsc -p tsconfig.json",
     "lint": "echo 'lint:db ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test --pass-with-no-tests",
-    "format": "echo 'format:db ok'"
+    "test": "bun --env-file=../../.env test --pass-with-no-tests",
+    "format": "echo 'format:db ok'",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../.env src/cli/migrate.ts development",
+    "db:migrate:test": "bun --env-file=../../.env src/cli/migrate.ts test",
+    "db:check": "drizzle-kit check"
   },
   "dependencies": {
     "drizzle-orm": "^0.44.0",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.0",
     "drizzle-kit": "^0.30.0",
     "typescript": "^5.8.0"
   }

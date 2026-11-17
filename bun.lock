@@ -143,8 +143,10 @@
       "dependencies": {
         "drizzle-orm": "^0.44.0",
         "postgres": "^3.4.5",
+        "zod": "^3.24.0",
       },
       "devDependencies": {
+        "@types/bun": "^1.2.0",
         "drizzle-kit": "^0.30.0",
         "typescript": "^5.8.0",
       },
