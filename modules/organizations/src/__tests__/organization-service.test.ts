@@ -229,6 +229,30 @@ describe.skipIf(!testDb)("OrganizationService (PostgreSQL)", () => {
     expect(await failure(service.cancelInvitation(owner, org.id, invitation.id))).toBe("CONFLICT:not_pending");
   });
 
+  test("an invitation stops granting access if the inviter is removed or demoted before acceptance", async () => {
+    const { owner, org, member: manager } = await orgWith("organization_manager");
+    const invitee = await newActor("Invitee2");
+    await service.invite(manager!, org.id, invitee.email, "pet_manager");
+    await service.changeMemberRole(owner, org.id, manager!.userId, "viewer");
+    expect(await failure(service.acceptInvitation(invitee, notifier.tokenFor(invitee.email)))).toBe("CONFLICT:inviter_lost_rights");
+    expect(await failure(service.getOrganization(invitee, org.id))).toBe("NOT_FOUND:");
+    // The invitation is now cancelled, so a fresh one can be sent.
+    expect((await service.previewInvitation(invitee, notifier.tokenFor(invitee.email))).status).toBe("cancelled");
+
+    const removedInviter = await orgWithMember(owner, org.id, "admin");
+    const invitee2 = await newActor("Invitee3");
+    await service.invite(removedInviter, org.id, invitee2.email, "viewer");
+    await service.removeMember(owner, org.id, removedInviter.userId);
+    expect(await failure(service.acceptInvitation(invitee2, notifier.tokenFor(invitee2.email)))).toBe("CONFLICT:inviter_lost_rights");
+  });
+
+  test("only invitation managers can list pending invitations (invitee emails are private)", async () => {
+    const { owner, org, member } = await orgWith("viewer");
+    await service.invite(owner, org.id, `priv-${run}@example.test`, "viewer");
+    expect(await failure(service.listInvitations(member!, org.id))).toBe("FORBIDDEN:missing_permission:invitation:create");
+    expect((await service.listInvitations(owner, org.id)).length).toBeGreaterThan(0);
+  });
+
   test("invitations of one organization cannot be cancelled through another", async () => {
     const a = await orgWith();
     const b = await orgWith();

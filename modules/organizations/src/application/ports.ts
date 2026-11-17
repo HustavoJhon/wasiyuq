@@ -47,7 +47,7 @@ export type CreateInvitationOutcome = { ok: true; invitation: InvitationRecord }
 
 export type AcceptInvitationOutcome =
   | { ok: true; organizationId: string }
-  | { ok: false; reason: "not_found" | "not_pending" };
+  | { ok: false; reason: "not_found" | "not_pending" | "inviter_lost_rights" };
 
 /** Persistence port for the organizations module. Every method is atomic. Archived organizations are invisible. */
 export interface OrganizationRepository {
@@ -85,8 +85,17 @@ export interface OrganizationRepository {
     now: Date;
   }): Promise<CreateInvitationOutcome>;
   cancelInvitation(invitationId: string, now: Date): Promise<boolean>;
-  /** Locks the invitation, re-checks it is pending, adds the membership (keeps an existing one) and marks it accepted. */
-  acceptInvitation(input: { invitationId: string; userId: string; now: Date }): Promise<AcceptInvitationOutcome>;
+  /**
+   * Locks the invitation, re-checks it is pending, re-validates that the inviter can still grant the role
+   * (`inviterCanGrant` receives the inviter's current role, or null if no longer a member; when false the
+   * invitation is cancelled), adds the membership (keeps an existing one) and marks it accepted.
+   */
+  acceptInvitation(input: {
+    invitationId: string;
+    userId: string;
+    now: Date;
+    inviterCanGrant: (inviterRole: OrganizationRole | null, invitedRole: OrganizationRole) => boolean;
+  }): Promise<AcceptInvitationOutcome>;
 }
 
 export class SlugTakenError extends Error {

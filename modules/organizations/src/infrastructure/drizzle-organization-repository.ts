@@ -316,7 +316,12 @@ export class DrizzleOrganizationRepository implements OrganizationRepository {
     return rows.length > 0;
   }
 
-  async acceptInvitation(input: { invitationId: string; userId: string; now: Date }): Promise<AcceptInvitationOutcome> {
+  async acceptInvitation(input: {
+    invitationId: string;
+    userId: string;
+    now: Date;
+    inviterCanGrant: (inviterRole: OrganizationRole | null, invitedRole: OrganizationRole) => boolean;
+  }): Promise<AcceptInvitationOutcome> {
     return this.db.transaction(async (tx) => {
       const [row] = await tx
         .select()
@@ -325,6 +330,19 @@ export class DrizzleOrganizationRepository implements OrganizationRepository {
         .for("update");
       if (!row) return { ok: false, reason: "not_found" } as const;
       if (row.acceptedAt || row.cancelledAt || row.expiresAt <= input.now) return { ok: false, reason: "not_pending" } as const;
+
+      // Re-validate the grant at use time: the inviter may have been removed or demoted since inviting.
+      const [inviter] = row.invitedBy
+        ? await tx
+            .select({ role: organizationMemberships.role })
+            .from(organizationMemberships)
+            .where(and(eq(organizationMemberships.organizationId, row.organizationId), eq(organizationMemberships.userId, row.invitedBy)))
+            .for("share")
+        : [];
+      if (!input.inviterCanGrant((inviter?.role as OrganizationRole | undefined) ?? null, row.role as OrganizationRole)) {
+        await tx.update(organizationInvitations).set({ cancelledAt: input.now }).where(eq(organizationInvitations.id, row.id));
+        return { ok: false, reason: "inviter_lost_rights" } as const;
+      }
 
       // Legacy firstOrCreate: an existing membership keeps its current role.
       await tx

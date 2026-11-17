@@ -9,7 +9,7 @@ import {
   requirePermission,
   type ActorMembership,
 } from "../domain/policy";
-import { permissionsFor } from "../domain/roles";
+import { permissionsFor, roleHasPermission, roleLevels } from "../domain/roles";
 import { isReservedSlug, nextAvailableSlug, slugify } from "../domain/slug";
 import {
   SlugTakenError,
@@ -198,8 +198,13 @@ export class OrganizationService {
     await this.repo.removeMember(organizationId, targetUserId);
   }
 
+  /**
+   * Pending invitations expose invitee emails, so listing requires an invitation-management permission
+   * (hardening vs legacy, where any member saw them on the team settings page).
+   */
   async listInvitations(actor: Actor, organizationId: string): Promise<InvitationView[]> {
-    await this.memberContext(organizationId, actor.userId);
+    const { actor: member } = await this.memberContext(organizationId, actor.userId);
+    if (!roleHasPermission(member.role, "invitation:cancel")) requirePermission(member, "invitation:create");
     const now = this.clock();
     const invitations = await this.repo.listPendingInvitations(organizationId, now);
     return invitations.map((invitation) => ({ ...invitation, status: invitationStatus(invitation, now) }));
@@ -263,8 +268,18 @@ export class OrganizationService {
     if (!invitationMatchesEmail(invitation.email, actor.email)) {
       throw forbidden("email_mismatch", "Esta invitación fue enviada a otra dirección de correo");
     }
-    const outcome = await this.repo.acceptInvitation({ invitationId: invitation.id, userId: actor.userId, now: this.clock() });
-    if (!outcome.ok) throw conflict("La invitación ya no está pendiente", "not_pending");
+    const outcome = await this.repo.acceptInvitation({
+      invitationId: invitation.id,
+      userId: actor.userId,
+      now: this.clock(),
+      inviterCanGrant: (inviterRole, invitedRole) =>
+        inviterRole !== null && roleHasPermission(inviterRole, "invitation:create") && roleLevels[invitedRole] <= roleLevels[inviterRole],
+    });
+    if (!outcome.ok) {
+      throw outcome.reason === "inviter_lost_rights"
+        ? conflict("Esta invitación ya no es válida: quien la envió ya no puede otorgar ese rol", "inviter_lost_rights")
+        : conflict("La invitación ya no está pendiente", "not_pending");
+    }
     await this.repo.setContext(actor.userId, outcome.organizationId);
     return { organizationId: outcome.organizationId };
   }
