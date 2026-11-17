@@ -13,6 +13,7 @@
       "name": "@wasiyuq/api",
       "version": "0.1.0",
       "dependencies": {
+        "@wasiyuq/db": "workspace:*",
         "@wasiyuq/validation": "workspace:*",
         "hono": "^4.7.0",
       },

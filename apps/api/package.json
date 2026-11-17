@@ -4,15 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
+    "dev": "bun --env-file=../../.env run --hot src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "bun run dist/index.js",
+    "start": "bun --env-file=../../.env run dist/index.js",
     "lint": "echo 'lint:api ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test --pass-with-no-tests",
+    "test": "bun --env-file=../../.env test ./src --pass-with-no-tests",
     "format": "echo 'format:api ok'"
   },
   "dependencies": {
+    "@wasiyuq/db": "workspace:*",
     "@wasiyuq/validation": "workspace:*",
     "hono": "^4.7.0"
   },
