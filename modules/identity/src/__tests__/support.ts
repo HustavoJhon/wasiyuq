@@ -16,5 +16,6 @@ export async function resolveTestDatabase(): Promise<DatabaseConfig | null> {
 const run = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 let seq = 0;
 export const uniqueEmail = (prefix = "user") => `${prefix}-${run}-${++seq}@example.test`;
-/** Distinct fake client IP per test so rate limits don't leak between tests. */
-export const uniqueIp = () => `10.${(seq >> 8) & 255}.${seq & 255}.${Math.floor(Math.random() * 250) + 1}`;
+/** Random fake client IP so rate limits (persisted in the test database) don't leak between tests or runs. */
+const octet = () => Math.floor(Math.random() * 254) + 1;
+export const uniqueIp = () => `10.${octet()}.${octet()}.${octet()}`;

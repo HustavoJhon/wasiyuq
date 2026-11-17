@@ -32,7 +32,9 @@ const ORIGIN = "http://localhost:5173";
 const run = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 let seq = 0;
 const email = (p = "api") => `${p}-${run}-${++seq}@example.test`;
-const ip = () => `10.77.${(seq >> 8) & 255}.${++seq & 255}`;
+/** Random fake client IPs: rate-limit counters persist in the test database across runs. */
+const octet = () => Math.floor(Math.random() * 254) + 1;
+const ip = () => `10.${octet()}.${octet()}.${octet()}`;
 
 describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
   let handle: DatabaseHandle;
