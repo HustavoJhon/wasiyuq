@@ -47,6 +47,7 @@ const roleCatalogSchema = z.object({
       label: z.string(),
       description: z.string(),
       assignable: z.boolean(),
+      level: z.number().int(),
       permissions: z.array(organizationPermissionSchema),
     }),
   ),

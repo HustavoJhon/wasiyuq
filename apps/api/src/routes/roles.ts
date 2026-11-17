@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { assignableRoles, permissionsFor } from "@wasiyuq/module-organizations";
+import { assignableRoles, permissionsFor, roleLevels } from "@wasiyuq/module-organizations";
 import { organizationRoleLabels, organizationRoles } from "@wasiyuq/validation";
 import type { AppEnv } from "../http/context";
 
@@ -12,6 +12,7 @@ export function roleRoutes() {
         role,
         ...organizationRoleLabels[role],
         assignable: assignableRoles.includes(role),
+        level: roleLevels[role],
         permissions: [...permissionsFor(role)],
       })),
     }),
