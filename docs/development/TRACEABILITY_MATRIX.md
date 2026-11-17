@@ -79,3 +79,15 @@ Las filas F-AUTH-01…07 indican el estado 2.0 tras "→". Trazabilidad a implem
 | F-AUTH-05 | `OrganizationService.invite/accept/cancel`, `routes/invitations.ts`, `routes/invitation.tsx` | Tests servicio + API + E2E |
 | F-AUTH-06 | `domain/policy.ts`, `domain/roles.ts`, `OrganizationService.authorize` | Tests de dominio (paridad legacy) y aislamiento |
 | F-AUTH-07 | `routes/admin.ts`, CLI `admin:grant` | Test admin API |
+
+> Nota: la "E2E" de la Fase 3 era un script temporal fuera del repositorio que ya no existe. Desde la Fase 3.1 las pruebas de navegador viven en `apps/web/e2e` y se ejecutan en CI.
+
+## Actualización Fase 3.1 (2026-11-17)
+
+| ID | Requisito | Código 2.0 | Pruebas |
+|---|---|---|---|
+| F-AUTH-01 | Registro sin enumeración, verificación y recuperación con correo real | `authentication.ts` (`autoSignIn: false`, `onExistingUserSignUp`, `onPasswordReset`), `email/*`, `routes/auth.tsx` | `authentication.test.ts`, `email-delivery.test.ts`, `apps/web/e2e/auth.spec.ts` (Mailpit) |
+| F-AUTH-01 | Hash de contraseñas sin bloquear el event loop, compatible con los hashes existentes | `password-hasher.ts` | `password-hasher.test.ts`, `apps/api/src/__tests__/auth-concurrency.test.ts`, `bench:hash` |
+| F-AUTH-04/05 | Organizaciones e invitaciones en navegador (rol por defecto `member`, aceptación ligada al email, 404 a no miembros) | `routes/organization-settings.tsx`, `routes/invitation.tsx` | `apps/web/e2e/organizations.spec.ts` |
+| F-PUB-06 (base) | Infraestructura de correo transaccional reutilizable para notificaciones futuras | `EmailSender`/`EmailDispatcher`/`SmtpEmailSender` | `email-delivery.test.ts` |
+| Transversal | Seguridad de sesión, CSRF, CORS, rate limit e IP, guardas de producción | `server.ts`, `index.ts`, `auth-config.ts`, `mail-config.ts` | `security-regressions.test.ts`, `mail-config.test.ts`, test de cookie de producción |
