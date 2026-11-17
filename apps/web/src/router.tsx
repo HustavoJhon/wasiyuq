@@ -16,7 +16,9 @@ interface RouterContext {
   queryClient: QueryClient;
 }
 
-const str = (value: unknown) => (typeof value === "string" && value.length > 0 ? value : undefined);
+/** TanStack Router JSON-parses search values ("1" → 1), so accept primitives and normalize to strings. */
+const str = (value: unknown) =>
+  typeof value === "string" ? value || undefined : typeof value === "number" || typeof value === "boolean" ? String(value) : undefined;
 
 /** Client-side guard for UX only: the API authorizes every request independently. */
 async function requireSession(context: RouterContext, href: string) {
