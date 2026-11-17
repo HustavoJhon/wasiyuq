@@ -37,7 +37,9 @@ describe("auth configuration", () => {
 
   test("valid development configuration with sensible defaults", () => {
     const config = loadAuthConfig(base);
-    expect(config).toMatchObject({ baseUrl: "http://localhost:5173", rateLimit: true, google: null, mailTransport: "console" });
+    expect(config).toMatchObject({ baseUrl: "http://localhost:5173", rateLimit: true, google: null });
+    expect(config.mail).toMatchObject({ transport: "console", smtp: null, maxAttempts: 3 });
+    expect(config.passwordHashConcurrency).toBeGreaterThanOrEqual(2);
     expect(config.trustProxy).toBe(false);
     expect(config.trustedOrigins).toEqual(["http://localhost:5173"]);
   });

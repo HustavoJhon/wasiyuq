@@ -25,7 +25,7 @@ WASIYUQ 2.0 is the technical rebuild of the Wasiyuq platform as a Bun/TypeScript
 ```bash
 bun install
 cp .env.example .env
-docker compose --env-file .env -f infra/docker/docker-compose.yml up -d   # PostgreSQL on 127.0.0.1:55432
+docker compose --env-file .env -f infra/docker/docker-compose.yml up -d   # PostgreSQL on 127.0.0.1:55432 + Mailpit (UI http://127.0.0.1:58025)
 bun run --filter @wasiyuq/db db:migrate                                    # apply migrations to wasiyuq_dev
 ```
 
@@ -39,8 +39,12 @@ bun run dev        # turbo dev (apps/packages)
 bun run build      # turbo build
 bun run lint       # turbo lint
 bun run typecheck  # turbo typecheck
-bun run test       # turbo test
+bun run test       # turbo test (unit + integration against wasiyuq_test and Mailpit when available)
+bun run test:e2e   # Playwright browser E2E (own API/web servers on 3101/5273, wasiyuq_test + Mailpit)
 ```
+
+Browser E2E needs a Chromium: `cd apps/web && bunx playwright install chromium`, or set
+`E2E_CHROMIUM_PATH=/usr/bin/chromium`. Password hashing benchmark: `bun run --filter @wasiyuq/module-identity bench:hash`.
 
 ### API only
 ```bash
@@ -75,5 +79,9 @@ Auth docs: [`docs/technical/AUTHENTICATION.md`](docs/technical/AUTHENTICATION.md
   optional Google OAuth (Better Auth), organizations, memberships, invitations and organization-scoped RBAC.
   2FA and passkeys are deferred. Pets, adoptions and follow-ups are not implemented yet.
 - Grant platform administration: `bun run --filter @wasiyuq/api admin:grant -- user@example.com`.
-- In development, emails (verification, reset, invitations) are printed in the API output (`MAIL_TRANSPORT=console`).
+- In development, emails (verification, reset, invitations, security notices) are delivered over SMTP to Mailpit
+  (`MAIL_TRANSPORT=smtp`); `MAIL_TRANSPORT=console` prints them instead. Production requires a real SMTP provider and
+  refuses to start without one (see `docs/technical/EMAIL_DELIVERY.md` and `docs/technical/PRODUCTION_READINESS.md`).
+- Phase 3.1 hardening: bounded, compatible password hashing; enumeration-safe sign-up; dependency audit with no
+  critical advisories (see `docs/technical/AUTHENTICATION_SECURITY.md`).
 - See `docs/development/LEGACY_CLEANUP_LOG.md` for cleanup record and risks.

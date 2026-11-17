@@ -7,13 +7,24 @@ import {
   targetFromNodeEnv,
   type DatabaseHandle,
 } from "@wasiyuq/db";
-import { AuthConfigError, CLIENT_IP_HEADER, loadAuthConfig, resolveClientIp, type AuthConfig } from "@wasiyuq/module-identity";
+import {
+  AuthConfigError,
+  CLIENT_IP_HEADER,
+  describeMailConfig,
+  EmailDeliveryError,
+  loadAuthConfig,
+  resolveClientIp,
+  SmtpEmailSender,
+  type AuthConfig,
+} from "@wasiyuq/module-identity";
 import { createApp } from "./app";
 import type { ApiServices } from "./http/context";
 import { log } from "./logger";
 import { createServices } from "./services";
 
 type Env = Record<string, string | undefined>;
+
+const EMAIL_DRAIN_TIMEOUT_MS = 10_000;
 
 export interface StartServerOptions {
   env?: Env;
@@ -37,9 +48,25 @@ function openDatabase(env: Env): DatabaseHandle | null {
   } catch (error) {
     if (error instanceof DatabaseConfigError) {
       log("error", "database configuration invalid; readiness will report not_configured", { issues: error.issues });
+      // Development keeps the process alive for /health; production refuses to start half-configured.
+      if (env.NODE_ENV === "production") throw error;
       return null;
     }
     throw error;
+  }
+}
+
+/** Non-fatal startup diagnostic: connect and authenticate to the SMTP provider without sending anything. */
+async function verifySmtp(config: AuthConfig): Promise<void> {
+  const sender = new SmtpEmailSender(config.mail.smtp!, config.mail.from);
+  try {
+    await sender.verify();
+    log("info", "smtp connection verified", describeMailConfig(config.mail));
+  } catch (error) {
+    const failure = error instanceof EmailDeliveryError ? { code: error.code, responseCode: error.responseCode } : { code: "EUNKNOWN" };
+    log("error", "smtp connection failed; emails will be retried and logged", { ...describeMailConfig(config.mail), ...failure });
+  } finally {
+    sender.close();
   }
 }
 
@@ -65,10 +92,18 @@ export async function startServer(options: StartServerOptions = {}): Promise<Run
   } catch (error) {
     if (!(error instanceof AuthConfigError)) throw error;
     log("error", "authentication configuration invalid; identity endpoints disabled", { issues: error.issues });
+    // Production must never run with authentication silently disabled.
+    if (env.NODE_ENV === "production") throw error;
   }
   if (database && authConfig) {
     services = createServices(database, authConfig);
-    log("info", "identity services enabled", { googleOAuth: Boolean(authConfig.google), rateLimit: authConfig.rateLimit });
+    if (authConfig.mail.smtp) void verifySmtp(authConfig);
+    log("info", "identity services enabled", {
+      googleOAuth: Boolean(authConfig.google),
+      rateLimit: authConfig.rateLimit,
+      passwordHashConcurrency: authConfig.passwordHashConcurrency,
+      mail: describeMailConfig(authConfig.mail),
+    });
   }
 
   let shuttingDown = false;
@@ -92,6 +127,9 @@ export async function startServer(options: StartServerOptions = {}): Promise<Run
       log("info", "api shutting down", { reason });
       try {
         await server.stop();
+        // Let queued emails (verification, reset links) finish before exiting; bounded so shutdown cannot hang.
+        const undelivered = (await services?.email.drain(EMAIL_DRAIN_TIMEOUT_MS)) ?? 0;
+        if (undelivered > 0) log("warn", "shutdown with undelivered emails", { pending: undelivered });
         await database?.close();
         log("info", "api stopped", { reason });
       } catch (error) {

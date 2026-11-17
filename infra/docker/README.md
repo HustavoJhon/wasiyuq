@@ -1,6 +1,6 @@
 # Infra (local development)
 
-PostgreSQL 16 for WASIYUQ 2.0. All commands run from the repository root and read variables from the root `.env`
+PostgreSQL 16 and Mailpit (local email sink) for WASIYUQ 2.0. All commands run from the repository root and read variables from the root `.env`
 (`cp .env.example .env`).
 
 ```bash
@@ -11,7 +11,7 @@ COMPOSE="docker compose --env-file .env -f infra/docker/docker-compose.yml"
 |---|---|
 | Start | `$COMPOSE up -d` |
 | Status / health | `$COMPOSE ps` (wait for `healthy`) |
-| Logs | `$COMPOSE logs -f postgres` |
+| Logs | `$COMPOSE logs -f postgres` / `$COMPOSE logs -f mailpit` |
 | psql shell | `$COMPOSE exec postgres psql -U wasiyuq -d wasiyuq_dev` |
 | Stop (keeps data) | `$COMPOSE stop` |
 | Stop and remove container (keeps data) | `$COMPOSE down` |
@@ -34,6 +34,13 @@ $COMPOSE exec postgres createdb -U wasiyuq wasiyuq_test
 
 The host port defaults to **55432** (`POSTGRES_PORT`) and is bound to `127.0.0.1` only, so it does not clash with —
 or get confused with — other PostgreSQL instances commonly listening on 5432.
+
+## Mailpit (development email)
+
+Mailpit accepts SMTP on `127.0.0.1:51025` (`MAILPIT_SMTP_PORT`) and shows every captured message at
+<http://127.0.0.1:58025> (`MAILPIT_UI_PORT`). Nothing is delivered to real inboxes. Messages live in memory and are
+lost when the container restarts. The API uses it when `MAIL_TRANSPORT=smtp` points at it (see `.env.example` and
+`docs/technical/EMAIL_DELIVERY.md`). Mailpit is not part of any production setup.
 
 ## Isolation from the legacy stack
 

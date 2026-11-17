@@ -33,15 +33,15 @@
 
 | Método y ruta | Uso |
 |---|---|
-| `POST /api/auth/sign-up/email` | `{name, email, password, callbackURL?}` → crea cuenta, inicia sesión, envía verificación |
+| `POST /api/auth/sign-up/email` | `{name, email, password, callbackURL?}` → 200 `{ user }` **sin cookie de sesión**. Email nuevo: crea la cuenta y envía la verificación. Email existente: misma respuesta, no cambia nada y avisa al titular por correo (Fase 3.1, sin enumeración) |
 | `POST /api/auth/sign-in/email` | `{email, password}` → 200 / 401 genérico / 403 suspendida / 429 |
 | `POST /api/auth/sign-out` | Revoca la sesión actual |
 | `GET /api/auth/get-session` | Sesión actual (sin token) |
 | `GET /api/auth/verify-email?token&callbackURL` | Verifica y redirige |
 | `POST /api/auth/send-verification-email` | Reenvía verificación |
-| `POST /api/auth/request-password-reset` | `{email, redirectTo}` → siempre 200 (sin enumeración) |
+| `POST /api/auth/request-password-reset` | `{email, redirectTo}` → siempre 200 con el mismo cuerpo (sin enumeración); el correo sale en segundo plano |
 | `GET /api/auth/reset-password/:token?callbackURL` | Redirige a la web con `?token=` |
-| `POST /api/auth/reset-password` | `{token, newPassword}` → revoca todas las sesiones |
+| `POST /api/auth/reset-password` | `{token, newPassword}` → revoca todas las sesiones y envía el aviso "tu contraseña cambió"; token caducado o reutilizado → 400 |
 | `POST /api/auth/sign-in/social` · `GET /api/auth/callback/google` | Google OAuth (solo si está configurado) |
 
 ## 3. Público
@@ -49,7 +49,7 @@
 | Método y ruta | Respuesta |
 |---|---|
 | `GET /health` | Liveness |
-| `GET /ready` | Readiness (BD) |
+| `GET /ready` | Readiness: 200/503 según la BD; `checks.email.status` (`ok`/`degraded`) es informativo y nunca incluye contadores |
 | `GET /api/public/auth-providers` | `{ emailPassword: true, google: boolean }` |
 
 ## 4. `/api/v1` (requiere sesión)
@@ -78,7 +78,10 @@
 | `POST /invitations/:token/accept` | verificado, email coincide | `{ organizationId }` |
 | `GET /admin/users?limit&offset` | `platform_admin` | `{ users[], limit, offset }` |
 | `PATCH /admin/users/:userId/status` | `platform_admin`, no a sí mismo | `{status}` → `{ user }` (suspender revoca sesiones) |
+| `GET /admin/email-health` | `platform_admin` | `{ email: { pending, sent, failed, consecutiveFailures, lastSuccessAt, lastFailureAt, lastErrorCode } }` (sin destinatarios ni contenido) |
 
 ## 5. Garantías verificadas por tests
 
-`apps/api/src/__tests__/identity-api.test.ts` (PostgreSQL de test): 401 sin sesión; respuestas sin contraseñas/hashes/tokens; verificación obligatoria; validación y campos desconocidos; aislamiento entre organizaciones (todas las rutas → 404); permisos por rol; escaladas; aceptación ligada al email; tokens ausentes de respuestas y logs; CSRF; sesiones; logout; administración sin bypass; suspensión; recuperación de contraseña; archivado.
+`apps/api/src/__tests__/identity-api.test.ts` (PostgreSQL de test): 401 sin sesión; respuestas sin contraseñas/hashes/tokens; verificación obligatoria; validación y campos desconocidos; aislamiento entre organizaciones (todas las rutas → 404); permisos por rol; escaladas; aceptación ligada al email; tokens ausentes de respuestas y logs; CSRF; sesiones; logout; administración sin bypass; suspensión; recuperación de contraseña; archivado; email-health solo para admins; `/ready` sin contadores.
+
+Fase 3.1: `auth-concurrency.test.ts` (12 registros e inicios de sesión concurrentes correctos con `/health` < 150 ms p95) y `security-regressions.test.ts` (IP de rate limit no falseable a través del servidor real, sin CORS, guardas de arranque en producción).

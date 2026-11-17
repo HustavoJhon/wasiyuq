@@ -2,6 +2,8 @@
 
 Workspace preparado para React Native + Expo. La implementación funcional móvil se realizará en fases posteriores.
 
+Versiones (Fase 3.1): **Expo SDK 58** (`expo ~58.0.22`), `react-native 0.88.1`, `react 19.3.0` (las del `bundledNativeModules.json` del SDK 58). Se actualizó desde SDK 52, que ya no tiene soporte y arrastraba avisos de seguridad (incluido uno crítico en `tar`). La web comparte la misma versión de React.
+
 ## Autenticación (planificada)
 
 La app usará la misma API y las mismas sesiones que la web, sin cambios de autorización:

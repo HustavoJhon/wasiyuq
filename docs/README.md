@@ -43,6 +43,8 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 
 > **Fase 3 (2026-11-17):** identidad y organizaciones implementadas (Better Auth para autenticación; RBAC propio con los 8 roles y 31 permisos legacy; aislamiento multi-organización probado). 2FA y passkeys diferidos. Ver [AUTHENTICATION.md](technical/AUTHENTICATION.md).
 
+> **Fase 3.1 (2026-11-17):** endurecimiento sin desplegar: hash de contraseñas con concurrencia acotada y compatible (no bloqueaba el event loop), correo real por SMTP (Mailpit en desarrollo), registro sin enumeración, guardas de arranque en producción, Expo SDK 58 (sin avisos críticos) y E2E de navegador en el repositorio. Ver [AUTHENTICATION_SECURITY.md](technical/AUTHENTICATION_SECURITY.md) y [PRODUCTION_READINESS.md](technical/PRODUCTION_READINESS.md).
+
 ## Índice rápido
 
 - [Auditoría del repositorio](development/REPOSITORY_AUDIT.md)
@@ -59,6 +61,9 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 - [Autorización y RBAC (Fase 3)](technical/AUTHORIZATION_RBAC.md)
 - [Contrato API de identidad y organizaciones](technical/API_IDENTITY_CONTRACT.md)
 - [Decisiones de seguridad](technical/SECURITY_DECISIONS.md)
+- [Seguridad de autenticación y hash de contraseñas (Fase 3.1)](technical/AUTHENTICATION_SECURITY.md)
+- [Envío de correo transaccional (Fase 3.1)](technical/EMAIL_DELIVERY.md)
+- [Preparación para producción (Fase 3.1)](technical/PRODUCTION_READINESS.md)
 - [Ciclo de vida de organizaciones y membresías](domain/ORGANIZATION_MEMBERSHIP.md)
 - [Roadmap de reconstrucción](modernization/RECONSTRUCTION_ROADMAP.md)
 

@@ -97,10 +97,26 @@
 - **Endurecimientos respecto al legacy (documentados como decisiones):** sin bypass por email; un actor no puede asignar ni invitar con un rol de nivel superior al suyo; el rol `owner` no es asignable ni invitable (el legacy permitía invitar como `owner` por `Rule::enum`); el propietario no puede ser eliminado ni degradado; los administradores de plataforma **no** heredan permisos dentro de organizaciones (el legacy los dejaba pasar) — actúan solo por endpoints de plataforma.
 - **Consecuencias:** cambios de comportamiento visibles para super admins acostumbrados al bypass; requiere validación con negocio (ver decisiones pendientes).
 
+## ADR-012 — Hash de contraseñas: scrypt asíncrono compatible con concurrencia acotada (Fase 3.1, 2026-11-17)
+- **Contexto:** en la Fase 3 se sospechó que scrypt bloqueaba el event loop (un registro tardó 31 s). La investigación mostró que Better Auth 1.7.15 en Bun usa `node:crypto` `scrypt` asíncrono (pool de hilos): lag del event loop ≤ 22 ms con 32 hashes simultáneos, frente a 2 s con `scryptSync`. Los 31 s fueron contención de CPU de procesos ajenos.
+- **Decisión:** hasher propio con **los mismos parámetros y formato** que Better Auth (`N=16384, r=16, p=1, dkLen=64`, NFKC, `sal:clave`), conectado por `emailAndPassword.password`, que añade un semáforo de concurrencia (32 MiB por derivación), comparación en tiempo constante y hashes malformados → `false`.
+- **Alternativas descartadas:** Argon2id/bcrypt con `Bun.password` (obliga a migrar todos los hashes sin ganancia medible); Worker dedicado (el pool de `node:crypto` ya saca el trabajo del event loop); bajar parámetros (debilita la seguridad).
+- **Consecuencias:** sin migración y reversible (compatibilidad probada en ambos sentidos); memoria acotada ante ráfagas. Detalle y mediciones en `docs/technical/AUTHENTICATION_SECURITY.md`.
+
+## ADR-013 — Correo transaccional por SMTP con adaptador propio (Fase 3.1)
+- **Decisión:** `SmtpEmailSender` (nodemailer 10.3.1) detrás del puerto `EmailSender`, con envío en segundo plano y reintentos (`EmailDispatcher`). Mailpit en desarrollo. Proveedor recomendado: Resend por SMTP; alternativas sin cambios de código: Amazon SES, Postmark, Brevo.
+- **Motivación:** independencia del proveedor (solo configuración), mismo código en desarrollo y producción, pruebas reales con Mailpit, respuestas de autenticación independientes del correo (sin enumeración por tiempos o errores).
+- **Consecuencias:** cola en memoria (adecuada para una instancia); sin webhooks de rebote hasta que se necesiten; producción bloqueada hasta tener cuenta del proveedor y dominio verificado. Detalle en `docs/technical/EMAIL_DELIVERY.md`.
+
+## ADR-014 — Política de dependencias (Fase 3.1)
+- **Decisión:** antigüedad mínima de 14 días por versión instalada (`bunfig.toml`, `minimumReleaseAge`); versiones exactas para librerías de seguridad (better-auth, nodemailer, zod); `bun install --frozen-lockfile` y Bun fijado en CI; CI falla ante avisos críticos y muestra el resto; actualizaciones directas antes que overrides.
+- **Aplicado:** Expo SDK 52 → 58 (React Native 0.88.1, React 19.3.0) en el workspace móvil (sin código), que eliminó el aviso crítico de `tar` y otros 33; avisos restantes documentados en `docs/technical/SECURITY_DECISIONS.md`.
+
 ## Decisiones pendientes de aprobación
 
 1. Framework HTTP final: Hono vs Elysia.
 2. ~~Proveedor de autenticación~~ → resuelto en ADR-010; pendiente: calendario de 2FA/passkeys.
+8. Cuenta y dominio del proveedor de correo (ADR-013) y verificación obligatoria antes del primer inicio de sesión.
 3. Estrategia SEO/SSR para web pública (SPA, SSR, prerender).
 4. Alcance MVP móvil y prioridades de flujos.
 5. Política de retención/migración de archivos y documentos (actas/fotos).
