@@ -7,8 +7,11 @@ import {
   targetFromNodeEnv,
   type DatabaseHandle,
 } from "@wasiyuq/db";
+import { AuthConfigError, CLIENT_IP_HEADER, loadAuthConfig, resolveClientIp, type AuthConfig } from "@wasiyuq/module-identity";
 import { createApp } from "./app";
+import type { ApiServices } from "./http/context";
 import { log } from "./logger";
+import { createServices } from "./services";
 
 type Env = Record<string, string | undefined>;
 
@@ -55,9 +58,31 @@ export async function startServer(options: StartServerOptions = {}): Promise<Run
     }
   }
 
+  let authConfig: AuthConfig | null = null;
+  let services: ApiServices | undefined;
+  try {
+    authConfig = loadAuthConfig(env);
+  } catch (error) {
+    if (!(error instanceof AuthConfigError)) throw error;
+    log("error", "authentication configuration invalid; identity endpoints disabled", { issues: error.issues });
+  }
+  if (database && authConfig) {
+    services = createServices(database, authConfig);
+    log("info", "identity services enabled", { googleOAuth: Boolean(authConfig.google), rateLimit: authConfig.rateLimit });
+  }
+
   let shuttingDown = false;
-  const app = createApp({ database, isShuttingDown: () => shuttingDown });
-  const server = Bun.serve({ fetch: app.fetch, port: options.port ?? Number(env.PORT ?? 3001) });
+  const app = createApp({ database, services, isShuttingDown: () => shuttingDown });
+  const trustProxy = authConfig?.trustProxy ?? false;
+  const server = Bun.serve({
+    port: options.port ?? Number(env.PORT ?? 3001),
+    fetch(request, bunServer) {
+      // Always overwrite the client IP header: clients can never choose the key used for rate limiting.
+      const headers = new Headers(request.headers);
+      headers.set(CLIENT_IP_HEADER, resolveClientIp(request.headers, bunServer.requestIP(request)?.address, trustProxy));
+      return app.fetch(new Request(request, { headers }));
+    },
+  });
   log("info", "api started", { port: server.port });
 
   let stopping: Promise<void> | null = null;
