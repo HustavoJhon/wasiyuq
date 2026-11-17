@@ -34,12 +34,13 @@ flowchart LR
 
 | Capacidad | Implementación | Verificación |
 |---|---|---|
-| Registro email/contraseña | `POST /api/auth/sign-up/email`; contraseña 8–128, hash scrypt en `accounts.password` | tests identity + API + E2E |
+| Registro email/contraseña | `POST /api/auth/sign-up/email`; contraseña 8–128, hash scrypt asíncrono con concurrencia acotada en `accounts.password` (ver `AUTHENTICATION_SECURITY.md` §1). **No abre sesión** y responde igual si el email ya existe (Fase 3.1) | tests identity + API + E2E |
 | Login / logout | `POST /api/auth/sign-in/email`, `POST /api/auth/sign-out` | ídem |
 | Sesiones | Tabla `sessions`, expiración 7 días, renovación diaria (`updateAge`), **sin cookie cache** → revocación inmediata | test de sesión expirada y revocada |
 | Listar/revocar sesiones | `GET /api/v1/me/sessions`, `DELETE /api/v1/me/sessions/:id`, `POST /api/v1/me/sessions/revoke-others` (propias del módulo; ver §5) | tests API |
-| Verificación de email | Enlace firmado (24 h) enviado al registrarse; `autoSignInAfterVerification`; reenvío desde la UI | tests + E2E |
-| Recuperación de contraseña | Token (1 h) almacenado **hasheado**, de un solo uso; al restablecer se **revocan todas las sesiones** | tests + E2E |
+| Verificación de email | Enlace firmado (24 h) enviado al registrarse; `autoSignInAfterVerification` (reutilizarlo no abre otra sesión); reenvío desde la UI | tests + E2E con Mailpit |
+| Recuperación de contraseña | Token (1 h) almacenado **hasheado**, de un solo uso; al restablecer se **revocan todas las sesiones** y se envía el aviso `password_changed` | tests + E2E con Mailpit |
+| Avisos de seguridad | `account_exists` (intento de registro con un email existente) y `password_changed` | tests identity + E2E |
 | Google OAuth | Activado **solo** si `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` están definidos; vinculación por email verificado (`trustedProviders: ["google"]`, paridad Socialite) | configuración probada; **no probado contra Google real** |
 | Estado de cuenta | `users.status` (`active`/`suspended`): suspendida → no puede iniciar sesión y sus sesiones se invalidan (fail closed) | tests identity + API |
 | Rate limiting | Better Auth, almacenamiento en BD (`rate_limits`), compartido entre instancias | test 6.º intento → 429 |
@@ -69,7 +70,7 @@ flowchart LR
 
 ## 4. Correo
 
-Puerto `EmailSender` (`modules/identity/src/domain/ports.ts`). Transportes: `console` (desarrollo: imprime el mensaje y su enlace en la salida de la API) y `memory` (tests). **No hay transporte de producción**: la configuración se niega a arrancar con `NODE_ENV=production` hasta implementarlo (decisión pendiente: proveedor SMTP/API).
+Desde la Fase 3.1: adaptador SMTP (`SmtpEmailSender`) detrás del puerto `EmailSender`, con envío en segundo plano y reintentos (`EmailDispatcher`). Mailpit en desarrollo; en producción, un proveedor SMTP (recomendado: Resend). Transportes `console` y `memory` solo para desarrollo y tests: producción exige `smtp` completo y, si no, se niega a arrancar. Detalle en [`EMAIL_DELIVERY.md`](EMAIL_DELIVERY.md).
 
 ## 5. Endpoints de Better Auth desactivados
 
@@ -91,8 +92,8 @@ Puerto `EmailSender` (`modules/identity/src/domain/ports.ts`). Transportes: `con
 | 2FA TOTP (legacy: Fortify con confirmación) | **Diferido** | Plugin `twoFactor` disponible; requiere UI de alta, códigos de recuperación y desafío en login. No se entrega a medias. |
 | Passkeys (legacy: Fortify passkeys) | **Diferido** | Requiere definir RP ID/dominios de producción. |
 | Google OAuth | Implementado, sin prueba real | Requiere credenciales y URI de callback `${AUTH_BASE_URL}/api/auth/callback/google`. |
-| Transporte de correo en producción | Pendiente | Bloquea despliegue a producción (intencionado). |
+| Transporte de correo en producción | Implementado (SMTP), sin credenciales reales | Falta la cuenta del proveedor y el dominio verificado (`PRODUCTION_READINESS.md`). |
 | Cambio de email / eliminación de cuenta | No implementado | Definir política de retención. |
 | Consulta DNI (apisperu) al registrarse | No implementado | Integración de fase posterior (`modules/integrations`). |
 | Rate limiting de `/api/v1` | En memoria por proceso | Suficiente para una instancia; mover a BD/Redis al escalar. |
-| Coste de scrypt en el event loop | Observado | Hash en JavaScript (~0,1–1 s, más con CPU saturada); evaluar workers/hash nativo antes de producción. |
+| Coste de scrypt en el event loop | Resuelto (Fase 3.1) | No bloqueaba: `node:crypto` asíncrono en el pool de hilos. La latencia de 31 s fue contención de CPU. Se añadió un límite de concurrencia y comparación en tiempo constante (`AUTHENTICATION_SECURITY.md` §1). |
