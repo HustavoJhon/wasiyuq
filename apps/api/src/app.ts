@@ -1,9 +1,10 @@
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import { secureHeaders } from "hono/secure-headers";
 import { checkDatabaseHealth, describeDatabase, type DatabaseHandle } from "@wasiyuq/db";
 import { healthResponseSchema, readinessResponseSchema, type DependencyCheck } from "@wasiyuq/validation";
 import type { ApiServices, AppEnv } from "./http/context";
-import { errorResponse, httpError } from "./http/errors";
+import { errorResponse, HttpError, httpError } from "./http/errors";
 import { originGuard, requestContext, requireAuth, requireVerifiedEmail } from "./http/middleware";
 import { rateLimit } from "./http/rate-limit";
 import { log } from "./logger";
@@ -78,6 +79,14 @@ export function createApp(options: AppOptions) {
     app.get("/api/public/auth-providers", (c) => c.json(services.providers));
 
     const v1 = new Hono<AppEnv>();
+    // Bounded request bodies (defence in depth against oversized payloads reaching validation).
+    v1.use(
+      "*",
+      bodyLimit({
+        maxSize: 64 * 1024,
+        onError: (c) => errorResponse(c, new HttpError("PAYLOAD_TOO_LARGE", "La solicitud es demasiado grande")),
+      }),
+    );
     v1.use("*", originGuard(services));
     v1.use("*", requireAuth(services));
     v1.use("*", rateLimit({ windowMs: 60_000, max: 120, key: (c) => c.get("auth")?.user.id ?? null }));

@@ -151,6 +151,13 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
     expect(notJson.status).toBe(400);
   });
 
+  test("oversized request bodies are rejected before validation", async () => {
+    const user = await verifiedUser();
+    const res = await request("/api/v1/organizations", { cookie: user.cookie, body: { name: "x".repeat(70 * 1024) } });
+    expect(res.status).toBe(413);
+    expect((await res.json()).error.code).toBe("PAYLOAD_TOO_LARGE");
+  });
+
   test("profile update validates DNI/WhatsApp and reports DNI conflicts", async () => {
     const a = await verifiedUser();
     const b = await verifiedUser();

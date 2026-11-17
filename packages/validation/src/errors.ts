@@ -9,6 +9,7 @@ export const apiErrorCodes = [
   "FORBIDDEN",
   "NOT_FOUND",
   "CONFLICT",
+  "PAYLOAD_TOO_LARGE",
   "RATE_LIMITED",
   "INVALID_ORIGIN",
   "INTERNAL_ERROR",

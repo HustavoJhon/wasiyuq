@@ -13,6 +13,7 @@ const statusByCode: Record<ApiErrorCode, number> = {
   INVALID_ORIGIN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
 };
