@@ -44,7 +44,7 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
   beforeAll(() => {
     handle = createDatabase(testDb as DatabaseConfig);
     const config = loadAuthConfig({ AUTH_SECRET: "api-test-secret-api-test-secret-123456", AUTH_BASE_URL: ORIGIN, WEB_APP_URL: ORIGIN, MAIL_TRANSPORT: "memory" });
-    app = createApp({ database: handle, services: createServices(handle, config, mailer) });
+    app = createApp({ database: handle, services: createServices(handle, config, { sender: mailer, retryBaseDelayMs: 0 }) });
   });
   afterAll(async () => handle?.close());
 
@@ -71,7 +71,10 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
   async function signUp(name = "Usuario", address = email()) {
     const res = await request("/api/auth/sign-up/email", { body: { name, email: address, password: "correct-horse-battery" } });
     expect(res.status).toBe(200);
-    return { email: address, cookie: cookieOf(res) };
+    // Sign-up never opens a session (enumeration-safe sign-up); sign in explicitly.
+    const signIn = await request("/api/auth/sign-in/email", { body: { email: address, password: "correct-horse-battery" } });
+    expect(signIn.status).toBe(200);
+    return { email: address, cookie: cookieOf(signIn) };
   }
   async function verify(address: string) {
     const url = new URL(linkIn(address, "email_verification"));
