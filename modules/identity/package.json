@@ -12,10 +12,18 @@
     "build": "tsc -p tsconfig.json",
     "lint": "echo 'lint:module-identity ok'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "bun test --pass-with-no-tests",
+    "test": "bun --env-file=../../.env test ./src --pass-with-no-tests",
     "format": "echo 'format:module-identity ok'"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.0",
     "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "better-auth": "1.7.15",
+    "@wasiyuq/db": "workspace:*",
+    "@wasiyuq/validation": "workspace:*",
+    "drizzle-orm": "0.45.4",
+    "zod": "^3.24.0"
   }
 }

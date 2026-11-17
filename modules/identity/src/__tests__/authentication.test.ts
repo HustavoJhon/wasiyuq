@@ -1,0 +1,184 @@
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { eq } from "drizzle-orm";
+import { createDatabase, sessions, users, type DatabaseConfig, type DatabaseHandle } from "@wasiyuq/db";
+import { CLIENT_IP_HEADER, loadAuthConfig } from "../infrastructure/auth-config";
+import { createAuthentication, type Authentication } from "../infrastructure/authentication";
+import { MemoryEmailSender } from "../infrastructure/email/senders";
+import { resolveTestDatabase, uniqueEmail, uniqueIp } from "./support";
+
+const testDb = await resolveTestDatabase();
+const BASE = "http://localhost:5173";
+
+describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
+  let handle: DatabaseHandle;
+  let auth: Authentication;
+  const mailer = new MemoryEmailSender();
+  const created: string[] = [];
+
+  beforeAll(() => {
+    handle = createDatabase(testDb as DatabaseConfig);
+    const config = loadAuthConfig({
+      AUTH_SECRET: "test-secret-test-secret-test-secret-123",
+      AUTH_BASE_URL: BASE,
+      WEB_APP_URL: BASE,
+      MAIL_TRANSPORT: "memory",
+    });
+    auth = createAuthentication(handle.db, config, mailer, { onUserCreated: async (u) => void created.push(u.id) });
+  });
+  afterAll(async () => handle?.close());
+
+  const call = (path: string, init: { body?: unknown; cookie?: string; ip?: string; method?: string; origin?: string } = {}) =>
+    auth.handler(
+      new Request(`${BASE}/api/auth${path}`, {
+        method: init.method ?? (init.body ? "POST" : "GET"),
+        headers: {
+          "content-type": "application/json",
+          origin: init.origin ?? BASE,
+          [CLIENT_IP_HEADER]: init.ip ?? uniqueIp(),
+          ...(init.cookie ? { cookie: init.cookie } : {}),
+        },
+        body: init.body ? JSON.stringify(init.body) : undefined,
+        redirect: "manual",
+      }),
+    );
+  const cookieOf = (res: Response) =>
+    res.headers
+      .getSetCookie()
+      .map((c) => c.split(";")[0])
+      .join("; ");
+  const signUp = async (email = uniqueEmail(), password = "correct-horse-battery") => {
+    const res = await call("/sign-up/email", { body: { name: "Ana Test", email, password } });
+    return { res, email, password, cookie: cookieOf(res) };
+  };
+
+  test("sign-up creates an unverified user, a session cookie, a verification email and runs the hook", async () => {
+    const { res, email, cookie } = await signUp();
+    expect(res.status).toBe(200);
+    const setCookie = res.headers.getSetCookie().join("\n");
+    expect(setCookie).toContain("wasiyuq.session_token=");
+    expect(setCookie.toLowerCase()).toContain("httponly");
+    expect(setCookie.toLowerCase()).toContain("samesite=lax");
+    const body = await res.clone().text();
+    expect(body).not.toContain("password");
+
+    const session = await auth.getSession(new Headers({ cookie }));
+    expect(session?.user).toMatchObject({ email, emailVerified: false, platformRole: "user", status: "active" });
+    expect(created).toContain(session!.user.id);
+    expect(mailer.last(email, "email_verification")).toBeDefined();
+  });
+
+  test("passwords are stored hashed and never echoed", async () => {
+    const { email, password } = await signUp();
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    const rows = await handle.sql<{ password: string }[]>`select password from accounts where user_id = ${user!.id}`;
+    expect(rows[0]!.password).not.toContain(password);
+    expect(rows[0]!.password.length).toBeGreaterThan(40);
+  });
+
+  test("duplicate emails are rejected", async () => {
+    const { email } = await signUp();
+    const again = await call("/sign-up/email", { body: { name: "Other", email, password: "another-password-1" } });
+    expect(again.status).toBeGreaterThanOrEqual(400);
+    expect(again.status).toBeLessThan(500);
+  });
+
+  test("weak passwords are rejected", async () => {
+    const res = await call("/sign-up/email", { body: { name: "Weak", email: uniqueEmail(), password: "short" } });
+    expect(res.status).toBe(400);
+  });
+
+  test("email verification link verifies the user", async () => {
+    const { email } = await signUp();
+    const link = mailer.last(email, "email_verification")!.text.match(/https?:\/\/\S+/)![0];
+    const url = new URL(link);
+    const res = await call(`${url.pathname.replace("/api/auth", "")}${url.search}`);
+    expect([200, 302]).toContain(res.status);
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    expect(user!.emailVerified).toBe(true);
+  });
+
+  test("invalid credentials return a generic 401 for unknown email and wrong password alike", async () => {
+    const { email } = await signUp();
+    const wrong = await call("/sign-in/email", { body: { email, password: "wrong-password-123" } });
+    const unknown = await call("/sign-in/email", { body: { email: uniqueEmail("ghost"), password: "wrong-password-123" } });
+    expect(wrong.status).toBe(401);
+    expect(unknown.status).toBe(401);
+    expect((await wrong.json()).message).toBe((await unknown.json()).message);
+  });
+
+  test("sign-in is rate limited to 5 attempts per minute per client", async () => {
+    const ip = uniqueIp();
+    const statuses: number[] = [];
+    for (let i = 0; i < 6; i++) {
+      const res = await call("/sign-in/email", { ip, body: { email: uniqueEmail("rl"), password: "wrong-password-123" } });
+      statuses.push(res.status);
+    }
+    expect(statuses.slice(0, 5).every((s) => s === 401)).toBe(true);
+    expect(statuses[5]).toBe(429);
+  });
+
+  test("sign-out revokes the session server-side", async () => {
+    const { cookie } = await signUp();
+    expect(await auth.getSession(new Headers({ cookie }))).not.toBeNull();
+    const out = await call("/sign-out", { body: {}, cookie });
+    expect(out.status).toBe(200);
+    expect(await auth.getSession(new Headers({ cookie }))).toBeNull();
+  });
+
+  test("expired sessions are rejected", async () => {
+    const { cookie, email } = await signUp();
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    await handle.db.update(sessions).set({ expiresAt: new Date(Date.now() - 1000) }).where(eq(sessions.userId, user!.id));
+    expect(await auth.getSession(new Headers({ cookie }))).toBeNull();
+  });
+
+  test("password reset: email link, new password works, old sessions revoked, token single-use", async () => {
+    const { email, cookie } = await signUp();
+    const request = await call("/request-password-reset", { body: { email, redirectTo: `${BASE}/reset-password` } });
+    expect(request.status).toBe(200);
+    const link = mailer.last(email, "password_reset")!.text.match(/https?:\/\/\S+/)![0];
+    const token = new URL(link).pathname.split("/").pop()!;
+
+    const reset = await call("/reset-password", { body: { token, newPassword: "brand-new-password-9" } });
+    expect(reset.status).toBe(200);
+    expect(await auth.getSession(new Headers({ cookie }))).toBeNull();
+
+    const reuse = await call("/reset-password", { body: { token, newPassword: "another-password-9" } });
+    expect(reuse.status).toBe(400);
+    const signIn = await call("/sign-in/email", { body: { email, password: "brand-new-password-9" } });
+    expect(signIn.status).toBe(200);
+  });
+
+  test("password reset for unknown emails responds identically (no account enumeration)", async () => {
+    const res = await call("/request-password-reset", { body: { email: uniqueEmail("nobody"), redirectTo: `${BASE}/reset-password` } });
+    expect(res.status).toBe(200);
+  });
+
+  test("suspended accounts cannot sign in", async () => {
+    const { email, password } = await signUp();
+    await handle.db.update(users).set({ status: "suspended" }).where(eq(users.email, email));
+    const res = await call("/sign-in/email", { body: { email, password } });
+    expect(res.status).toBe(403);
+  });
+
+  test("cookie-authenticated requests from untrusted origins are rejected (CSRF)", async () => {
+    const { cookie } = await signUp();
+    const res = await call("/sign-out", { origin: "https://evil.example", cookie, body: {} });
+    expect(res.status).toBe(403);
+    expect(await auth.getSession(new Headers({ cookie }))).not.toBeNull();
+  });
+
+  test("redirect targets outside trusted origins are rejected (no open redirect)", async () => {
+    const { email } = await signUp();
+    const res = await call("/request-password-reset", { body: { email, redirectTo: "https://evil.example/steal" } });
+    expect(res.status).toBe(403);
+  });
+
+  test("profile/email/deletion endpoints of the provider are disabled", async () => {
+    const { cookie } = await signUp();
+    for (const path of ["/update-user", "/change-email", "/delete-user"]) {
+      const res = await call(path, { cookie, body: { name: "Hacked", newEmail: "x@example.test" } });
+      expect(res.status).toBe(404);
+    }
+  });
+});

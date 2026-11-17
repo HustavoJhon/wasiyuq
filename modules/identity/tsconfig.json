@@ -3,7 +3,10 @@
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": false,
-    "declaration": true
+    "declaration": true,
+    "types": [
+      "bun"
+    ]
   },
   "include": [
     "src"
