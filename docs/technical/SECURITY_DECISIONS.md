@@ -25,6 +25,8 @@ Registro de decisiones con su motivo y la prueba que las respalda. Varias surgie
 | S-18 | Configuración que se niega a arrancar en producción sin transporte de correo, sin rate limit o sin HTTPS | Despliegue inseguro accidental | Test de configuración |
 | S-19 | Rol por defecto en invitaciones = `member` (control de formulario) | Error de UI que preseleccionaba "Administrador" | E2E |
 | S-20 | Versiones de librerías de autenticación fijadas (Better Auth 1.7.15, publicada >2 semanas antes) | Cadena de suministro; releases muy frecuentes | `package.json` |
+| S-21 | Zod actualizado a 4.6.7 (GHSA-mrhx-c7xc-m3w5, agotamiento de memoria en validación) | La API valida cuerpos con Zod | `bun audit`, suite completa |
+| S-22 | Límite de cuerpo 64 KB en `/api/v1` → 413 `PAYLOAD_TOO_LARGE` | Payloads gigantes antes de validar | Test API |
 
 ## Riesgos aceptados / pendientes
 
@@ -33,3 +35,16 @@ Registro de decisiones con su motivo y la prueba que las respalda. Varias surgie
 - Sin auditoría persistente de acciones administrativas (solo logs).
 - Vinculación automática de Google por email (paridad legacy) confía en la verificación de email de Google.
 - Política de contraseñas: solo longitud (8–128); sin comprobación de contraseñas filtradas (plugin `haveibeenpwned` disponible, requiere llamada externa: decisión pendiente).
+
+## Auditoría de dependencias (`bun audit`, 2026-11-17)
+
+Tras la actualización de Zod no quedan avisos en dependencias de runtime de la API ni de autenticación (hono, better-auth, drizzle-orm, postgres, zod). Avisos restantes (no corregidos en esta fase):
+
+| Paquete | Severidad | Origen | Exposición |
+|---|---|---|---|
+| `tar` (incl. 1 crítica de DoS) | crítica/alta | `apps/mobile` (Expo/React Native, no implementado) | Herramientas de instalación móvil; no se ejecuta en API/web |
+| `image-size`, `minimatch` | alta/moderada | Expo/React Native, tailwind | Tooling |
+| `esbuild` ≤0.24.2 | moderada | Vite 6 (servidor de desarrollo), drizzle-kit | Solo servidor de desarrollo local |
+| `postcss` | alta/moderada | Tailwind/Vite (build) | Procesa solo CSS propio |
+
+Pendiente: actualizar Expo/React Native al iniciar la fase móvil y Vite/Tailwind en una tarea de mantenimiento dedicada (cambios mayores).
