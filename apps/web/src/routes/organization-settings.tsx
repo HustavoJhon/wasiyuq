@@ -180,6 +180,8 @@ function InvitationsSection({ orgId, myRole, can }: { orgId: string; myRole: Org
   const { levels, assignable } = useRoleLevels();
   const { data } = useQuery({ queryKey: queryKeys.invitations(orgId), queryFn: () => api.invitations(orgId) });
   const [sentTo, setSentTo] = useState<string | null>(null);
+  // Least privilege by default: "member" (controlled, so it survives the async role catalog load).
+  const [role, setRole] = useState<OrganizationRole>("member");
   const refresh = () => queryClient.invalidateQueries({ queryKey: queryKeys.invitations(orgId) });
   const invite = useMutation({
     mutationFn: (input: { email: string; role: OrganizationRole }) => api.invite(orgId, input),
@@ -198,8 +200,13 @@ function InvitationsSection({ orgId, myRole, can }: { orgId: string; myRole: Org
     const form = event.currentTarget;
     const data = new FormData(form);
     invite.mutate(
-      { email: String(data.get("email") ?? ""), role: String(data.get("role")) as OrganizationRole },
-      { onSuccess: () => form.reset() },
+      { email: String(data.get("email") ?? ""), role },
+      {
+        onSuccess: () => {
+          form.reset();
+          setRole("member");
+        },
+      },
     );
   };
 
@@ -215,7 +222,7 @@ function InvitationsSection({ orgId, myRole, can }: { orgId: string; myRole: Org
             <FormField label="Correo electrónico" name="email" type="email" required error={errors.email} />
             <div className="grid gap-1.5">
               <Label htmlFor="invite-role">Rol</Label>
-              <Select id="invite-role" name="role" defaultValue="member">
+              <Select id="invite-role" name="role" value={role} onChange={(e) => setRole(e.target.value as OrganizationRole)}>
                 {grantable.map((r) => (
                   <option key={r.role} value={r.role}>{r.label}</option>
                 ))}
