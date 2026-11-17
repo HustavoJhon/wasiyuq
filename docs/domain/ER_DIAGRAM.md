@@ -187,7 +187,57 @@ erDiagram
   }
 ```
 
-## 2. Notas de fidelidad
+## 2. ER implementado en WASIYUQ 2.0 — identidad y organizaciones (Fase 3)
+
+Migración Drizzle `packages/db/migrations/0000_identity_organizations.sql` (PostgreSQL). Columnas en snake_case; IDs UUID.
+
+```mermaid
+erDiagram
+  users ||--o{ sessions : "user_id (cascade)"
+  users ||--o{ accounts : "user_id (cascade)"
+  users ||--o{ organization_memberships : "user_id (cascade)"
+  organizations ||--o{ organization_memberships : "organization_id (cascade)"
+  organizations ||--o{ organization_invitations : "organization_id (cascade)"
+  users o|--o{ organization_invitations : "invited_by / accepted_by (set null)"
+  users ||--o| organization_contexts : "user_id PK (cascade)"
+  organizations ||--o{ organization_contexts : "organization_id (cascade)"
+  users o|--o| organizations : "personal_owner_id (cascade, unique)"
+
+  users { uuid id PK
+    text email UK "lower-case"
+    text dni UK "nullable, 8 dígitos"
+    text platform_role "user|platform_admin"
+    text status "active|suspended"
+    boolean email_verified }
+  sessions { uuid id PK
+    text token UK
+    timestamptz expires_at }
+  accounts { uuid id PK
+    text provider_id "credential|google"
+    text account_id
+    text password "hash scrypt" }
+  verifications { uuid id PK
+    text identifier "hasheado"
+    timestamptz expires_at }
+  rate_limits { uuid id PK
+    text key UK }
+  organizations { uuid id PK
+    text slug UK
+    text kind "personal|organization"
+    timestamptz archived_at }
+  organization_memberships { uuid id PK
+    text role "8 roles; owner único por org" }
+  organization_invitations { uuid id PK
+    text email "lower-case"
+    text role "≠ owner"
+    text token_hash UK
+    timestamptz expires_at }
+  organization_contexts { uuid user_id PK }
+```
+
+Restricciones destacadas: `UNIQUE(organization_id, user_id)` en membresías; índice único parcial `organization_id WHERE role='owner'`; `CHECK` de coherencia `kind='personal' ⇔ personal_owner_id IS NOT NULL`; formato de slug; aceptada y cancelada mutuamente excluyentes. Cubiertas por `packages/db/src/__tests__/schema.test.ts`. Las tablas de negocio futuras deben referenciar `organizations` con `ON DELETE RESTRICT`.
+
+## 3. Notas de fidelidad
 
 | Tema | Observación | Estado |
 |---|---|---|

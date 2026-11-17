@@ -81,3 +81,19 @@ flowchart TB
 - **Doble job PDF sobre `acta_path`** (`Acta` vs `Certificate`): semántica de documento no unificada.
 - **`FollowUpService::checkOverdue`** (usado por job) marca como `missed`, mientras `getOverdue()` solo consulta: comportamiento correcto pero naming a confirmar. 
 - **Campos de seguimiento:** `Store/UpdateFollowUpRequest` aceptan URLs en `photos.*` y metadatos (peso, vacunas, salud) que no se persisten en `reportMilestone`/`scheduleAdditional` actuales (solo notas/fotos subidas/estado/fechas). **Brecha verificada por comparación request vs servicio.**
+
+## 7. Implementación 2.0 — identidad y organizaciones (Fase 3, 2026-11-17)
+
+Contextos implementados en `modules/identity` y `modules/organizations` (capas `domain/`, `application/`, `infrastructure/`, API pública en `index.ts`).
+
+| Agregado 2.0 | Legacy | Invariantes implementadas |
+|---|---|---|
+| **User** (`IdentityUser`) | `User` | Email único en minúsculas; DNI opcional único (8 dígitos); `platform_role` ∈ {user, platform_admin}; `status` ∈ {active, suspended} (suspendido no autentica); el dominio no conoce al proveedor de autenticación |
+| **Organization** | `Team` | `kind` personal/organization; una personal por usuario; slug único (incl. archivadas); archivado en vez de borrado |
+| **Membership** | `team_members` | Un rol por usuario y organización; exactamente un `owner`; roles y permisos centralizados (31 permisos) |
+| **Invitation** | `TeamInvitation` | Ligada a email, 3 días, rol ≠ owner y ≤ rol del emisor, token hasheado, re-validación del emisor al aceptar |
+| **OrganizationContext** | `users.current_team_id` | Contexto activo por usuario; cae a la organización personal si deja de ser válido |
+
+Detalle: `docs/domain/ORGANIZATION_MEMBERSHIP.md`, `docs/technical/AUTHORIZATION_RBAC.md`, `docs/technical/AUTHENTICATION.md`.
+
+**No implementado en Fase 3 (fases posteriores):** Pet, Adoption, FollowUp, contenido, comunidad, directorio, soporte. El guard `OrganizationService.authorize(userId, orgId, permission)` es el punto de integración para esos módulos.
