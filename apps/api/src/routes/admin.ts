@@ -37,5 +37,8 @@ export function adminRoutes(services: ApiServices) {
     return c.json({ user: toAdminUser(user) });
   });
 
+  // Email delivery counters (no recipients or content). Admin-only: see the note on /ready.
+  app.get("/email-health", (c) => c.json({ email: services.email.health() }));
+
   return app;
 }

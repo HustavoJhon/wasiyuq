@@ -111,6 +111,11 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
     expect(await res.json()).toEqual({ emailPassword: true, google: false });
   });
 
+  test("readiness exposes only a coarse email status (no per-message counters)", async () => {
+    const body = await (await request("/ready")).json();
+    expect(body.checks.email).toEqual({ status: "ok" });
+  });
+
   test("security headers are set", async () => {
     const res = await request("/health");
     expect(res.headers.get("x-content-type-options")).toBe("nosniff");
@@ -287,6 +292,12 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
 
     expect((await request("/api/v1/admin/users", { cookie: regular.cookie })).status).toBe(403);
     await handle.db.update(users).set({ platformRole: "platform_admin" }).where(eq(users.id, admin.id));
+    expect((await request("/api/v1/admin/email-health", { cookie: regular.cookie })).status).toBe(403);
+    const emailHealth = await request("/api/v1/admin/email-health", { cookie: admin.cookie });
+    expect(emailHealth.status).toBe(200);
+    expect(Object.keys((await emailHealth.json()).email).sort()).toEqual(
+      ["consecutiveFailures", "failed", "lastErrorCode", "lastFailureAt", "lastSuccessAt", "pending", "sent"].sort(),
+    );
     const list = await request("/api/v1/admin/users?limit=5", { cookie: admin.cookie });
     expect(list.status).toBe(200);
     expect((await list.text()).toLowerCase()).not.toContain("password");
