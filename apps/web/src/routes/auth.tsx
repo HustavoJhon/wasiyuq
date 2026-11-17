@@ -94,8 +94,7 @@ export function LoginPage() {
 export function RegisterPage() {
   const search = useSearch({ strict: false }) as { redirect?: string };
   const redirect = safeRedirect(search.redirect);
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -117,9 +116,31 @@ export function RegisterPage() {
     const { error } = await authClient.signUp.email({ name, email, password, callbackURL: "/app?verified=1" });
     setPending(false);
     if (error) return setError(authErrorMessage(error));
-    await queryClient.invalidateQueries({ queryKey: queryKeys.me });
-    await navigate({ to: redirect });
+    // Sign-up never opens a session and answers the same way for new and existing emails (no enumeration),
+    // so the next step is always: check the inbox, then sign in.
+    setSubmitted(true);
   };
+
+  if (submitted) {
+    return (
+      <AuthLayout title="Revisa tu correo" description="Tu registro fue recibido">
+        <div className="grid gap-4">
+          <Alert variant="success">
+            <CheckCircle2 aria-hidden className="h-4 w-4" />
+            <AlertDescription>
+              Te enviamos un correo con los siguientes pasos. Verifica tu dirección con el enlace del mensaje (válido 24 horas) y luego
+              inicia sesión.
+            </AlertDescription>
+          </Alert>
+          <Button asChild>
+            <Link to="/login" search={{ redirect }}>
+              Ir a iniciar sesión
+            </Link>
+          </Button>
+        </div>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout
