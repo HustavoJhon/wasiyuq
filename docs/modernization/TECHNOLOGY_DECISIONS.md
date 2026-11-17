@@ -51,7 +51,7 @@
 
 ## ADR-010 — Autenticación: Better Auth (solo autenticación) + autorización propia (Fase 3, 2026-11-17)
 - **Estado:** aceptada para Fase 3 (sustituye la condición de ADR-005 tras la evaluación siguiente).
-- **Contexto (legacy verificado en historial git, commit `8b77756^`):** Fortify con registro, reset de contraseña, verificación de email, 2FA TOTP (con confirmación) y passkeys; Socialite Google con vinculación automática por email; rate limit de login 5/min por email+IP; equipos con `team_members.role` (8 roles) y 30 permisos (`TeamRole::permissions()`); super admin por flag **o email hardcodeado**.
+- **Contexto (legacy verificado en historial git, commit `8b77756^`):** Fortify con registro, reset de contraseña, verificación de email, 2FA TOTP (con confirmación) y passkeys; Socialite Google con vinculación automática por email; rate limit de login 5/min por email+IP; equipos con `team_members.role` (8 roles) y 31 permisos (`TeamRole::permissions()`); super admin por flag **o email hardcodeado**.
 
 ### Evaluación
 
@@ -73,7 +73,7 @@
 
 ### Decisión
 1. **Better Auth `1.7.15`** (versión fijada, publicada hace >2 semanas) se usa **solo para autenticación**: usuarios, cuentas (credenciales/OAuth), sesiones, verificaciones, rate limiting. Montado en Hono en `/api/auth/*`, adaptador Drizzle sobre PostgreSQL, telemetría desactivada.
-2. **No se usa el plugin `organization` de Better Auth.** La organización, membresía, invitaciones y RBAC viven en `modules/organizations` con tablas propias, porque: (a) el modelo legacy tiene 8 roles y 30 permisos con semántica propia (equipo personal, único propietario, invitaciones ligadas a email, expiración 3 días); (b) el dominio no debe depender del proveedor de autenticación; (c) facilita la migración de datos legacy y el cambio futuro de proveedor.
+2. **No se usa el plugin `organization` de Better Auth.** La organización, membresía, invitaciones y RBAC viven en `modules/organizations` con tablas propias, porque: (a) el modelo legacy tiene 8 roles y 31 permisos con semántica propia (equipo personal, único propietario, invitaciones ligadas a email, expiración 3 días); (b) el dominio no debe depender del proveedor de autenticación; (c) facilita la migración de datos legacy y el cambio futuro de proveedor.
 3. El dominio (`modules/identity/src/domain`) no conoce Better Auth; la integración vive en `modules/identity/src/infrastructure`.
 4. Autorización de plataforma (`platform_role`) separada de la autorización por organización. **Sin bypass por email.**
 
@@ -92,7 +92,7 @@
 - **Consecuencias:** dependencia de una librería con ritmo de releases alto (fijar versiones y revisar changelog al actualizar); 2FA/passkeys quedan como brecha de paridad documentada.
 
 ## ADR-011 — RBAC por organización con catálogo centralizado (Fase 3)
-- **Decisión:** se preservan los 8 roles y 30 permisos legacy (`TeamRole`/`TeamPermission`) con los mismos identificadores (`team:update`, `pets:view`, …) en un catálogo central; autorización **deny-by-default** evaluada en servidor por membresía activa en la organización del recurso.
+- **Decisión:** se preservan los 8 roles y 31 permisos legacy (`TeamRole`/`TeamPermission`) con los mismos identificadores (`team:update`, `pets:view`, …) en un catálogo central; autorización **deny-by-default** evaluada en servidor por membresía activa en la organización del recurso.
 - **Endurecimientos respecto al legacy (documentados como decisiones):** sin bypass por email; un actor no puede asignar ni invitar con un rol de nivel superior al suyo; el rol `owner` no es asignable ni invitable (el legacy permitía invitar como `owner` por `Rule::enum`); el propietario no puede ser eliminado ni degradado; los administradores de plataforma **no** heredan permisos dentro de organizaciones (el legacy los dejaba pasar) — actúan solo por endpoints de plataforma.
 - **Consecuencias:** cambios de comportamiento visibles para super admins acostumbrados al bypass; requiere validación con negocio (ver decisiones pendientes).
 
