@@ -20,6 +20,8 @@
     "typescript": "^5.8.0"
   },
   "dependencies": {
-    "@wasiyuq/validation": "workspace:*"
+    "@wasiyuq/db": "workspace:*",
+    "@wasiyuq/validation": "workspace:*",
+    "drizzle-orm": "0.45.4"
   }
 }

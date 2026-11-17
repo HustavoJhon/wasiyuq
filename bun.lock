@@ -108,7 +108,9 @@
       "name": "@wasiyuq/module-organizations",
       "version": "0.1.0",
       "dependencies": {
+        "@wasiyuq/db": "workspace:*",
         "@wasiyuq/validation": "workspace:*",
+        "drizzle-orm": "0.45.4",
       },
       "devDependencies": {
         "@types/bun": "^1.2.0",
