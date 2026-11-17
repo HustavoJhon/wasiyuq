@@ -95,3 +95,4 @@ Puerto `EmailSender` (`modules/identity/src/domain/ports.ts`). Transportes: `con
 | Cambio de email / eliminación de cuenta | No implementado | Definir política de retención. |
 | Consulta DNI (apisperu) al registrarse | No implementado | Integración de fase posterior (`modules/integrations`). |
 | Rate limiting de `/api/v1` | En memoria por proceso | Suficiente para una instancia; mover a BD/Redis al escalar. |
+| Coste de scrypt en el event loop | Observado | Hash en JavaScript (~0,1–1 s, más con CPU saturada); evaluar workers/hash nativo antes de producción. |

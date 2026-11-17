@@ -1,6 +1,6 @@
 # Informe final de auditoría y transición — WASIYUQ
 
-**Fecha:** 2026-11-17 (Fase 0 documental + Fase 1 fundación/limpieza + Fase 2 fundación de BD en `dev`)  
+**Fecha:** 2026-11-17 (Fase 0 documental + Fase 1 fundación/limpieza + Fase 2 fundación de BD + Fase 3 identidad y organizaciones)  
 **Rama:** `dev` (documentación Fase 0: `2665584`, `86eac2d`, `1110843`, `161b3c7`; Fase 1: múltiples commits hasta la verificación/fundación 2.0)  
 **Alcance:**  
 - **Fase 0:** auditoría estática e ingeniería inversa documental (sin modificar código de aplicación, dependencias, migraciones ni BD).  
@@ -135,3 +135,16 @@ Detalle: `docs/modernization/TARGET_STACK.md`, `docs/modernization/TARGET_ARCHIT
 - **Verificado:** compose healthy; generate/migrate en dev y test; rechazo de destinos no autorizados; 29 tests db+api en verde con BD real; lint/typecheck/build OK; ciclo real de caída/recuperación de BD en `/ready`.
 - **Sin cambios en:** bases de datos originales, volúmenes/contenedores legacy, respaldos, archivos de usuarios, stored procedures/factories/seeders. Sin tablas de negocio, sin migración de datos, sin merge a `main`, sin deploy.
 - **Decisiones pendientes:** configuración y secretos de producción; destino del volumen residual `docker_wasiyuq_postgres_data`; destino de factories/seeders/SPs legacy; respaldo externo de `database/database.sqlite` y volúmenes legacy; esquema de dominio (inicio de módulos).
+
+## 16. Resultado Fase 3 (identidad y organizaciones, 2026-11-17)
+- **Decisión:** Better Auth 1.7.15 solo para autenticación; organizaciones/membresías/RBAC propios (ADR-010, ADR-011).
+- **Implementado:** registro, login/logout, verificación de email, recuperación de contraseña (revoca sesiones), sesiones listables/revocables, Google OAuth configurable, estado de cuenta (suspensión), rol de plataforma explícito (sin email hardcodeado), organizaciones multi-membresía con espacio personal, 8 roles y 31 permisos legacy, invitaciones con token hasheado, contexto activo, archivado, panel mínimo de administración.
+- **Base de datos:** migración aditiva `0000_identity_organizations` (9 tablas) con claves, únicos, índices parciales y `CHECK`.
+- **API:** `/api/auth/*` (Better Auth) y `/api/v1/*` (Hono, Zod estricto, errores uniformes, CSRF, rate limit, límite de cuerpo, logs sin secretos). Contrato: `docs/technical/API_IDENTITY_CONTRACT.md`.
+- **Web:** login, registro, recuperación, verificación, shell autenticado, perfil y sesiones, organizaciones, miembros, invitaciones, administración; navegación según permisos.
+- **Verificación:** 128 tests automatizados (validation 5, api-client 3, db 27, web 6, organizations 36, identity 24, api 27) contra PostgreSQL de test; E2E en Chromium con 28 comprobaciones; `lint`/`typecheck`/`build` OK; migraciones idempotentes y `drizzle-kit check` sin conflictos; `bun audit` sin avisos en dependencias de runtime.
+- **Seguridad:** 22 decisiones registradas en `docs/technical/SECURITY_DECISIONS.md`, varias derivadas de revisiones durante la implementación (fuga de token de sesión en JSON, checks de origen desactivados en test, suplantación de IP para rate limit, TOCTOU en invitaciones, SQL en logs, rol por defecto en UI).
+- **Brechas de paridad:** 2FA y passkeys diferidos; Google OAuth sin prueba real; sin transporte de correo de producción (arranque en producción bloqueado); cambio de email y borrado de cuenta no implementados; consulta DNI no migrada.
+- **Observación de rendimiento:** el hash scrypt de Better Auth se ejecuta en JavaScript y bloquea el event loop (~0,1–1 s por operación); bajo carga de CPU del host se observaron registros de varios segundos. Evaluar workers o un hash nativo antes de producción.
+- **Sin cambios en:** bases de datos originales (SQL Server/SQLite), volúmenes legacy, respaldos, fotos, documentos. No se implementaron pets/adoptions/follow-ups ni se desplegó a producción.
+- **Decisiones pendientes:** ver `AUTHENTICATION.md` §7, `AUTHORIZATION_RBAC.md` §5, `ORGANIZATION_MEMBERSHIP.md` §7.
