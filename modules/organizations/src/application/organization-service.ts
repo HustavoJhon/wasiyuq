@@ -79,7 +79,7 @@ export class OrganizationService {
   private async createWithRetry(name: string, kind: "personal" | "organization", ownerUserId: string) {
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
-        const slug = await this.uniqueSlug(kind === "personal" ? `${name} personal` : name);
+        const slug = await this.uniqueSlug(name);
         return await this.repo.createWithOwner({ name, slug, kind, ownerUserId });
       } catch (error) {
         if (!(error instanceof SlugTakenError)) throw error;
