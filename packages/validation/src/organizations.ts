@@ -165,13 +165,14 @@ export const createInvitationRequestSchema = z
   .strict();
 export type CreateInvitationRequest = z.infer<typeof createInvitationRequestSchema>;
 
-/** Returned once, at creation: the raw token is never stored nor shown again. */
-export const createdInvitationSchema = z.object({ invitation: invitationSchema, acceptUrl: z.string() });
-
+/**
+ * Shown to a signed-in user who opened an invitation link. The invited address is not revealed: only whether
+ * it matches the current account (legacy `ValidTeamInvitation`). The raw token is never returned by the API.
+ */
 export const invitationPreviewSchema = z.object({
   organizationName: z.string(),
   role: organizationRoleSchema,
-  email: z.string(),
+  emailMatches: z.boolean(),
   expiresAt: z.string(),
   status: z.enum(["pending", "accepted", "expired", "cancelled"]),
 });
