@@ -268,6 +268,39 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(text).not.toContain('"token"');
   });
 
+  test("production cookies are Secure, httpOnly, SameSite=Lax and __Secure- prefixed", async () => {
+    const httpsBase = "https://app.wasiyuq.org";
+    const prodConfig = loadAuthConfig({
+      NODE_ENV: "production",
+      AUTH_SECRET: "prod-like-test-secret-0123456789abcdefghij",
+      AUTH_BASE_URL: httpsBase,
+      WEB_APP_URL: httpsBase,
+      MAIL_TRANSPORT: "smtp",
+      MAIL_FROM_ADDRESS: "no-reply@wasiyuq.org",
+      SMTP_HOST: "smtp.provider.example",
+      SMTP_SECURITY: "tls",
+      SMTP_USER: "user",
+      SMTP_PASSWORD: "password",
+    });
+    const prodAuth = createAuthentication(handle.db, prodConfig, new EmailDispatcher(new MemoryEmailSender()));
+    const post = (path: string, body: unknown) =>
+      prodAuth.handler(
+        new Request(`${httpsBase}/api/auth${path}`, {
+          method: "POST",
+          headers: { "content-type": "application/json", origin: httpsBase, [CLIENT_IP_HEADER]: uniqueIp() },
+          body: JSON.stringify(body),
+        }),
+      );
+    const email = uniqueEmail("prodcookie");
+    await post("/sign-up/email", { name: "Prod", email, password: "correct-horse-battery" });
+    const signIn = await post("/sign-in/email", { email, password: "correct-horse-battery" });
+    expect(signIn.status).toBe(200);
+    const sessionCookie = signIn.headers.getSetCookie().find((c) => c.includes("session_token="))!;
+    expect(sessionCookie).toStartWith("__Secure-wasiyuq.session_token=");
+    const flags = sessionCookie.toLowerCase();
+    for (const flag of ["secure", "httponly", "samesite=lax", "path=/"]) expect(flags).toContain(flag);
+  });
+
   test("profile/email/deletion/session-listing endpoints of the provider are disabled", async () => {
     const { cookie } = await signUp();
     for (const path of ["/update-user", "/change-email", "/delete-user", "/list-sessions"]) {
