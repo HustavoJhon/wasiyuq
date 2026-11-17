@@ -86,3 +86,34 @@
 | Frontend React inicia | OK — `bun run --filter @wasiyuq/web dev` (Vite en `127.0.0.1:5174`), respuesta HTTP 200 y HTML de la app servido. |
 
 **Conclusión de fase:** fundación técnica 2.0 operativa en monorepo (install/build/lint/typecheck/test/API/web verificados). Quedan pendientes de entorno/permisos y trabajo funcional de módulos de negocio y migración de datos.
+
+## 8. Auditoría de limpieza de BD legacy (2026-11-17)
+
+Auditoría focalizada tras retirar `database/migrations/**` (commit `f02d015`, 26 migraciones PHP + `stored_procedures/.gitkeep`).
+
+### Búsqueda realizada
+`git grep` sobre todo el repo (excluyendo `docs/`, `legacy-assets/`, `database/`) de: `laravel`, `artisan`, `eloquent`, `Illuminate`, `sqlsrv`, `SQL Server`, `mssql`, `tedious`, `pdo_`, `composer`, `migrate:`, `db:seed`, `DB_CONNECTION`, `DB_HOST`. Revisados también `package.json` raíz y de cada workspace, `turbo.json`, `.github/workflows/*.yml`, `.env.example`, `infra/docker/`, y `bun.lock`.
+
+### Resultado: dependencias operativas
+**Ninguna.** No existen scripts, workflows CI, configuraciones ni dependencias que ejecuten migraciones Laravel, comandos Artisan, Eloquent o drivers de SQL Server.
+
+| Hallazgo | Tipo | Valoración |
+|---|---|---|
+| `README.md` (nota sobre retiro de Laravel), `packages/db/README.md` (nota sobre retiro de migraciones) | Histórico/aclaratorio | Correcto, se mantiene |
+| `.gitignore` → `.env.laravel.local` | Protección | Evita versionar secretos legacy; se mantiene |
+| `bun.lock` → `mysql2`, `sqlite3`, `better-sqlite3` | `peerDependencies` opcionales de `drizzle-orm` | No instalados; no operativos |
+| `database/factories/*.php`, `database/seeders/DatabaseSeeder.php` (usan `Illuminate`/Eloquent) | Referencia legacy | No ejecutables sin Laravel; conservados por decisión independiente |
+| `database/stored-procedures/**/*.sql` (T-SQL) | Referencia legacy | Conservados para paridad funcional |
+| `docs/**` | Histórico | Citas de auditoría marcadas como retiradas (commit `76a672f`) |
+| `legacy-assets/docs-ref/{docker-compose.legacy.yml,Makefile.legacy,README.legacy.md}` | Respaldo documental | Incluye comandos Artisan/SQL Server históricos; no operativos |
+
+### Datos legacy locales detectados (no versionados, preservados)
+- `.env.legacy` declara `DB_CONNECTION=sqlite` → `database/database.sqlite` (ignorado vía `database/.gitignore`). El entorno Docker legacy (`docker-compose.legacy.yml`) usaba SQL Server. **Ambos se tratan como bases de datos originales: no se modifican ni eliminan.**
+
+### Infraestructura de migraciones 2.0
+- Único sistema previsto: **Drizzle Kit** en `packages/db` (`drizzle.config.ts`, salida `packages/db/migrations/`, dialecto `postgresql`).
+- Ninguna otra carpeta de migraciones ni otro ORM en workspaces.
+
+### Riesgos remanentes
+- Las factories/seeders legacy pueden confundirse con tooling 2.0; pendientes de decisión (archivar en `legacy-assets/` o eliminar).
+- `database/database.sqlite` vive dentro del árbol de trabajo; se recomienda respaldarlo fuera del repo antes de cualquier limpieza física.

@@ -7,6 +7,7 @@
 ## Estado de ejecución (Fase 1 — 2026-11-16)
 - **Ejecutado:** retiro del código/config/tooling operativo Laravel/PHP/Composer/Inertia/Vue del proyecto activo; respaldo de referencias/assets legacy en `legacy-assets/**`; preservación de `docs/**` y referencias legacy de BD en `database/{factories,seeders,stored-procedures}`; inicialización de monorepo Bun/Turborepo/TS con `apps/{api,web,mobile}`, `modules/*`, `packages/*`, `infra/docker` y `.env.example`.
 - **Limpieza adicional:** eliminación de `database/migrations/**` (migraciones Laravel/SQL Server legacy). La estructura de migraciones de WASIYUQ 2.0 pertenece exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL, preparada sin esquema funcional completo).
+- **Auditoría post-limpieza (2026-11-17):** sin dependencias operativas de Laravel/Artisan/Eloquent/SQL Server en scripts, CI, workspaces ni configuración. Drizzle Kit (`packages/db`) es el único sistema de migraciones previsto. Detalle en `LEGACY_CLEANUP_LOG.md` §8.
 - **Registro detallado:** `docs/development/LEGACY_CLEANUP_LOG.md` (qué se eliminó, conservó, reemplazó, verificaciones y riesgos).
 - **Pendiente de retiro físico en entorno (permisos root, no trackeado):** `vendor/**`, parte de `public/build/**` y symlink `public/storage` residual.
 - **No realizado:** eliminación de bases de datos originales, borrado de respaldos/archivos históricos externos, implementación de módulos de negocio, deploy. No se eliminaron `database/stored-procedures/**`, `database/factories/**` ni `database/seeders/**` (decisión independiente).
