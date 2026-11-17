@@ -112,7 +112,8 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       },
     },
     // Profile, email and deletion changes go through the identity module (validated, audited rules), not Better Auth.
-    disabledPaths: ["/update-user", "/change-email", "/delete-user"],
+    // `/list-sessions` returns every session token to JavaScript; the API exposes /api/v1/me/sessions instead.
+    disabledPaths: ["/update-user", "/change-email", "/delete-user", "/list-sessions"],
     advanced: {
       // Explicit: Better Auth silently skips origin/CSRF checks when it detects a test environment. Keeping them
       // on everywhere means tests exercise the same protection as production.
@@ -153,7 +154,7 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
 
   return {
     basePath: AUTH_BASE_PATH,
-    handler: (request) => auth.handler(request),
+    handler: async (request) => stripSessionTokens(await auth.handler(request)),
     async getSession(headers) {
       const result = await auth.api.getSession({ headers, query: { disableRefresh: false } });
       if (!result) return null;
@@ -180,4 +181,30 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       };
     },
   };
+}
+
+/**
+ * Better Auth includes the session token in some JSON bodies (sign-up, sign-in, get-session) for bearer-token
+ * clients. Browsers authenticate with the httpOnly cookie only, so the token is removed from every JSON body to
+ * keep it out of reach of JavaScript. (Mobile clients will use a dedicated flow; see docs.)
+ */
+export async function stripSessionTokens(response: Response): Promise<Response> {
+  if (!(response.headers.get("content-type") ?? "").includes("application/json")) return response;
+  const text = await response.text();
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    return new Response(text, response);
+  }
+  const scrub = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(scrub);
+    if (value && typeof value === "object") {
+      return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "token").map(([key, v]) => [key, scrub(v)]));
+    }
+    return value;
+  };
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  return new Response(JSON.stringify(scrub(body)), { status: response.status, statusText: response.statusText, headers });
 }

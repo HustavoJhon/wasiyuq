@@ -60,6 +60,7 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(setCookie.toLowerCase()).toContain("samesite=lax");
     const body = await res.clone().text();
     expect(body).not.toContain("password");
+    expect(body).not.toContain('"token"');
 
     const session = await auth.getSession(new Headers({ cookie }));
     expect(session?.user).toMatchObject({ email, emailVerified: false, platformRole: "user", status: "active" });
@@ -183,11 +184,24 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(res.status).toBe(403);
   });
 
-  test("profile/email/deletion endpoints of the provider are disabled", async () => {
+  test("session tokens never appear in JSON bodies (sign-in, get-session)", async () => {
+    const { email, password } = await signUp();
+    const signIn = await call("/sign-in/email", { body: { email, password } });
+    const cookie = cookieOf(signIn);
+    const rawToken = decodeURIComponent(cookie.split("=")[1]!).split(".")[0]!;
+    expect(await signIn.text()).not.toContain(rawToken);
+    const session = await call("/get-session", { cookie });
+    const text = await session.text();
+    expect(text).toContain(email);
+    expect(text).not.toContain(rawToken);
+    expect(text).not.toContain('"token"');
+  });
+
+  test("profile/email/deletion/session-listing endpoints of the provider are disabled", async () => {
     const { cookie } = await signUp();
-    for (const path of ["/update-user", "/change-email", "/delete-user"]) {
-      const res = await call(path, { cookie, body: { name: "Hacked", newEmail: "x@example.test" } });
-      expect(res.status).toBe(404);
+    for (const path of ["/update-user", "/change-email", "/delete-user", "/list-sessions"]) {
+      const res = await call(path, { cookie, method: path === "/list-sessions" ? "GET" : "POST", body: path === "/list-sessions" ? undefined : { name: "Hacked", newEmail: "x@example.test" } });
+      expect([path, res.status]).toEqual([path, 404]);
     }
   });
 });
