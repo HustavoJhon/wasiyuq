@@ -55,7 +55,7 @@ Registro de decisiones con su motivo y la prueba que las respalda. Varias surgie
 
 Corregido sin overrides:
 - `apps/mobile`: Expo SDK 52 (sin soporte) → **SDK 58** (`expo ~58.0.22`, `react-native 0.88.1`, `react 19.3.0`, versiones del `bundledNativeModules.json` del SDK 58). El workspace móvil es un marcador sin código, así que no hubo cambios de API. Esto eliminó `tar` (crítico), `@xmldom/xmldom`, `image-size`, `uuid` y las copias antiguas de `postcss`.
-- `apps/web`: `react`/`react-dom` fijados a 19.3.0 (antes `^19`, que había resuelto versiones distintas para `react` y `react-dom`).
+- `apps/web`: `react`/`react-dom` fijados a 19.3.0 (antes `^19` → 19.3.1). React Native 0.88.1 exige exactamente `react` 19.3.0 y en el monorepo hay una sola copia, así que web y móvil comparten esa versión y `react-dom` coincide con `react`.
 
 Avisos restantes (sin versión compatible publicada o fuera de runtime):
 
