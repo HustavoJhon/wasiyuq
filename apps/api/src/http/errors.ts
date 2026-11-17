@@ -47,13 +47,21 @@ export function errorResponse(c: Context, error: unknown) {
     message = error.message;
     if (code === "FORBIDDEN") log("warn", "authorization denied", { path: c.req.routePath, reason: error.reason, userId: c.get("auth")?.user.id });
   } else {
-    // Unknown errors: log details server-side, return a generic message (no stack traces or SQL to clients).
-    log("error", "unhandled error", {
-      method: c.req.method,
-      path: c.req.routePath,
-      error: error instanceof Error ? error.message : String(error),
-      requestId: c.get("requestId"),
-    });
+    // Unknown errors: never log raw messages (database errors embed SQL parameters such as emails). Log only the
+    // error type and, for PostgreSQL errors, the SQLSTATE code and constraint name.
+    log("error", "unhandled error", { method: c.req.method, path: c.req.routePath, requestId: c.get("requestId"), ...safeErrorMeta(error) });
   }
   return c.json({ error: { code, message, ...(issues ? { issues } : {}) } }, statusByCode[code] as 400);
+}
+
+/** Non-sensitive description of an unexpected error for logs. */
+export function safeErrorMeta(error: unknown): { errorType: string; pgCode?: string; constraint?: string } {
+  const type = error instanceof Error ? error.name || error.constructor.name : typeof error;
+  const cause = (error as { cause?: unknown } | null)?.cause ?? error;
+  const pg = (cause ?? {}) as { code?: unknown; constraint_name?: unknown };
+  return {
+    errorType: type,
+    ...(typeof pg.code === "string" && /^[0-9A-Z]{5}$/.test(pg.code) ? { pgCode: pg.code } : {}),
+    ...(typeof pg.constraint_name === "string" ? { constraint: pg.constraint_name } : {}),
+  };
 }

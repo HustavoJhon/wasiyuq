@@ -3,8 +3,21 @@ import { log } from "../logger";
 import type { ApiServices, AppEnv, AuthState } from "./context";
 import { HttpError, httpError } from "./errors";
 
-/** Remove secrets from paths before logging (invitation tokens). */
-export const redactPath = (path: string) => path.replace(/(\/invitations\/)[A-Za-z0-9_-]{20,}/, "$1:token");
+const UUID_SEGMENT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const TOKEN_SEGMENT = /^[A-Za-z0-9_.~-]{16,}$/;
+const ROUTE_WORDS = /^[a-z]+(-[a-z]+)*$/;
+
+/**
+ * Remove secrets from paths before logging: any token-like segment (invitation links, password reset
+ * callbacks, ...) becomes `:token`. UUIDs are kept for traceability. Query strings are never logged.
+ */
+export const redactPath = (path: string) =>
+  path
+    .split("/")
+    .map((segment) =>
+      TOKEN_SEGMENT.test(segment) && !UUID_SEGMENT.test(segment) && !ROUTE_WORDS.test(segment) ? ":token" : segment,
+    )
+    .join("/");
 
 export const requestContext: MiddlewareHandler<AppEnv> = async (c, next) => {
   const requestId = crypto.randomUUID();
