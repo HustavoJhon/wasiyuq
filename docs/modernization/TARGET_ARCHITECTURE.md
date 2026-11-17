@@ -1,6 +1,6 @@
 # Arquitectura objetivo
 
-**Fecha:** 2026-11-16 (actualizado tras Fase 1)  
+**Fecha:** 2026-11-17 (actualizado tras Fase 2 — fundación de BD)  
 **Objetivo:** reconstruir WASIYUQ como plataforma moderna, mantenible y preparada para web y móvil, preservando dominio y reglas de negocio.
 
 ## Estado Fase 1 (fundación creada)
@@ -10,6 +10,23 @@
 - `apps/mobile`: preparado (sin implementación funcional).
 - Módulos y paquetes creados con límites/exports mínimos (`index.ts`); sin lógica de negocio implementada aún.
 - **Migraciones 2.0:** estructura exclusiva en `packages/db/migrations/` con configuración Drizzle ORM + PostgreSQL preparada (sin esquema funcional completo). Las migraciones Laravel legacy `database/migrations/**` fueron retiradas; `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
+
+## Estado Fase 2 (fundación de base de datos)
+- `packages/db` (`@wasiyuq/db`): configuración tipada por destino (`development` → `DATABASE_URL`, `test` → `TEST_DATABASE_URL`) validada con Zod; cliente Drizzle sobre postgres.js con ciclo de vida (`createDatabase`/`close`); `checkDatabaseHealth`; `runMigrations` con salvaguardas (lista explícita de BD, host local, separación dev/test, bloqueo en producción, rechazo de indicadores legacy SQL Server); exports explícitos en `src/index.ts`.
+- `apps/api`: depende de `@wasiyuq/db`; `GET /health` (liveness, sin BD) y `GET /ready` (readiness, consulta PostgreSQL, 503 con código de fallo); logs JSON estructurados de fallos de conexión sin credenciales; `SIGINT`/`SIGTERM` con apagado ordenado.
+- `packages/validation`: `readinessResponseSchema` compartido.
+- `infra/docker`: PostgreSQL 16 aislado del stack legacy (proyecto Compose `wasiyuq2`).
+- Esquema Drizzle vacío: los módulos de negocio definirán sus tablas en fases posteriores.
+- Referencia completa: `docs/technical/DATABASE_FOUNDATION.md`.
+
+```mermaid
+flowchart LR
+  API["apps/api (Hono)"] -->|createDatabase / checkDatabaseHealth| DB["packages/db"]
+  DB -->|postgres.js + Drizzle| PG[("PostgreSQL 16\nwasiyuq_dev / wasiyuq_test")]
+  CLI["db:migrate / db:migrate:test"] -->|assertMigrationTargetAllowed| DB
+  KIT["drizzle-kit generate"] -->|SQL| MIG["packages/db/migrations"]
+  MIG --> CLI
+```
 
 ## 1. Principios
 
@@ -92,6 +109,7 @@ flowchart TB
 
 - **PostgreSQL** como fuente de verdad nueva; esquema diseñado desde dominio y mapeado a esquema actual.
 - Estrategia de migración: extracción desde SQL Server, transformación (tipos, JSON, enums/strings, timestamps, soft deletes), carga verificable y reconciliación.
+- **Implementado (Fase 2):** infraestructura de migraciones Drizzle Kit con salvaguardas; ver `docs/technical/DATABASE_FOUNDATION.md`. Aún sin esquema de dominio ni migración de datos.
 - Reemplazo de **stored procedures T-SQL** por consultas/repositorios/casos de uso en Drizzle, manteniendo resultados funcionales equivalentes.
 
 ## 7. Seguridad objetivo

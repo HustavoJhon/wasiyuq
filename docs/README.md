@@ -39,7 +39,7 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 - Migraciones Laravel legacy (`database/migrations/`, **retiradas en limpieza Fase 1**), `database/seeders/`, `database/stored-procedures/` (referencias conservadas según decisión)
 - `resources/js/`, `config/`
 
-> **WASIYUQ 2.0:** las migraciones de base de datos ya no usan Laravel/Artisan; la estructura de migraciones pertenece exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL, preparada, sin esquema funcional completo aún). `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
+> **WASIYUQ 2.0:** las migraciones de base de datos ya no usan Laravel/Artisan; pertenecen exclusivamente a `packages/db/migrations/` (Drizzle ORM + PostgreSQL). Desde la Fase 2 la infraestructura es operativa (configuración validada, migraciones con salvaguardas, readiness en la API), aún sin esquema de negocio; ver [DATABASE_FOUNDATION.md](technical/DATABASE_FOUNDATION.md). `database/factories/`, `database/seeders/` y `database/stored-procedures/` permanecen como referencias legacy pendientes de decisión independiente.
 
 ## Índice rápido
 
@@ -50,8 +50,9 @@ Este directorio contiene el expediente técnico y funcional generado a partir de
 - [Matriz de trazabilidad](development/TRACEABILITY_MATRIX.md)
 - [Registro de limpieza Fase 1](development/LEGACY_CLEANUP_LOG.md)
 - [Plan de retiro de legado](modernization/LEGACY_CLEANUP_PLAN.md)
-- [Stack objetivo (Fase 1 aplicado)](modernization/TARGET_STACK.md)
+- [Stack objetivo (Fases 1–2 aplicadas)](modernization/TARGET_STACK.md)
 - [Arquitectura objetivo](modernization/TARGET_ARCHITECTURE.md)
+- [Fundación de base de datos (Fase 2)](technical/DATABASE_FOUNDATION.md)
 - [Roadmap de reconstrucción](modernization/RECONSTRUCTION_ROADMAP.md)
 
 ## Notas

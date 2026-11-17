@@ -1,11 +1,12 @@
 # Informe final de auditoría y transición — WASIYUQ
 
-**Fecha:** 2026-11-16 (Fase 0 documental + Fase 1 fundación/limpieza en `dev`)  
+**Fecha:** 2026-11-17 (Fase 0 documental + Fase 1 fundación/limpieza + Fase 2 fundación de BD en `dev`)  
 **Rama:** `dev` (documentación Fase 0: `2665584`, `86eac2d`, `1110843`, `161b3c7`; Fase 1: múltiples commits hasta la verificación/fundación 2.0)  
 **Alcance:**  
 - **Fase 0:** auditoría estática e ingeniería inversa documental (sin modificar código de aplicación, dependencias, migraciones ni BD).  
 - **Fase 1:** retiro del runtime legacy Laravel/PHP/Composer/Inertia/Vue del proyecto activo y preparación del monorepo Bun/TypeScript. **`docs/**` conservado**, referencias legacy de BD conservadas (`database/factories|seeders|stored-procedures`; `database/migrations/**` Laravel retirado en limpieza adicional), respaldos/referencias en `legacy-assets/**`. **No se modificaron ni destruyeron bases de datos originales. No se implementaron módulos de negocio ni se realizó deploy.**  
-- **Migraciones 2.0:** `packages/db/migrations/` (Drizzle ORM + PostgreSQL, estructura preparada; sin esquema funcional completo).  
+- **Migraciones 2.0:** `packages/db/migrations/` (Drizzle ORM + PostgreSQL; infraestructura operativa con salvaguardas desde Fase 2; sin esquema de negocio).  
+- **Fase 2:** fundación de base de datos (PostgreSQL + Drizzle + readiness API). Ver sección 15 y `docs/technical/DATABASE_FOUNDATION.md`.  
 **Registro operativo:** `docs/development/LEGACY_CLEANUP_LOG.md`.
 
 ## 1. Qué es WASIYUQ
@@ -117,9 +118,20 @@ Detalle: `docs/modernization/TARGET_STACK.md`, `docs/modernization/TARGET_ARCHIT
 - **Pendientes/riesgos:** `vendor/**` y parte de `public/build/**` root-owned en disco (no trackeados); historial git contiene rename de `.env` en `b83558b` (retirado del índice en `28f31e0`); implementación de módulos de negocio, migración SQL Server→PostgreSQL, paridad auth/documentos/seguimientos/SPs y decisiones abiertas (secciones 8, 12).
 
 ## 14. Siguiente paso recomendado
+> Actualización 2026-11-17: el punto 3 (integración PostgreSQL/Drizzle) quedó resuelto a nivel de infraestructura en Fase 2 (sección 15).
 1. **Validar con negocio:** gaps C/P críticos (cierre adopción, documentos, campos seguimiento, SPs) y congelar decisiones de paridad.  
 2. **Respaldos y descubrimiento de datos reales:** inventario de BD/archivos/secretos en entornos (sin exponer secretos en repo).  
 3. **Implementación Fase 2:** módulos de negocio por prioridad (identidad/organizaciones/mascotas/adopciones/seguimientos), integración PostgreSQL/Drizzle, auth evaluada, y migración de datos/archivos con pruebas de paridad.  
 4. **Operación:** resolver limpieza de residuos root-owned, rotar secretos si aplica por historial, y asegurar entorno Docker con puertos disponibles para CI/dev.
 
 > **Conclusión:** Fase 0 documentada y Fase 1 completada a nivel de fundación técnica y retiro del runtime legacy. Persisten decisiones de negocio/migración y la implementación funcional de módulos antes de paridad y cutover.
+
+## 15. Resultado Fase 2 (fundación de base de datos, 2026-11-17)
+- **Auditoría previa:** sin dependencias operativas de Laravel/Artisan/Eloquent/SQL Server (`LEGACY_CLEANUP_LOG.md` §8).
+- **`packages/db`:** configuración Zod por destino (dev/test), cliente Drizzle + postgres.js con ciclo de vida, health check, runner de migraciones con salvaguardas y CLI (`db:generate`, `db:check`, `db:migrate`, `db:migrate:test`).
+- **Infra:** PostgreSQL 16 en Compose `wasiyuq2` (aislado del stack legacy `wasiyuq`), `127.0.0.1:55432`, `pg_isready`, volumen persistente, BD de test automática.
+- **API:** `/health` (liveness) independiente de `/ready` (readiness con BD); logs estructurados de fallos; apagado ordenado.
+- **CI:** servicio PostgreSQL efímero + migraciones + tests de integración.
+- **Verificado:** compose healthy; generate/migrate en dev y test; rechazo de destinos no autorizados; 29 tests db+api en verde con BD real; lint/typecheck/build OK; ciclo real de caída/recuperación de BD en `/ready`.
+- **Sin cambios en:** bases de datos originales, volúmenes/contenedores legacy, respaldos, archivos de usuarios, stored procedures/factories/seeders. Sin tablas de negocio, sin migración de datos, sin merge a `main`, sin deploy.
+- **Decisiones pendientes:** configuración y secretos de producción; destino del volumen residual `docker_wasiyuq_postgres_data`; destino de factories/seeders/SPs legacy; respaldo externo de `database/database.sqlite` y volúmenes legacy; esquema de dominio (inicio de módulos).

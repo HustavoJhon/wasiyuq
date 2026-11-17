@@ -117,3 +117,28 @@ Auditoría focalizada tras retirar `database/migrations/**` (commit `f02d015`, 2
 ### Riesgos remanentes
 - Las factories/seeders legacy pueden confundirse con tooling 2.0; pendientes de decisión (archivar en `legacy-assets/` o eliminar).
 - `database/database.sqlite` vive dentro del árbol de trabajo; se recomienda respaldarlo fuera del repo antes de cualquier limpieza física.
+
+
+## 9. Fase 2 — fundación de base de datos (2026-11-17)
+
+Relación con la limpieza legacy: la nueva infraestructura PostgreSQL/Drizzle se construyó **sin tocar** ningún recurso legacy.
+
+- **Colisión detectada y resuelta:** el `docker-compose.yml` de 2.0 usaba implícitamente el mismo nombre de proyecto Compose (`wasiyuq`) que el stack Laravel, cuyos contenedores (`wasiyuq-sqlserver-1`, `wasiyuq-minio-1`, `wasiyuq-redis-1`, `wasiyuq-app-1`, `wasiyuq-nginx-1`, `wasiyuq-mailpit-1`; detenidos) y volúmenes (`wasiyuq_sqlserver_data`, `wasiyuq_minio_data`, `wasiyuq_redis_data`) siguen en el host. Un `docker compose down --remove-orphans` desde 2.0 podía eliminar esos contenedores. Se renombró el proyecto 2.0 a **`wasiyuq2`** (contenedor `wasiyuq2-postgres`, volumen `wasiyuq2_postgres_data`). El contenedor y el volumen 2.0 creados minutos antes con el nombre conflictivo (vacíos) se eliminaron por nombre exacto; **ningún contenedor ni volumen legacy fue modificado**.
+- **Volumen residual de Fase 1:** `docker_wasiyuq_postgres_data` (creado 2026-11-16 por el intento de arranque de Fase 1, proyecto `docker`). No se eliminó; puede borrarse manualmente si se confirma que no contiene datos útiles.
+- **Puertos:** el host tiene otras instancias PostgreSQL en 5432/5433 (otros proyectos). 2.0 usa `127.0.0.1:55432` y las salvaguardas de migración rechazan BD no listadas (verificado: un intento contra `127.0.0.1:5432/postgres` se rechaza sin conectar).
+- **Salvaguardas anti-legacy:** URLs no PostgreSQL (SQL Server/MySQL/SQLite) se rechazan en la validación; las migraciones rechazan puertos 1433/1434 y nombres con `legacy|laravel|sqlserver|mssql|sqlite|forge|homestead`.
+- **Sin operaciones destructivas automáticas:** ningún script hace `DROP DATABASE`/`migrate:fresh`/reset. El reset de desarrollo está documentado como procedimiento manual en `infra/docker/README.md`.
+- Detalle técnico: `docs/technical/DATABASE_FOUNDATION.md`.
+
+### Verificaciones Fase 2
+
+| Verificación | Resultado |
+|---|---|
+| `docker compose --env-file .env -f infra/docker/docker-compose.yml up -d` | OK — `wasiyuq2-postgres` `healthy`; BD `wasiyuq_dev` y `wasiyuq_test` creadas |
+| `bun run --filter @wasiyuq/db db:generate` | OK — sin cambios de esquema (esquema vacío); `meta/_journal.json` creado |
+| `db:migrate` / `db:migrate:test` | OK — `applied`, `appliedTotal: 0` (solo esquema de control `drizzle`) |
+| `db:migrate` con allow-list vacía / contra `postgres` en 5432 | Rechazado por salvaguardas, exit 1, sin conexión |
+| `bun run test` | OK — `@wasiyuq/db` 22 pass (unitarios + integración en `wasiyuq_test`, incl. generate+migrate en esquema efímero); `@wasiyuq/api` 7 pass |
+| Tests sin BD (`TEST_DATABASE_URL` ausente o inalcanzable) | Integración omitida, 0 fallos |
+| `bun run lint` / `typecheck` / `build` | OK |
+| API real (`PORT=3101`) | `/health` 200; `/ready` 200 → `docker stop wasiyuq2-postgres` → `/ready` 503 `ECONNREFUSED` (log JSON sin credenciales), `/health` 200 → `docker start` → `/ready` 200; `SIGTERM` → `api shutting down`/`api stopped`, proceso termina |
