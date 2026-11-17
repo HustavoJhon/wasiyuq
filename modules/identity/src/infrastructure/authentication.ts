@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
@@ -5,7 +6,7 @@ import { accounts, rateLimits, sessions, users, verifications, type Database } f
 import type { AccountStatus, PlatformRole } from "@wasiyuq/validation";
 import type { EmailSender } from "../domain/ports";
 import type { IdentityUser } from "../domain/user";
-import type { AuthConfig } from "./auth-config";
+import { CLIENT_IP_HEADER, type AuthConfig } from "./auth-config";
 import { emailTemplates } from "./email/templates";
 
 export interface AuthenticatedSession {
@@ -120,7 +121,8 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       cookiePrefix: "wasiyuq",
       useSecureCookies: config.production,
       defaultCookieAttributes: { httpOnly: true, sameSite: "lax" },
-      ipAddress: { ipAddressHeaders: [config.clientIpHeader] },
+      // Only our server-written header is read; see resolveClientIp.
+      ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
       database: { generateId: false },
     },
     databaseHooks: {
@@ -156,6 +158,11 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
       const result = await auth.api.getSession({ headers, query: { disableRefresh: false } });
       if (!result) return null;
       const u = result.user as typeof result.user & Record<string, unknown>;
+      // Fail closed: only explicitly active accounts get a session. Suspended (or malformed) accounts lose it.
+      if (u.status !== "active") {
+        await db.delete(sessions).where(eq(sessions.id, result.session.id));
+        return null;
+      }
       return {
         session: { id: result.session.id, expiresAt: new Date(result.session.expiresAt), createdAt: new Date(result.session.createdAt) },
         user: {
@@ -167,7 +174,7 @@ export function createAuthentication(db: Database, config: AuthConfig, mailer: E
           dni: (u.dni as string | null | undefined) ?? null,
           whatsapp: (u.whatsapp as string | null | undefined) ?? null,
           platformRole: ((u.platformRole as string | undefined) ?? "user") as PlatformRole,
-          status: ((u.status as string | undefined) ?? "active") as AccountStatus,
+          status: "active" satisfies AccountStatus,
           createdAt: new Date(u.createdAt),
         },
       };

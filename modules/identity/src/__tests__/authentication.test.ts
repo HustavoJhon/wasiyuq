@@ -154,6 +154,15 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(res.status).toBe(200);
   });
 
+  test("suspending an account invalidates its existing sessions immediately (fail closed)", async () => {
+    const { email, cookie } = await signUp();
+    expect(await auth.getSession(new Headers({ cookie }))).not.toBeNull();
+    await handle.db.update(users).set({ status: "suspended" }).where(eq(users.email, email));
+    expect(await auth.getSession(new Headers({ cookie }))).toBeNull();
+    const [user] = await handle.db.select().from(users).where(eq(users.email, email));
+    expect(await handle.db.select().from(sessions).where(eq(sessions.userId, user!.id))).toHaveLength(0);
+  });
+
   test("suspended accounts cannot sign in", async () => {
     const { email, password } = await signUp();
     await handle.db.update(users).set({ status: "suspended" }).where(eq(users.email, email));

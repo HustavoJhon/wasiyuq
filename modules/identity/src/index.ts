@@ -4,7 +4,7 @@ export type { EmailMessage, EmailSender } from "./domain/ports";
 export { assertCanAuthenticate, assertPlatformAdmin, isPlatformAdmin, type IdentityUser, type ProfileChanges } from "./domain/user";
 export type { SessionRecord } from "./application/ports";
 export { IdentityService } from "./application/identity-service";
-export { AuthConfigError, CLIENT_IP_HEADER, loadAuthConfig, type AuthConfig } from "./infrastructure/auth-config";
+export { AuthConfigError, CLIENT_IP_HEADER, loadAuthConfig, resolveClientIp, type AuthConfig } from "./infrastructure/auth-config";
 export {
   AUTH_BASE_PATH,
   createAuthentication,

@@ -13,8 +13,11 @@ export interface AuthConfig {
   trustedOrigins: string[];
   production: boolean;
   rateLimit: boolean;
-  /** Header from which the client IP is read (set by our server or a trusted proxy). */
-  clientIpHeader: string;
+  /**
+   * When true, the client IP is the rightmost X-Forwarded-For entry (appended by our single trusted reverse
+   * proxy). When false, it is the socket address. Either way the server writes it into CLIENT_IP_HEADER.
+   */
+  trustProxy: boolean;
   google: { clientId: string; clientSecret: string } | null;
   mailTransport: "console" | "memory";
 }
@@ -26,8 +29,24 @@ export class AuthConfigError extends Error {
   }
 }
 
-/** Header the API server sets from the socket address (any incoming value is overwritten). */
+/** Header the API server always overwrites with the resolved client IP. Better Auth reads only this header. */
 export const CLIENT_IP_HEADER = "x-wasiyuq-client-ip";
+
+/**
+ * Resolve the client IP for rate limiting. Never trusts client-supplied values unless a proxy is configured,
+ * and then only the rightmost X-Forwarded-For hop (the one our proxy appended), never the leftmost.
+ */
+export function resolveClientIp(headers: Headers, socketIp: string | null | undefined, trustProxy: boolean): string {
+  if (trustProxy) {
+    const hops = (headers.get("x-forwarded-for") ?? "")
+      .split(",")
+      .map((hop) => hop.trim())
+      .filter(Boolean);
+    const last = hops.at(-1);
+    if (last) return last;
+  }
+  return socketIp || "unknown";
+}
 
 const url = z
   .string()
@@ -83,7 +102,7 @@ export function loadAuthConfig(env: Record<string, string | undefined> = process
     trustedOrigins: [...new Set([data.WEB_APP_URL, data.AUTH_BASE_URL, ...extra])],
     production: data.NODE_ENV === "production",
     rateLimit: data.AUTH_RATE_LIMIT === "on",
-    clientIpHeader: data.AUTH_TRUST_PROXY === "true" ? "x-forwarded-for" : CLIENT_IP_HEADER,
+    trustProxy: data.AUTH_TRUST_PROXY === "true",
     google:
       data.GOOGLE_CLIENT_ID && data.GOOGLE_CLIENT_SECRET
         ? { clientId: data.GOOGLE_CLIENT_ID, clientSecret: data.GOOGLE_CLIENT_SECRET }

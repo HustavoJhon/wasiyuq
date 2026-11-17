@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { IdentityError } from "../domain/errors";
 import { assertCanAuthenticate, assertCanChangeStatus, assertPlatformAdmin, isPlatformAdmin } from "../domain/user";
-import { AuthConfigError, CLIENT_IP_HEADER, loadAuthConfig } from "../infrastructure/auth-config";
+import { AuthConfigError, loadAuthConfig, resolveClientIp } from "../infrastructure/auth-config";
 import { emailTemplates } from "../infrastructure/email/templates";
 
 const reason = (fn: () => unknown) => {
@@ -38,7 +38,7 @@ describe("auth configuration", () => {
   test("valid development configuration with sensible defaults", () => {
     const config = loadAuthConfig(base);
     expect(config).toMatchObject({ baseUrl: "http://localhost:5173", rateLimit: true, google: null, mailTransport: "console" });
-    expect(config.clientIpHeader).toBe(CLIENT_IP_HEADER);
+    expect(config.trustProxy).toBe(false);
     expect(config.trustedOrigins).toEqual(["http://localhost:5173"]);
   });
 
@@ -59,8 +59,12 @@ describe("auth configuration", () => {
     expect(prod).toContain("https");
   });
 
-  test("trusting a proxy switches the client IP header", () => {
-    expect(loadAuthConfig({ ...base, AUTH_TRUST_PROXY: "true" }).clientIpHeader).toBe("x-forwarded-for");
+  test("client IP ignores spoofable headers unless a proxy is trusted, then uses the rightmost hop", () => {
+    const headers = new Headers({ "x-forwarded-for": "6.6.6.6, 203.0.113.9" });
+    expect(resolveClientIp(headers, "198.51.100.1", false)).toBe("198.51.100.1");
+    expect(resolveClientIp(headers, "198.51.100.1", true)).toBe("203.0.113.9");
+    expect(resolveClientIp(new Headers(), null, true)).toBe("unknown");
+    expect(loadAuthConfig({ ...base, AUTH_TRUST_PROXY: "true" }).trustProxy).toBe(true);
   });
 });
 
