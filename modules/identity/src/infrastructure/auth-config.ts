@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { buildMailConfig, mailConfigIssues, mailEnvSchema, type MailConfig } from "./email/mail-config";
+import { defaultHashConcurrency } from "./password-hasher";
 
 /**
  * Authentication configuration, validated from the environment.
@@ -19,7 +21,9 @@ export interface AuthConfig {
    */
   trustProxy: boolean;
   google: { clientId: string; clientSecret: string } | null;
-  mailTransport: "console" | "memory";
+  mail: MailConfig;
+  /** Maximum simultaneous scrypt derivations (each holds 32 MiB). */
+  passwordHashConcurrency: number;
 }
 
 export class AuthConfigError extends Error {
@@ -65,19 +69,16 @@ const schema = z
     AUTH_TRUST_PROXY: z.enum(["true", "false"]).default("false"),
     GOOGLE_CLIENT_ID: z.string().trim().optional(),
     GOOGLE_CLIENT_SECRET: z.string().trim().optional(),
-    MAIL_TRANSPORT: z.enum(["console", "memory"]).default("console"),
+    AUTH_PASSWORD_HASH_CONCURRENCY: z.coerce.number().int().min(1).max(64).optional(),
   })
+  .extend(mailEnvSchema.shape)
   .superRefine((env, ctx) => {
     const production = env.NODE_ENV === "production";
     if (Boolean(env.GOOGLE_CLIENT_ID) !== Boolean(env.GOOGLE_CLIENT_SECRET)) {
       ctx.addIssue({ code: "custom", path: ["GOOGLE_CLIENT_ID"], message: "set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET or neither" });
     }
+    for (const issue of mailConfigIssues(env, production)) ctx.addIssue({ code: "custom", path: [issue.path], message: issue.message });
     if (production) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["MAIL_TRANSPORT"],
-        message: "no production email transport is implemented yet; refusing to start with a development transport",
-      });
       if (env.AUTH_RATE_LIMIT === "off") ctx.addIssue({ code: "custom", path: ["AUTH_RATE_LIMIT"], message: "cannot be off in production" });
       for (const key of ["AUTH_BASE_URL", "WEB_APP_URL"] as const) {
         if (!env[key].startsWith("https://")) ctx.addIssue({ code: "custom", path: [key], message: "must use https in production" });
@@ -107,6 +108,7 @@ export function loadAuthConfig(env: Record<string, string | undefined> = process
       data.GOOGLE_CLIENT_ID && data.GOOGLE_CLIENT_SECRET
         ? { clientId: data.GOOGLE_CLIENT_ID, clientSecret: data.GOOGLE_CLIENT_SECRET }
         : null,
-    mailTransport: data.MAIL_TRANSPORT,
+    mail: buildMailConfig(data),
+    passwordHashConcurrency: data.AUTH_PASSWORD_HASH_CONCURRENCY ?? defaultHashConcurrency(),
   };
 }
