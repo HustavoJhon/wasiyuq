@@ -37,7 +37,9 @@
         "DB_POOL_MAX",
         "DB_CONNECT_TIMEOUT_SECONDS",
         "NODE_ENV",
-        "LOG_LEVEL"
+        "LOG_LEVEL",
+        "MAILPIT_API_URL",
+        "MAILPIT_SMTP_PORT"
       ]
     },
     "format": {
