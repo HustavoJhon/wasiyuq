@@ -20,13 +20,13 @@ function OrganizationSwitcher() {
   });
   if (!me) return null;
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex min-w-0 items-center gap-2">
       <Label htmlFor="org-switcher" className="sr-only">
         Organización activa
       </Label>
       <Select
         id="org-switcher"
-        className="h-9 w-56"
+        className="h-9 w-full min-w-0 max-w-[14rem]"
         value={me.activeOrganizationId ?? ""}
         disabled={switchOrg.isPending}
         onChange={(event) => switchOrg.mutate(event.target.value)}
@@ -97,13 +97,13 @@ export function AppShell() {
         Saltar al contenido
       </a>
       <header className="border-b bg-card">
-        <div className="container flex h-16 items-center justify-between gap-4">
+        <div className="container flex h-16 items-center justify-between gap-3">
           <Brand />
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <OrganizationSwitcher />
             <span className="hidden text-sm text-muted-foreground md:inline">{me.user.name}</span>
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut aria-hidden /> Salir
+            <Button variant="ghost" size="sm" onClick={signOut} aria-label="Cerrar sesión">
+              <LogOut aria-hidden /> <span className="hidden sm:inline">Salir</span>
             </Button>
           </div>
         </div>

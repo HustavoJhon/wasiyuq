@@ -5,11 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader } from "./ui/card";
 
 export function Brand() {
   return (
-    <Link to="/" className="inline-flex items-center gap-2 font-semibold tracking-tight text-foreground">
+    <Link to="/" className="inline-flex shrink-0 items-center gap-2 font-semibold tracking-tight text-foreground">
       <span className="grid h-8 w-8 place-items-center rounded-md bg-primary text-primary-foreground">
         <PawPrint aria-hidden className="h-4 w-4" />
       </span>
-      WASIYUQ
+      <span className="hidden sm:inline">WASIYUQ</span>
+      <span className="sr-only sm:hidden">WASIYUQ</span>
     </Link>
   );
 }
