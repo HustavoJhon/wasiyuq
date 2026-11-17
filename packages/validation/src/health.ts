@@ -25,6 +25,16 @@ export const readinessResponseSchema = z.object({
   timestamp: z.string(),
   checks: z.object({
     database: dependencyCheckSchema,
+    /**
+     * Informational only: email outages never make the API unready (sign-in keeps working), but operators
+     * should see repeated delivery failures. `degraded` after 3 consecutive failed deliveries.
+     */
+    email: z
+      .object({
+        status: z.enum(["ok", "degraded"]),
+        pending: z.number().int().nonnegative(),
+      })
+      .optional(),
   }),
 });
 

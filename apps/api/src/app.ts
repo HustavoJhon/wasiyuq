@@ -66,7 +66,17 @@ export function createApp(options: AppOptions) {
       status: ready ? "ready" : "not_ready",
       service: SERVICE,
       timestamp: new Date().toISOString(),
-      checks: { database: check },
+      checks: {
+        database: check,
+        ...(services
+          ? {
+              email: {
+                status: services.email.health().consecutiveFailures >= 3 ? ("degraded" as const) : ("ok" as const),
+                pending: services.email.health().pending,
+              },
+            }
+          : {}),
+      },
     });
     return c.json(body, ready ? 200 : 503);
   });
