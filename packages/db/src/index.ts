@@ -26,3 +26,4 @@ export {
   UnsafeDatabaseTargetError,
 } from "./safety";
 export * as schema from "./schema";
+export * from "./schema";
