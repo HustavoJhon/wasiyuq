@@ -80,13 +80,13 @@
 - Añadir idempotencia, retries con backoff, observabilidad y protección anti-abuso en endpoints expuestos (chatbot/DNI).
 - Definir estrategia de archivos (S3-compatible) y URLs firmadas si aplica; planificar migración de binarios existentes.
 
-## 5. Estado en WASIYUQ 2.0 (Fase 3, 2026-11-17)
+## 5. Estado en WASIYUQ 2.0 (Fases 3 y 3.1, 2026-11-17)
 
 | Integración | 2.0 | Configuración | Estado |
 |---|---|---|---|
 | Autenticación | Better Auth 1.7.15 (librería embebida, no servicio externo) | `AUTH_SECRET`, `AUTH_BASE_URL`, `WEB_APP_URL`, `AUTH_TRUSTED_ORIGINS`, `AUTH_RATE_LIMIT`, `AUTH_TRUST_PROXY` | Implementado |
 | Google OAuth | Proveedor social de Better Auth; vinculación por email verificado (paridad Socialite) | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`; callback `${AUTH_BASE_URL}/api/auth/callback/google` | Implementado; **activo solo con credenciales; no probado contra Google real** |
-| Correo | Puerto `EmailSender`: transportes `console` (desarrollo) y `memory` (tests); plantillas en español (verificación, restablecimiento, invitación) | `MAIL_TRANSPORT` | Implementado para dev/test; **sin transporte de producción** (arranque bloqueado en producción) |
+| Correo | Adaptador SMTP (`SmtpEmailSender`, nodemailer) detrás del puerto `EmailSender`; cola con reintentos en segundo plano (`EmailDispatcher`); Mailpit en desarrollo; proveedor recomendado Resend (cualquier SMTP sirve). Plantillas en español: verificación, restablecimiento, invitación, `account_exists`, `password_changed` | `MAIL_TRANSPORT`, `MAIL_FROM_*`, `SMTP_*`, `MAIL_MAX_ATTEMPTS`, `MAIL_RETRY_BASE_DELAY_MS` | Implementado y probado con Mailpit (Fase 3.1). **Producción sin credenciales**: arranque bloqueado hasta configurar el proveedor ([`EMAIL_DELIVERY.md`](EMAIL_DELIVERY.md)) |
 | DNI (apisperu) | — | — | No migrado (fase posterior, `modules/integrations`) |
 | Analítica GA4 | — | — | No migrado |
 
