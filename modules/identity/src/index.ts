@@ -9,6 +9,7 @@ export {
   AUTH_BASE_PATH,
   createAuthentication,
   SESSION_TTL_SECONDS,
+  SIGN_UP_MIN_DURATION_MS,
   type AuthenticatedSession,
   type Authentication,
   type AuthenticationHooks,

@@ -22,6 +22,12 @@ export interface AuthenticationHooks {
   log?: (level: "info" | "warn" | "error", message: string, meta: Record<string, unknown>) => void;
   /** Override the password hasher (tests). Defaults to the bounded scrypt hasher. */
   passwordHasher?: PasswordHasher;
+  /**
+   * Minimum duration of `POST /sign-up/email` responses. New and existing emails do different work (user rows,
+   * verification token) after the same password hash; padding both to a fixed floor removes that timing signal.
+   * Default SIGN_UP_MIN_DURATION_MS; tests that are not about timing may lower it.
+   */
+  signUpMinDurationMs?: number;
 }
 
 export interface Authentication {
@@ -34,6 +40,7 @@ export interface Authentication {
 
 export const AUTH_BASE_PATH = "/api/auth";
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+export const SIGN_UP_MIN_DURATION_MS = 500;
 const ONE_DAY = 60 * 60 * 24;
 
 /**
@@ -44,6 +51,7 @@ export function createAuthentication(db: Database, config: AuthConfig, outbox: E
   const log = hooks.log ?? (() => {});
   const passwordHasher = hooks.passwordHasher ?? createPasswordHasher({ concurrency: config.passwordHashConcurrency });
   const loginUrl = `${config.webAppUrl}/login`;
+  const signUpMinDurationMs = hooks.signUpMinDurationMs ?? SIGN_UP_MIN_DURATION_MS;
 
   const auth = betterAuth({
     appName: "WASIYUQ",
@@ -159,12 +167,12 @@ export function createAuthentication(db: Database, config: AuthConfig, outbox: E
       user: {
         create: {
           after: async (user) => {
-            try {
-              await hooks.onUserCreated?.({ id: user.id, name: user.name, email: user.email });
-            } catch (error) {
-              // The account exists; the personal organization is re-ensured on the next /me request.
-              log("error", "post sign-up hook failed", { userId: user.id, errorType: describeArgument(error) });
-            }
+            // Background: the sign-up response must not wait for extra work that only new accounts trigger
+            // (timing would reveal whether the email was new). The hook is idempotent and race-safe, and the
+            // personal organization is re-ensured on the next /me request if it has not finished or failed.
+            void Promise.resolve()
+              .then(() => hooks.onUserCreated?.({ id: user.id, name: user.name, email: user.email }))
+              .catch((error) => log("error", "post sign-up hook failed", { userId: user.id, errorType: describeArgument(error) }));
           },
         },
       },
@@ -183,7 +191,15 @@ export function createAuthentication(db: Database, config: AuthConfig, outbox: E
 
   return {
     basePath: AUTH_BASE_PATH,
-    handler: async (request) => stripSessionTokens(await auth.handler(request)),
+    handler: async (request) => {
+      const started = performance.now();
+      const response = await stripSessionTokens(await auth.handler(request));
+      if (request.method === "POST" && new URL(request.url).pathname.endsWith("/sign-up/email")) {
+        const remaining = signUpMinDurationMs - (performance.now() - started);
+        if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
+      return response;
+    },
     async getSession(headers) {
       const result = await auth.api.getSession({ headers, query: { disableRefresh: false } });
       if (!result) return null;
