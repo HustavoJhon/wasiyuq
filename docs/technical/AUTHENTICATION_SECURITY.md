@@ -53,7 +53,7 @@ Se evaluaron y descartaron: `Bun.password` (Argon2id/bcrypt nativo, asíncrono),
 | Expiración y revocación de sesiones | 7 días, sin cookie cache, revocación inmediata (logout, restablecer contraseña, suspensión, revocar por id) | Tests identity, API y E2E |
 | Restablecer contraseña | Token de 1 h guardado hasheado, un solo uso, revoca todas las sesiones, aviso `password_changed` por correo | Tests de reutilización, expiración y revocación; E2E |
 | Verificación de email | JWT firmado de 24 h; reutilizarlo no abre otra sesión; un enlace manipulado se rechaza | Tests de reutilización y manipulación |
-| Enumeración de cuentas | Respuesta idéntica para usuario inexistente o contraseña errónea; recuperación siempre 200 con cuerpo idéntico; **registro con email existente indistinguible** (ver §3); correo en segundo plano (sin diferencia de tiempos); `/ready` sin contadores por mensaje | Tests identity, API y E2E |
+| Enumeración de cuentas | Respuesta idéntica para usuario inexistente o contraseña errónea; recuperación siempre 200 con cuerpo idéntico; **registro con email existente indistinguible** (ver §3); correo en segundo plano (sin diferencia de tiempos); `/ready` sin estado del correo; registro con duración mínima fija | Tests identity, API y E2E |
 | Rate limiting y proxy | Límites en BD por IP; IP escrita por el servidor (socket o salto derecho de XFF con proxy de confianza) | Test de cliente con cabeceras de IP falsas a través de `Bun.serve` real → 429 |
 | Suspensión | Fail closed: sesiones borradas y acceso denegado en la siguiente petición | Tests identity y API |
 | Cambio de organización | Solo a organizaciones de las que se es miembro | Test API |
@@ -70,6 +70,7 @@ Se evaluaron y descartaron: `Bun.password` (Argon2id/bcrypt nativo, asíncrono),
 Antes, `POST /api/auth/sign-up/email` abría sesión (`autoSignIn: true`) y un email ya registrado devolvía 422 `USER_ALREADY_EXISTS`, lo que permitía comprobar si un correo tenía cuenta. Ahora (`autoSignIn: false`):
 
 - Email nuevo o existente: **misma respuesta** (200, mismo cuerpo, sin cookie) y el mismo coste de hash en ambos caminos (Better Auth hashea también en el camino del duplicado).
+- **Mismo tiempo:** el camino de email nuevo hace trabajo adicional (filas de usuario y cuenta, token de verificación, organización personal). La organización personal se crea en segundo plano (idempotente, y se vuelve a asegurar en `/me`), y la respuesta de `POST /sign-up/email` se rellena hasta un mínimo fijo de 500 ms (`SIGN_UP_MIN_DURATION_MS`). Con carga extrema un camino podría superar ese mínimo; el rate limit de 5 registros por minuto e IP limita las mediciones.
 - Email nuevo: se envía la verificación. Email existente: se avisa al titular (`account_exists`) y su cuenta no cambia.
 - La web muestra "Revisa tu correo". El enlace de verificación inicia sesión (`autoSignInAfterVerification`); también se puede iniciar sesión sin verificar (paridad legacy), pero las funciones de organización requieren email verificado.
 
