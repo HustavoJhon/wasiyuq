@@ -40,7 +40,7 @@ Las migraciones siguen bloqueadas con `NODE_ENV=production` (`packages/db/src/sa
 |---|---|
 | Logs | JSON en una línea por evento (`stdout`; `warn`/`error` a `stderr`), con `requestId`, método, ruta redactada, estado y duración. Sin secretos, tokens, emails de Better Auth ni contenido de correos |
 | Liveness | `GET /health`: no toca la BD |
-| Readiness | `GET /ready`: 200 si PostgreSQL responde y la base es la esperada; 503 si no, o durante el apagado. `checks.email.status` es informativo (`ok`/`degraded`) |
+| Readiness | `GET /ready`: 200 si PostgreSQL responde y la base es la esperada; 503 si no, o durante el apagado. No expone el estado del correo (ver `EMAIL_DELIVERY.md` §3) |
 | Salud del correo | `GET /api/v1/admin/email-health` (administradores de plataforma) |
 | Apagado (`SIGTERM`/`SIGINT`) | Readiness pasa a `SHUTTING_DOWN`, deja de aceptar conexiones, termina las peticiones en curso, espera hasta 10 s a los correos pendientes y cierra el pool de BD |
 | Errores no controlados | Rechazos de promesas sin manejar: se registran (solo el tipo). Excepciones no capturadas: se registran y el proceso sale con 1 para que el orquestador lo reinicie |

@@ -33,7 +33,7 @@
 
 | Método y ruta | Uso |
 |---|---|
-| `POST /api/auth/sign-up/email` | `{name, email, password, callbackURL?}` → 200 `{ user }` **sin cookie de sesión**. Email nuevo: crea la cuenta y envía la verificación. Email existente: misma respuesta, no cambia nada y avisa al titular por correo (Fase 3.1, sin enumeración) |
+| `POST /api/auth/sign-up/email` | `{name, email, password, callbackURL?}` → 200 `{ user }` **sin cookie de sesión**, siempre tras al menos 500 ms. Email nuevo: crea la cuenta y envía la verificación. Email existente: misma respuesta, no cambia nada y avisa al titular por correo (Fase 3.1, sin enumeración) |
 | `POST /api/auth/sign-in/email` | `{email, password}` → 200 / 401 genérico / 403 suspendida / 429 |
 | `POST /api/auth/sign-out` | Revoca la sesión actual |
 | `GET /api/auth/get-session` | Sesión actual (sin token) |
@@ -49,7 +49,7 @@
 | Método y ruta | Respuesta |
 |---|---|
 | `GET /health` | Liveness |
-| `GET /ready` | Readiness: 200/503 según la BD; `checks.email.status` (`ok`/`degraded`) es informativo y nunca incluye contadores |
+| `GET /ready` | Readiness: 200/503 según la BD. No incluye ningún estado del correo (canal lateral de enumeración); ver `/api/v1/admin/email-health` |
 | `GET /api/public/auth-providers` | `{ emailPassword: true, google: boolean }` |
 
 ## 4. `/api/v1` (requiere sesión)
@@ -82,6 +82,6 @@
 
 ## 5. Garantías verificadas por tests
 
-`apps/api/src/__tests__/identity-api.test.ts` (PostgreSQL de test): 401 sin sesión; respuestas sin contraseñas/hashes/tokens; verificación obligatoria; validación y campos desconocidos; aislamiento entre organizaciones (todas las rutas → 404); permisos por rol; escaladas; aceptación ligada al email; tokens ausentes de respuestas y logs; CSRF; sesiones; logout; administración sin bypass; suspensión; recuperación de contraseña; archivado; email-health solo para admins; `/ready` sin contadores.
+`apps/api/src/__tests__/identity-api.test.ts` (PostgreSQL de test): 401 sin sesión; respuestas sin contraseñas/hashes/tokens; verificación obligatoria; validación y campos desconocidos; aislamiento entre organizaciones (todas las rutas → 404); permisos por rol; escaladas; aceptación ligada al email; tokens ausentes de respuestas y logs; CSRF; sesiones; logout; administración sin bypass; suspensión; recuperación de contraseña; archivado; email-health solo para admins; `/ready` sin estado del correo.
 
 Fase 3.1: `auth-concurrency.test.ts` (12 registros e inicios de sesión concurrentes correctos con `/health` < 150 ms p95) y `security-regressions.test.ts` (IP de rate limit no falseable a través del servidor real, sin CORS, guardas de arranque en producción).
