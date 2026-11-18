@@ -44,7 +44,7 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
   beforeAll(() => {
     handle = createDatabase(testDb as DatabaseConfig);
     const config = loadAuthConfig({ AUTH_SECRET: "api-test-secret-api-test-secret-123456", AUTH_BASE_URL: ORIGIN, WEB_APP_URL: ORIGIN, MAIL_TRANSPORT: "memory" });
-    app = createApp({ database: handle, services: createServices(handle, config, { sender: mailer, retryBaseDelayMs: 0 }) });
+    app = createApp({ database: handle, services: createServices(handle, config, { sender: mailer, retryBaseDelayMs: 0, signUpMinDurationMs: 0 }) });
   });
   afterAll(async () => handle?.close());
 
@@ -111,9 +111,9 @@ describe.skipIf(!testDb)("identity & organizations HTTP API", () => {
     expect(await res.json()).toEqual({ emailPassword: true, google: false });
   });
 
-  test("readiness exposes only a coarse email status (no per-message counters)", async () => {
+  test("readiness exposes no email delivery state (no enumeration side channel)", async () => {
     const body = await (await request("/ready")).json();
-    expect(body.checks.email).toEqual({ status: "ok" });
+    expect(Object.keys(body.checks)).toEqual(["database"]);
   });
 
   test("security headers are set", async () => {

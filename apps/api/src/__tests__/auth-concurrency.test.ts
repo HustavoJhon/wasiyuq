@@ -37,7 +37,7 @@ describe.skipIf(!testDb)("authentication under concurrency", () => {
   beforeAll(() => {
     handle = createDatabase({ ...(testDb as DatabaseConfig), poolMax: 20 });
     const config = loadAuthConfig({ AUTH_SECRET: "concurrency-test-secret-0123456789abcdef", AUTH_BASE_URL: ORIGIN, WEB_APP_URL: ORIGIN, MAIL_TRANSPORT: "memory" });
-    app = createApp({ database: handle, services: createServices(handle, config, { sender: new MemoryEmailSender(), retryBaseDelayMs: 0 }) });
+    app = createApp({ database: handle, services: createServices(handle, config, { sender: new MemoryEmailSender(), retryBaseDelayMs: 0, signUpMinDurationMs: 0 }) });
   });
   afterAll(async () => handle?.close());
 

@@ -20,6 +20,8 @@ export interface ServiceOverrides {
   sender?: EmailSender;
   /** Delay before the first email retry (tests use 0). */
   retryBaseDelayMs?: number;
+  /** Sign-up response floor (timing equalization); tests not about timing lower it. */
+  signUpMinDurationMs?: number;
 }
 
 /** Composition root: wires modules together. Modules never import each other's internals. */
@@ -44,6 +46,7 @@ export function createServices(database: DatabaseHandle, config: AuthConfig, ove
       await organizations.ensurePersonalOrganization(user);
     },
     log: (level, message, meta) => log(level, message, meta),
+    signUpMinDurationMs: overrides.signUpMinDurationMs,
   });
 
   return {

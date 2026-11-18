@@ -24,7 +24,10 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
 
   beforeAll(() => {
     handle = createDatabase(testDb as DatabaseConfig);
-    auth = createAuthentication(handle.db, config, new EmailDispatcher(mailer), { onUserCreated: async (u) => void created.push(u.id) });
+    auth = createAuthentication(handle.db, config, new EmailDispatcher(mailer), {
+      onUserCreated: async (u) => void created.push(u.id),
+      signUpMinDurationMs: 0,
+    });
   });
   afterAll(async () => handle?.close());
 
@@ -95,6 +98,32 @@ describe.skipIf(!testDb)("authentication (Better Auth adapter)", () => {
     expect(mailer.last(email, "account_exists")?.text).toContain(`${BASE}/login`);
     expect((await call("/sign-in/email", { body: { email, password } })).status).toBe(200);
     expect((await call("/sign-in/email", { body: { email, password: "another-password-1" } })).status).toBe(401);
+  });
+
+  test("sign-up takes the same minimum time for new and existing emails (no timing enumeration)", async () => {
+    const timed = createAuthentication(handle.db, config, new EmailDispatcher(new MemoryEmailSender()), {
+      onUserCreated: async () => {
+        await Bun.sleep(300); // slow post-creation work must not show up in the response time
+      },
+    });
+    const signUpAt = async (email: string) => {
+      const started = performance.now();
+      const res = await timed.handler(
+        new Request(`${BASE}/api/auth/sign-up/email`, {
+          method: "POST",
+          headers: { "content-type": "application/json", origin: BASE, [CLIENT_IP_HEADER]: uniqueIp() },
+          body: JSON.stringify({ name: "Timing", email, password: "correct-horse-battery" }),
+        }),
+      );
+      expect(res.status).toBe(200);
+      return performance.now() - started;
+    };
+    const email = uniqueEmail("timing");
+    const fresh = await signUpAt(email);
+    const existing = await signUpAt(email);
+    expect(fresh).toBeGreaterThanOrEqual(495);
+    expect(existing).toBeGreaterThanOrEqual(495);
+    expect(Math.abs(fresh - existing)).toBeLessThan(100);
   });
 
   test("weak passwords are rejected", async () => {

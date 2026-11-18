@@ -77,10 +77,10 @@ describe.skipIf(!reachable)("security regressions (real server)", () => {
     expect(get.headers.get("access-control-allow-origin")).toBeNull();
   });
 
-  test("readiness reports the database and a coarse email status", async () => {
+  test("readiness reports only the database (no email delivery signal)", async () => {
     const body = await (await fetch(`${base}/ready`)).json();
     expect(body.status).toBe("ready");
-    expect(body.checks.email).toEqual({ status: "ok" });
+    expect(Object.keys(body.checks)).toEqual(["database"]);
   });
 });
 

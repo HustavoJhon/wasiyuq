@@ -66,14 +66,9 @@ export function createApp(options: AppOptions) {
       status: ready ? "ready" : "not_ready",
       service: SERVICE,
       timestamp: new Date().toISOString(),
-      checks: {
-        database: check,
-        ...(services
-          ? // Coarse status only: per-message counters on a public endpoint would reveal whether a request
-            // (e.g. a password reset for some address) produced an email, i.e. whether the account exists.
-            { email: { status: services.email.health().consecutiveFailures >= 3 ? ("degraded" as const) : ("ok" as const) } }
-          : {}),
-      },
+      // Email delivery state is deliberately absent: any per-message signal on a public endpoint can reveal
+      // whether a request (e.g. a password reset for some address) produced an email. See /api/v1/admin/email-health.
+      checks: { database: check },
     });
     return c.json(body, ready ? 200 : 503);
   });
